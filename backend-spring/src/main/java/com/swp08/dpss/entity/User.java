@@ -16,27 +16,27 @@ import java.time.LocalDate;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false, length = 50)
-    String name;
+    private String name;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    String password;
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    Roles role;
+    private Roles role;
 
     @Enumerated(EnumType.STRING)
-    Genders gender;
+    private Genders gender;
 
     @Column(nullable = false)
-    LocalDate dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(nullable = false, unique = true)
-    String email;
+    private String email;
 
     @Column(nullable = false, unique = true)
-    String phone;
+    private String phone;
 }
