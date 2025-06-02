@@ -4,6 +4,7 @@
 *.env
 application-dev.properties
 application-prod.properties
+backend-spring/src/main/resources/application.properties
 
 # Build artifacts
 target/
@@ -35,3 +36,4 @@ yarn-error.log*
 
 # Other
 coverage/
+
