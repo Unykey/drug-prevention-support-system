@@ -1,28 +1,62 @@
 # Drug Use Prevention Support System
 
-This repository contains two different implementations of the project:
-
-1. **MVC Version** — Traditional Java MVC-based application.  
-2. **Modern Version** — Modern toolkit using commonly used technologies.
-
 ---
 
 ## Project Overview
 
-This project aims to support drug use prevention in the community. Each version provides the same core functionality but uses different technologies and architectures.
+This project is a web-based application designed to support a volunteer organization in its efforts to prevent drug use within the community. The system provides educational resources, risk assessment tools, access to professional consultation, and management of community outreach programs.
 
 ---
 
-## Folder Structure
+## Key Features
 
-- `/mvc-version` — Contains the MVC-based implementation with Java and JSP.  
-- `/modern-version` — Contains the modern implementation with Spring Boot backend and React frontend.  
+*   **Public Information:**
+    *   Homepage introducing the volunteer organization.
+    *   Blog for sharing experiences, articles, and prevention tips.
+*   **Educational Resources:**
+    *   Search and registration for online training courses on drug awareness, prevention skills, refusal skills, etc.
+    *   Course content tailored for different age groups (students, parents, teachers).
+*   **Risk Assessment:**
+    *   Self-assessment surveys (e.g., ASSIST, CRAFFT) to identify potential drug use risks.
+    *   Personalized recommendations based on assessment results (e.g., suggest courses, consult a specialist).
+*   **Consultation Services:**
+    *   Online appointment booking with qualified consultants.
+    *   Management of consultant profiles, schedules, and expertise.
+*   **Community Programs:**
+    *   Management of community outreach and education programs.
+    *   Pre/post program surveys for participants to provide feedback and measure impact.
+*   **User Management:**
+    *   User registration and profile management.
+    *   Tracking of user history (appointments, courses, program participation).
+*   **Reporting & Analytics:**
+    *   Dashboard for an overview of system activity and key metrics.
+    *   Report generation for program effectiveness, user engagement, etc.
 
 ---
 
-## How to Use
+## Tech Stack
 
-Refer to each version's README for detailed setup and usage instructions.
+*(This assumes the previously discussed tech stack. Adjust if it has changed for this new topic.)*
+
+*   **Backend (Core System):**
+    *   Language: Java
+    *   Framework: Spring Boot
+*   **Backend (Real-time Features - Optional, e.g., for notifications/chat):**
+    *   Runtime: Node.js
+    *   Framework: Express.js (or similar)
+    *   Real-time: WebSockets (e.g., Socket.IO) or STOMP (if using Spring for WebSockets)
+*   **Frontend:**
+    *   Library/Framework: React (with HTML, CSS, JavaScript/TypeScript)
+*   **Database:**
+    *   Cloud: Supabase (PostgreSQL)
+    *   Local Development: Local PostgreSQL instance
+*   **Version Control:** Git & GitHub
+
+---
+
+## Getting Started
+
+wip
 
 ---
 
