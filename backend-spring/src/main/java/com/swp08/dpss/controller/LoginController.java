@@ -2,7 +2,7 @@ package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.LoginRequest;
 import com.swp08.dpss.entity.User;
-import com.swp08.dpss.service.LoginService;
+import com.swp08.dpss.service.impls.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
