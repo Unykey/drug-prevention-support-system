@@ -45,7 +45,6 @@ public class SurveyResponse {
     }
 
     public SurveyResponse(long id, Date submittedAt, int resultScore) {
-        this.id = id;
         this.submittedAt = submittedAt;
         this.resultScore = resultScore;
     }

@@ -47,7 +47,6 @@ public class SurveyQuestion {
     }
 
     public SurveyQuestion(long id, String question, String type) {
-        this.id = id;
         this.question = question;
         this.type = type;
     }

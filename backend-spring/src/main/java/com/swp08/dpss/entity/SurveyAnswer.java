@@ -28,8 +28,7 @@ public class SurveyAnswer {
     public SurveyAnswer() {
     }
 
-    public SurveyAnswer(Integer answerId, String answerValue) {
-        this.answerId = answerId;
+    public SurveyAnswer(String answerValue) {
         this.answerValue = answerValue;
     }
 }
