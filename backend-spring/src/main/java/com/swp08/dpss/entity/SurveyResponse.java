@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table
@@ -19,7 +17,7 @@ public class SurveyResponse {
     private long id;
 
     @Column (name = "SubmittedAt")
-    private Date submittedAt;
+    private LocalDateTime submittedAt;
 
     @Column (name = "ResultScore")
     private int resultScore;
@@ -28,17 +26,17 @@ public class SurveyResponse {
     private String answer;
 
     @ManyToOne
-    @JoinColumn (name = "SurveyId")
+    @JoinColumn (name = "Survey")
     private Survey survey;
 
     @ManyToOne
-    @JoinColumn (name = "QuestionId")
+    @JoinColumn (name = "Question")
     private SurveyQuestion question;
 
     public SurveyResponse() {
     }
 
-    public SurveyResponse(long id, Date submittedAt, int resultScore) {
+    public SurveyResponse(long id, LocalDateTime submittedAt, int resultScore) {
         this.submittedAt = submittedAt;
         this.resultScore = resultScore;
     }
