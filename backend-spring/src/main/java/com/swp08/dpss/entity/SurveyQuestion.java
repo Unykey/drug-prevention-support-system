@@ -30,7 +30,7 @@ public class SurveyQuestion {
     private String answer;
 
     @ManyToOne
-    @JoinColumn(name = "SurveyId")
+    @JoinColumn(name = "Survey")
     private Survey survey;
 
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question")
