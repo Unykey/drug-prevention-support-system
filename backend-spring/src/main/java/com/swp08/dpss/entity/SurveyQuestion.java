@@ -17,30 +17,33 @@ import java.util.List;
 public class SurveyQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "Id", columnDefinition = "varchar(10)")
+    @Column (name = "Id")
     private long id;
 
     @Column (name = "Question", nullable = false)
     private String question;
 
-    @Column (name = "Type", nullable = false)
+    @Column (name = "Type", nullable = false, columnDefinition = "varchar(20)")
     private String type;
+
+    @Column (name = "Answer", nullable = false)
+    private String answer;
 
     @ManyToOne
     @JoinColumn(name = "SurveyId")
     private Survey survey;
 
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question")
-    private List<SurveyAnswer> answers = new ArrayList<SurveyAnswer>();
+    private List<SurveyResponse> responses = new ArrayList<>();
 
-    public void addAnswer(SurveyAnswer answer) {
-        answers.add(answer);
-        answer.setQuestion(this);
+    public void addResponse(SurveyResponse response) {
+        responses.add(response);
+        response.setQuestion(this);
     }
 
-    public void removeAnswer(SurveyAnswer answer) {
-        answers.remove(answer);
-        answer.setQuestion(null);
+    public void removeResponse(SurveyResponse response) {
+        responses.remove(response);
+        response.setQuestion(null);
     }
 
     public SurveyQuestion() {

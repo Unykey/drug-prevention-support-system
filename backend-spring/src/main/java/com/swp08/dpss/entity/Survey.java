@@ -16,7 +16,7 @@ import java.util.List;
 public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (name = "Id", columnDefinition = "varchar(10)")
+    @Column (name = "Id")
     private long id;
 
     @Column (name = "Name", nullable = false, columnDefinition = "nvarchar(50)")

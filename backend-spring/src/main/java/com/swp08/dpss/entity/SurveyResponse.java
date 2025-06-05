@@ -15,31 +15,25 @@ import java.util.List;
 public class SurveyResponse {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id", columnDefinition = "varchar(10)")
+    @Column(name = "Id")
     private long id;
 
-    @Column (name = "SubmittedAt", nullable = false)
+    @Column (name = "SubmittedAt")
     private Date submittedAt;
 
     @Column (name = "ResultScore")
     private int resultScore;
 
+    @Column (name = "Answer")
+    private String answer;
+
     @ManyToOne
-    @JoinColumn (name = "Survey")
+    @JoinColumn (name = "SurveyId")
     private Survey survey;
 
-    @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "response")
-    private List<SurveyAnswer> answers = new ArrayList<SurveyAnswer>();
-
-    public void addAnswer(SurveyAnswer answer) {
-        answers.add(answer);
-        answer.setResponse(this);
-    }
-
-    public void removeAnswer(SurveyAnswer answer) {
-        answers.remove(answer);
-        answer.setResponse(null);
-    }
+    @ManyToOne
+    @JoinColumn (name = "QuestionId")
+    private SurveyQuestion question;
 
     public SurveyResponse() {
     }
