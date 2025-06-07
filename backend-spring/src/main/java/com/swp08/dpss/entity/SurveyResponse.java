@@ -36,9 +36,8 @@ public class SurveyResponse {
     public SurveyResponse() {
     }
 
-    public SurveyResponse(long id, LocalDateTime submittedAt, int resultScore) {
-        this.submittedAt = submittedAt;
-        this.resultScore = resultScore;
+    public SurveyResponse(String answer) {
+        this.answer = answer;
     }
 }
 
