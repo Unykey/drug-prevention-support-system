@@ -1,0 +1,17 @@
+package com.swp08.dpss.repository;
+
+import com.swp08.dpss.entity.Survey;
+import com.swp08.dpss.entity.SurveyQuestion;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, long> {
+    // Get all questions by survey ID
+    List<SurveyQuestion> findBySurveyId(Long surveyId);
+
+    // Find all multiple-choice questions
+    List<SurveyQuestion> findByType(String type);
+}
