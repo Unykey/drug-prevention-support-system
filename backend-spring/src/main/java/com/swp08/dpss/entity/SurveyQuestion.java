@@ -49,18 +49,10 @@ public class SurveyQuestion {
     public SurveyQuestion() {
     }
 
-    public SurveyQuestion(long id, String question, String type) {
+    public SurveyQuestion(String question, String type, String answer) {
         this.question = question;
         this.type = type;
-    }
-
-    @Override
-    public String toString() {
-        return "SurveyQuestion{" +
-                "id=" + id +
-                ", question='" + question + '\'' +
-                ", type='" + type + '\'' +
-                '}';
+        this.answer = answer;
     }
 
 }
