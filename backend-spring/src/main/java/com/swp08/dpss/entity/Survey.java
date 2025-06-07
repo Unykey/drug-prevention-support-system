@@ -59,12 +59,4 @@ public class Survey {
         this.description = description;
     }
 
-    @Override
-    public String toString() {
-        return "Survey{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
 }
