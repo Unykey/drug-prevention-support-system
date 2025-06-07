@@ -39,7 +39,7 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String phone;
-
+  
     public User() {
     }
 
@@ -130,5 +130,4 @@ public class User {
                 ", phone='" + phone + '\'' +
                 '}';
     }
-
 }
