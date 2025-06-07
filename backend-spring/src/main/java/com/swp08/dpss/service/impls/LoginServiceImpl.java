@@ -1,15 +1,16 @@
-package com.swp08.dpss.service;
+package com.swp08.dpss.service.impls;
 
 import com.swp08.dpss.dto.requests.LoginRequest;
 import com.swp08.dpss.entity.User;
 import com.swp08.dpss.repository.UserRepository;
+import com.swp08.dpss.service.interfaces.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class LoginService {
+public class LoginServiceImpl implements LoginService {
 
     @Autowired
     private UserRepository userRepository;
@@ -21,9 +22,9 @@ public class LoginService {
      * @param loginRequest Contains email and password.
      * @return User object if login successful, null otherwise.
      */
+    @Override
     public User login(LoginRequest loginRequest) {
         Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             //DANGER: PLAIN TEXT PASSWORD COMPARISON
