@@ -4,15 +4,18 @@ import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-//@Table(name = "AppUser")
-//@Getter
-//@Setter
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,82 +43,13 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
-    public User() {
-    }
-
-    public User(String name, String password, Roles role, Genders gender, LocalDate dateOfBirth, String email, String phone) {
-        this.name = name;
-        this.password = password;
-        this.role = role;
-        this.gender = gender;
-        this.dateOfBirth = dateOfBirth;
-        this.email = email;
-        this.phone = phone;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Roles getRole() {
-        return role;
-    }
-
-    public void setRole(Roles role) {
-        this.role = role;
-    }
-
-    public Genders getGender() {
-        return gender;
-    }
-
-    public void setGender(Genders gender) {
-        this.gender = gender;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "user_parent", // name of join table between user and parent
+            joinColumns = @JoinColumn(name = "id"), // FK column in join table referencing User
+            inverseJoinColumns = @JoinColumn(name = "parentId") // FK column in join table referencing Parent
+    )
+    private Set<Parent> parents = new HashSet<>();
 
     @Override
     public String toString() {
