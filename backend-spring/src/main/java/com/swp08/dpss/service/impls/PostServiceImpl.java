@@ -4,6 +4,7 @@ import com.swp08.dpss.dto.requests.PostRequest;
 import com.swp08.dpss.dto.responses.PostResponse;
 import com.swp08.dpss.entity.Post;
 import com.swp08.dpss.entity.User;
+import com.swp08.dpss.enums.PostStatus;
 import com.swp08.dpss.repository.PostRepository;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.PostService;
@@ -49,15 +50,25 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponse> getAllPosts() {
-        return postRepository.findAll()
+        return postRepository.findByStatusNot(PostStatus.DELETED)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public void deletePost(Long id) {
-        postRepository.deleteById(id);
+    public List<PostResponse> getPostByStatus(PostStatus status) {
+        return postRepository.findByStatus(status)
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deletePost(Long id){
+        Post post = postRepository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+        post.setStatus(PostStatus.DELETED);
+        postRepository.save(post);
     }
 
     private PostResponse toDto(Post post) {
