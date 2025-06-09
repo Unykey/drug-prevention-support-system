@@ -1,6 +1,7 @@
 package com.swp08.dpss.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class Parent {
     // --- Many-to-Many relationship with User ---
     // 'mappedBy' indicates that the User entity owns the relationship
     // (i.e., the @JoinTable is defined on the User side)
+    @JsonManagedReference // This side will be serialized normally
     @ManyToMany(mappedBy = "parents", fetch = FetchType.LAZY)
     private Set<User> user = new HashSet<>();
 }

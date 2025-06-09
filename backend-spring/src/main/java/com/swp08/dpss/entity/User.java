@@ -1,5 +1,7 @@
 package com.swp08.dpss.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import jakarta.persistence.*;
@@ -43,26 +45,24 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    @JsonBackReference // This side will NOT be serialized when serializing a Parent that contains this User
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_parent", // name of join table between user and parent
-            joinColumns = @JoinColumn(name = "id"), // FK column in join table referencing User
-            inverseJoinColumns = @JoinColumn(name = "parentId") // FK column in join table referencing Parent
+            joinColumns = @JoinColumn(name = "user_id"), // FK column in join table referencing User
+            inverseJoinColumns = @JoinColumn(name = "parent_id") // FK column in join table referencing Parent
     )
     private Set<Parent> parents = new HashSet<>();
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                ", gender=" + gender +
-                ", dateOfBirth=" + dateOfBirth +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
+    // Methods for managing the relationship
+    public void addParent(Parent parent){
+        this.parents.add(parent);
+        parent.getUser().add(this); // Maintain bidirectional consistency
+    }
+
+    public void removeParent(Parent parent){
+        this.parents.remove(parent);
+        parent.getUser().remove(this); // Maintain bidirectional consistency
     }
 
 }
