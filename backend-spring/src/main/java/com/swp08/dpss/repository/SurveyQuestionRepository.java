@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, long> {
+public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, Long> {
     // Get all questions by survey ID
     List<SurveyQuestion> findBySurveyId(Long surveyId);
 

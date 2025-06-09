@@ -1,4 +1,4 @@
-package com.swp08.dpss.service;
+package com.swp08.dpss.service.interfaces;
 
 import com.swp08.dpss.dto.SurveyDto;
 import com.swp08.dpss.entity.Survey;

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface SurveyResponseRepository extends CrudRepository<SurveyResponse, long> {
+public interface SurveyResponseRepository extends CrudRepository<SurveyResponse, Long> {
     // Get all responses for a survey by a specific user
     List<SurveyResponse> findBySurveyIdAndUserId(Long surveyId, Long userId);
 

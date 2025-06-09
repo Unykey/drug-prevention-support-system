@@ -2,7 +2,7 @@ package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.SurveyDto;
 import com.swp08.dpss.entity.Survey;
-import com.swp08.dpss.service.SurveyService;
+import com.swp08.dpss.service.interfaces.SurveyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

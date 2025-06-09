@@ -1,8 +1,7 @@
-package com.swp08.dpss.service.impl;
-
 import com.swp08.dpss.dto.SurveyDto;
 import com.swp08.dpss.entity.Survey;
-import com.swp08.dpss.service.SurveyService;
+import com.swp08.dpss.repository.SurveyRepository;
+import com.swp08.dpss.service.interfaces.SurveyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,10 +9,10 @@ import java.util.List;
 @Service
 public class SurveyServiceImpl implements SurveyService {
 
-    private final SurveyService surveyService;
+    private final SurveyRepository surveyRepository;
 
-    public SurveyServiceImpl(SurveyService surveyService) {
-        this.surveyService = surveyService;
+    public SurveyServiceImpl(SurveyRepository surveyRepository) {
+        this.surveyRepository = surveyRepository;
     }
 
     @Override
@@ -26,13 +25,12 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public List<Survey> getAllSurveys() {
-        return List.of();
+        return surveyRepository.findAll();
     }
 
     @Override
     public Survey getSurveyById(long id) {
-        return null;
+        return surveyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
     }
-
-
 }
