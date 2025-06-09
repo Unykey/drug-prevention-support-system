@@ -1,5 +1,6 @@
 package com.swp08.dpss.entity;
 
+import com.swp08.dpss.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,8 +30,9 @@ public class Post {
     @Column (name = "CreatedAt", nullable = false)
     private LocalDateTime createdAt;
 
+    @Enumerated(EnumType.STRING)
     @Column (name = "Status", nullable = false, length = 1)
-    private int status;
+    private PostStatus status;
 
     @ManyToOne
     @JoinColumn (name = "Author")
