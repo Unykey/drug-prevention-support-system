@@ -19,25 +19,17 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-//    @GetMapping("/api/user")
     @GetMapping
     public ResponseEntity getUser() {
         List<User> users = userService.findAll();
         return ResponseEntity.ok().body(users);
     }
 
-//    @PostMapping("/api/user")
     @PostMapping
     public ResponseEntity createNewUser(@Valid @RequestBody User user) {
         User newUser = userService.createNewUser(user);
         return ResponseEntity.ok().body(newUser);
     }
-
-//    @PutMapping
-//    public ResponseEntity updateUser(@Valid @RequestBody User user) {
-//        User updateUser = userService.updateUser(user);
-//        return ResponseEntity.ok().body(updateUser);
-//    }
 
     // Endpoint to get a user by email
     // Example: GET /api/users/search?email=test@example.com
@@ -52,12 +44,13 @@ public class UserController {
             return ResponseEntity.ok().body(user.get());
         } else {
             System.out.println("User not found");
-            return  ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found User with email: " + email);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found User with Email: " + email);
         }
     }
 
-//    @DeleteMapping
-//    public ResponseEntity deleteUser(@Valid @RequestBody User user) {
-//
-//    }
+    @GetMapping("/search/{id}")
+    public ResponseEntity getUserByPhone(@RequestParam Long id) {
+        Optional<User> findUser = userService.findById(id);
+        return ResponseEntity.ok().body(findUser);
+    }
 }

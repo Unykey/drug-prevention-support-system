@@ -1,18 +1,23 @@
 package com.swp08.dpss.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-//@Table(name = "AppUser")
-//@Getter
-//@Setter
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,95 +44,25 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String phone;
-  
-    public User() {
+
+    @JsonBackReference // This side will NOT be serialized when serializing a Parent that contains this User
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "user_parent", // name of join table between user and parent
+            joinColumns = @JoinColumn(name = "user_id"), // FK column in join table referencing User
+            inverseJoinColumns = @JoinColumn(name = "parent_id") // FK column in join table referencing Parent
+    )
+    private Set<Parent> parents = new HashSet<>();
+
+    // Methods for managing the relationship
+    public void addParent(Parent parent){
+        this.parents.add(parent);
+        parent.getUser().add(this); // Maintain bidirectional consistency
     }
 
-    public User(String name, String password, Roles role, Genders gender, LocalDate dateOfBirth, String email, String phone) {
-        this.name = name;
-        this.password = password;
-        this.role = role;
-        this.gender = gender;
-        this.dateOfBirth = dateOfBirth;
-        this.email = email;
-        this.phone = phone;
+    public void removeParent(Parent parent){
+        this.parents.remove(parent);
+        parent.getUser().remove(this); // Maintain bidirectional consistency
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Roles getRole() {
-        return role;
-    }
-
-    public void setRole(Roles role) {
-        this.role = role;
-    }
-
-    public Genders getGender() {
-        return gender;
-    }
-
-    public void setGender(Genders gender) {
-        this.gender = gender;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                ", gender=" + gender +
-                ", dateOfBirth=" + dateOfBirth +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
-    }
 }

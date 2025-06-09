@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%; /* Light background */
+    --foreground: 224 71% 4%; /* Dark text for contrast */
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71% 4%;
+
+    --primary: 210 90% 50%; /* Brighter Blue */
+    --primary-foreground: 0 0% 100%; /* White text on primary */
+
+    --secondary: 220 13% 91%; /* Light Gray */
+    --secondary-foreground: 224 71% 4%;
+
+    --muted: 220 13% 91%;
+    --muted-foreground: 220 9% 46%; /* Muted text */
+
+    --accent: 200 90% 55%; /* Lighter, vibrant Accent Blue */
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 72% 51%; /* Brighter Red */
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 85%; /* Lighter border */
+    --input: 220 13% 85%; /* Lighter input border */
+    --ring: 210 90% 50%; /* Ring color matching primary */
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 224 71% 4%; /* Dark background */
+    --foreground: 210 20% 98%; /* Light text for dark mode */
+
+    --card: 224 71% 4%;
+    --card-foreground: 210 20% 98%;
+
+    --popover: 224 71% 4%;
+    --popover-foreground: 210 20% 98%;
+
+    --primary: 210 90% 50%; 
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 28% 17%; /* Darker Gray */
+    --secondary-foreground: 210 20% 98%;
+
+    --muted: 215 28% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 200 90% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 63% 31%; 
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 28% 22%; /* Darker border */
+    --input: 215 28% 22%; 
+    --ring: 210 90% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-primary via-accent to-sky-500 bg-clip-text text-transparent;
+}
+
+/* Custom styles for light theme */
+.light-theme-card {
+  @apply bg-white shadow-lg border-gray-200;
+}
+.light-theme-card-header {
+ @apply text-slate-800;
+}
+.light-theme-card-description {
+  @apply text-slate-600;
+}
+.light-theme-card-content {
+  @apply text-slate-700;
+}
+.light-theme-input {
+  @apply bg-white border-gray-300 text-slate-900 placeholder-slate-400 focus:ring-primary focus:border-primary;
+}
+.light-theme-button-primary {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90;
+}
+.light-theme-button-secondary {
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/90;
+}
+.light-theme-button-outline {
+  @apply border-primary text-primary hover:bg-primary/5;
+}
+.light-theme-text-primary {
+  @apply text-primary;
+}
+.light-theme-text-accent {
+  @apply text-accent;
+}
+.light-theme-text-muted {
+  @apply text-muted-foreground;
+}
+.light-theme-text-default {
+  @apply text-foreground;
+}
+.light-theme-bg-muted {
+  @apply bg-muted;
+}
