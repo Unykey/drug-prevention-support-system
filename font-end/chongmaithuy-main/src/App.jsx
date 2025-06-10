@@ -43,42 +43,52 @@ function App() {
       <Router>
         <Layout>
           <Routes>
+            {/* Public Routes - accessible without authentication */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             
+            {/* Course Routes - list and detail pages */}
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/courses/:id" element={<CourseDetailPage />} />
             
+            {/* Survey Routes - list and detail pages */}
             <Route path="/surveys" element={<SurveyPage />} />
             <Route path="/surveys/:id" element={<SurveyDetailPage />} />
             
+            {/* Appointment Routes - view all; protected booking route below */}
             <Route path="/appointments" element={<AppointmentsPage />} />
+            {/* Protected Route: Book Appointment - only for authenticated roles */}
             <Route path="/book-appointment/:counselorId" element={
               <ProtectedRoute allowedRoles={[ROLES.MEMBER, ROLES.STAFF, ROLES.CONSULTANT, ROLES.MANAGER, ROLES.ADMIN]}>
                 <BookAppointmentPage />
               </ProtectedRoute>
             } />
             
+            {/* Program Routes - list and detail pages */}
             <Route path="/programs" element={<ProgramsPage />} />
             <Route path="/programs/:id" element={<ProgramDetailPage />} />
 
+            {/* Blog Routes - list and detail pages */}
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:id" element={<BlogDetailPage />} />
             
+            {/* Protected Route: User Profile - available to all logged-in roles */}
             <Route path="/profile" element={
               <ProtectedRoute allowedRoles={[ROLES.MEMBER, ROLES.STAFF, ROLES.CONSULTANT, ROLES.MANAGER, ROLES.ADMIN]}>
                 <UserProfilePage />
               </ProtectedRoute>
             } />
             
+            {/* Protected Route: Admin Dashboard - staff and above */}
             <Route path="/admin" element={
               <ProtectedRoute allowedRoles={[ROLES.STAFF, ROLES.CONSULTANT, ROLES.MANAGER, ROLES.ADMIN]}>
                 <AdminPage />
               </ProtectedRoute>
             } />
 
+            {/* Admin User Management - list, create, and edit users */}
             <Route path="/admin/users" element={
               <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}>
                 <UserListPage />
@@ -95,6 +105,7 @@ function App() {
               </ProtectedRoute>
             } />
 
+            {/* Admin Counselor Management - list, create, and edit counselors */}
             <Route path="/admin/counselors" element={
               <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER]}>
                 <CounselorListPage />
@@ -111,6 +122,7 @@ function App() {
               </ProtectedRoute>
             } />
 
+            {/* Admin Course Management - list, create, and edit courses */}
             <Route path="/admin/courses" element={
               <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF]}>
                 <CourseListPage />
@@ -127,6 +139,7 @@ function App() {
               </ProtectedRoute>
             } />
 
+            {/* Admin Blog Management - list, create, and edit blog posts */}
             <Route path="/admin/blog" element={
               <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF]}>
                 <BlogPostListPage />
@@ -143,6 +156,7 @@ function App() {
               </ProtectedRoute>
             } />
             
+            {/* Admin Program Management - list, create, and edit programs */}
             <Route path="/admin/programs" element={
               <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF]}>
                 <ProgramListPage />
@@ -159,6 +173,7 @@ function App() {
               </ProtectedRoute>
             } />
 
+            {/* Admin Survey Management - list, create, and edit surveys */}
             <Route path="/admin/surveys" element={
               <ProtectedRoute allowedRoles={[ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF]}>
                 <SurveyListPage />
@@ -175,6 +190,7 @@ function App() {
               </ProtectedRoute>
             } />
             
+            {/* Fallback Route - display 404 Not Found page */}
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Layout>
