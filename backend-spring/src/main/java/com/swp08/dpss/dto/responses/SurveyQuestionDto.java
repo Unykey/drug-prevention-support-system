@@ -7,6 +7,6 @@ public class SurveyQuestionDto {
     private Long id;
     private String question;
     private String type;
-    private String answer;
+    private String solution;
     private Long surveyId;
 }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 public class SurveyAnswerDto {
     private Long id;
-    private String answer;
+    private String content;
     private int resultScore;
     private LocalDateTime submittedAt;
 
