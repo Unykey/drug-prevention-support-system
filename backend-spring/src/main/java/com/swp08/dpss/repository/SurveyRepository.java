@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
-    List<Survey> getSurveysByNameContainingIgnoreCase(String name);
+    List<Survey> findByNameContainingIgnoreCase(String name);
 }
