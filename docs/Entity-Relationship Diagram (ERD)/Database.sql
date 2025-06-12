@@ -62,7 +62,7 @@ CREATE TABLE "SurveyQuestion"(
 	question_type VARCHAR(20) NOT NULL
 );
 
--- Create SurveyResponse table
+-- Create SurveyAnswer table
 CREATE TABLE "SurveyResponse" (
 	response_id INT PRIMARY KEY,
 	survey_id VARCHAR(30) REFERENCES "Survey"(survey_id) ON DELETE CASCADE,

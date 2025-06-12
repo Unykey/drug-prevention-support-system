@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Table
 @Getter
 @Setter
-public class SurveyResponse {
+public class SurveyAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
@@ -33,10 +33,10 @@ public class SurveyResponse {
     @JoinColumn (name = "Question")
     private SurveyQuestion question;
 
-    public SurveyResponse() {
+    public SurveyAnswer() {
     }
 
-    public SurveyResponse(String answer) {
+    public SurveyAnswer(String answer) {
         this.answer = answer;
     }
 }

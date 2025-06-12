@@ -19,7 +19,7 @@ public class Survey {
     @Column (name = "Id")
     private long id;
 
-    @Column (name = "Name", nullable = false, columnDefinition = "nvarchar(50)")
+    @Column (name = "Name", nullable = false, columnDefinition = "varchar(50)")
     private String name;
 
     @Column (name = "Description")
@@ -29,14 +29,14 @@ public class Survey {
     private List<SurveyQuestion> questions = new ArrayList<SurveyQuestion>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
-    private List<SurveyResponse> responses = new ArrayList<SurveyResponse>();
+    private List<SurveyAnswer> responses = new ArrayList<SurveyAnswer>();
 
     public void addQuestion(SurveyQuestion question) {
         questions.add(question);
         question.setSurvey(this);
     }
 
-    public void addResponse(SurveyResponse response) {
+    public void addResponse(SurveyAnswer response) {
         responses.add(response);
         response.setSurvey(this);
     }
@@ -46,7 +46,7 @@ public class Survey {
         question.setSurvey(null);
     }
 
-    public void removeResponse(SurveyResponse response) {
+    public void removeResponse(SurveyAnswer response) {
         responses.remove(response);
         response.setSurvey(null);
     }
