@@ -1,10 +1,15 @@
-import com.swp08.dpss.dto.SurveyDto;
+package com.swp08.dpss.service.impl;
+
+import com.swp08.dpss.dto.requests.CreateSurveyRequest;
+import com.swp08.dpss.dto.responses.SurveyDetailsDto;
+import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SurveyServiceImpl implements SurveyService {
@@ -16,21 +21,58 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public Survey createSurvey(SurveyDto dto) {
+    public SurveyDetailsDto createSurvey(CreateSurveyRequest request) {
         Survey survey = new Survey();
-        survey.setName(dto.getName());
-        survey.setDescription(dto.getDescription());
-        return surveyRepository.save(survey);
+        survey.setName(request.getName());
+        survey.setDescription(request.getDescription());
+
+        return toDto(surveyRepository.save(survey));
     }
 
     @Override
-    public List<Survey> getAllSurveys() {
-        return surveyRepository.findAll();
+    public List<SurveyDetailsDto> getAllSurveys() {
+        return surveyRepository.findAll()
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public Survey getSurveyById(long id) {
-        return surveyRepository.findById(id)
+    public SurveyDetailsDto getSurveyById(long id) {
+        Survey survey = surveyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
+        return toDto(survey);
+    }
+
+    @Override
+    public List<SurveyDetailsDto> searchSurveysByName(String name) {
+        List<Survey> surveys = surveyRepository.findByNameContainingIgnoreCase(name);
+        return surveys.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+
+    private SurveyDetailsDto toDto(Survey survey) {
+        SurveyDetailsDto dto = new SurveyDetailsDto();
+        dto.setId(survey.getId());
+        dto.setName(survey.getName());
+        dto.setDescription(survey.getDescription());
+
+        dto.setQuestions(
+                survey.getQuestions()
+                        .stream()
+                        .map(q -> {
+                            SurveyQuestionDto qDto = new SurveyQuestionDto();
+                            qDto.setId(q.getId());
+                            qDto.setQuestion(q.getQuestion());
+                            qDto.setType(q.getType());
+                            qDto.setSolution(q.getSolution());
+                            qDto.setSurveyId(survey.getId());
+                            return qDto;
+                        }).collect(Collectors.toList())
+        );
+
+        return dto;
     }
 }
