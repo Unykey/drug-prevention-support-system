@@ -1,4 +1,4 @@
-package com.swp08.dpss.dto.response;
+package com.swp08.dpss.dto.responses;
 
 import lombok.Data;
 

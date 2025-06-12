@@ -1,11 +1,11 @@
-package com.swp08.dpss.dto.response;
+package com.swp08.dpss.dto.responses;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class SurveyDto {
+public class SurveyDetailsDto {
     private Long id;
     private String name;
     private String description;
