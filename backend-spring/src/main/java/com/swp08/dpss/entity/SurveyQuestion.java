@@ -26,33 +26,33 @@ public class SurveyQuestion {
     @Column (name = "Type", nullable = false, columnDefinition = "varchar(20)")
     private String type;
 
-    @Column (name = "Answer", nullable = false)
-    private String answer;
+    @Column (name = "Solution", nullable = false)
+    private String solution;
 
     @ManyToOne
     @JoinColumn(name = "Survey")
     private Survey survey;
 
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question")
-    private List<SurveyAnswer> responses = new ArrayList<>();
+    private List<SurveyAnswer> answers = new ArrayList<>();
 
     public void addResponse(SurveyAnswer response) {
-        responses.add(response);
+        answers.add(response);
         response.setQuestion(this);
     }
 
     public void removeResponse(SurveyAnswer response) {
-        responses.remove(response);
+        answers.remove(response);
         response.setQuestion(null);
     }
 
     public SurveyQuestion() {
     }
 
-    public SurveyQuestion(String question, String type, String answer) {
+    public SurveyQuestion(String question, String type, String solution) {
         this.question = question;
         this.type = type;
-        this.answer = answer;
+        this.solution = solution;
     }
 
 }

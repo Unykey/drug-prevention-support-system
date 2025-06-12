@@ -29,7 +29,7 @@ public class Survey {
     private List<SurveyQuestion> questions = new ArrayList<SurveyQuestion>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
-    private List<SurveyAnswer> responses = new ArrayList<SurveyAnswer>();
+    private List<SurveyAnswer> answers = new ArrayList<SurveyAnswer>();
 
     public void addQuestion(SurveyQuestion question) {
         questions.add(question);
@@ -37,7 +37,7 @@ public class Survey {
     }
 
     public void addResponse(SurveyAnswer response) {
-        responses.add(response);
+        answers.add(response);
         response.setSurvey(this);
     }
 
@@ -46,9 +46,9 @@ public class Survey {
         question.setSurvey(null);
     }
 
-    public void removeResponse(SurveyAnswer response) {
-        responses.remove(response);
-        response.setSurvey(null);
+    public void removeResponse(SurveyAnswer answer) {
+        answers.remove(answer);
+        answer.setSurvey(null);
     }
 
     public Survey() {

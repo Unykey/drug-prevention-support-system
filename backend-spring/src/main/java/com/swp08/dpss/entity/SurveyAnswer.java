@@ -22,8 +22,8 @@ public class SurveyAnswer {
     @Column (name = "ResultScore")
     private int resultScore;
 
-    @Column (name = "Answer")
-    private String answer;
+    @Column (name = "content")
+    private String content;
 
     @ManyToOne
     @JoinColumn (name = "Survey")
