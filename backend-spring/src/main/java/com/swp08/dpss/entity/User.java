@@ -1,17 +1,16 @@
 package com.swp08.dpss.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
+import com.swp08.dpss.enums.User_Status;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -45,14 +44,17 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
-    @JsonBackReference // This side will NOT be serialized when serializing a Parent that contains this User
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private User_Status status;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_parent", // name of join table between user and parent
             joinColumns = @JoinColumn(name = "user_id"), // FK column in join table referencing User
             inverseJoinColumns = @JoinColumn(name = "parent_id") // FK column in join table referencing Parent
     )
-    private Set<Parent> parents = new HashSet<>();
+    private List<Parent> parents = new ArrayList<>();
 
     // Methods for managing the relationship
     public void addParent(Parent parent){
