@@ -7,8 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "parents")
@@ -32,7 +32,6 @@ public class Parent {
     // --- Many-to-Many relationship with User ---
     // 'mappedBy' indicates that the User entity owns the relationship
     // (i.e., the @JoinTable is defined on the User side)
-    @JsonManagedReference // This side will be serialized normally
     @ManyToMany(mappedBy = "parents", fetch = FetchType.LAZY)
-    private Set<User> user = new HashSet<>();
+    private List<User> user = new ArrayList<>();
 }
