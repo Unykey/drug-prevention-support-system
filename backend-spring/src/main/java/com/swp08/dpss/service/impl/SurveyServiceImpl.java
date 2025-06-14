@@ -75,4 +75,9 @@ public class SurveyServiceImpl implements SurveyService {
 
         return dto;
     }
+
+    @Override
+    public void deleteSurveyById(long id) {
+        surveyRepository.deleteById(id);
+    }
 }

@@ -1,6 +1,8 @@
 package com.swp08.dpss.entity;
 
+import com.swp08.dpss.enums.SurveyStatus;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +26,10 @@ public class Survey {
 
     @Column (name = "Description")
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    @Column (name = "Status")
+    private SurveyStatus status;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
     private List<SurveyQuestion> questions = new ArrayList<SurveyQuestion>();
@@ -54,9 +60,10 @@ public class Survey {
     public Survey() {
     }
 
-    public Survey(long id, String name, String description) {
+    public Survey(long id, String name, String description, SurveyStatus status) {
         this.name = name;
         this.description = description;
     }
+
 
 }

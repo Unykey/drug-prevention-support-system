@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface SurveyRepository extends JpaRepository<Survey, Long> {
     List<Survey> findByNameContainingIgnoreCase(String name);
+
+    void deleteById(long id);
 }

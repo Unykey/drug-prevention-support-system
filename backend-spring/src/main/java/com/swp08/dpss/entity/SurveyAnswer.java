@@ -36,8 +36,8 @@ public class SurveyAnswer {
     public SurveyAnswer() {
     }
 
-    public SurveyAnswer(String answer) {
-        this.answer = answer;
+    public SurveyAnswer(String content) {
+        this.content = content;
     }
 }
 

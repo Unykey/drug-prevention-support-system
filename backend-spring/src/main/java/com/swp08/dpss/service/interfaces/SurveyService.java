@@ -10,4 +10,5 @@ public interface SurveyService {
     List<SurveyDetailsDto> getAllSurveys();
     SurveyDetailsDto getSurveyById(long id);
     List<SurveyDetailsDto> searchSurveysByName(String name);
+    void deleteSurveyById(long id);
 }

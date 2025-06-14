@@ -69,4 +69,18 @@ public class SurveyController {
     public ResponseEntity<List<SurveyDetailsDto>> searchSurveys(@RequestParam String keyword) {
         return ResponseEntity.ok(surveyService.searchSurveysByName(keyword));
     }
+
+    @DeleteMapping("/{id}")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<Void> deleteSurvey(@PathVariable Long id) {
+        surveyService.deleteSurveyById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{surveyId}/questions/{questionId}")
+    //@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public ResponseEntity<Void> deleteQuestionFromSurvey(@PathVariable Long surveyId, @PathVariable Long questionId) {
+        surveyQuestionService.deleteQuestionFromSurvey(surveyId, questionId);
+        return ResponseEntity.noContent().build();
+    }
 }
