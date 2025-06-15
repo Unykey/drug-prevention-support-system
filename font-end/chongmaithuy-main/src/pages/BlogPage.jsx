@@ -8,7 +8,13 @@ import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { ROLES } from '@/config/roles';
 
+// File: BlogPage.jsx - Trang Blog & Chia Sẻ Kinh Nghiệm
+// Hiển thị danh sách bài viết, chức năng tìm kiếm và nút tạo bài mới cho người dùng có vai trò phù hợp.
+// Bao gồm các section: Hero, Search, Posts Grid, và Load More.
+
+// Dữ liệu giả lập (placeholder) cho các bài viết trên blog (sẽ thay thế khi tích hợp API)
 const placeholderPosts = [
+  // Mỗi đối tượng bài viết bao gồm: id, tiêu đề, ngày đăng, tác giả, trích đoạn và hình ảnh
   { id: 1, title: "Tác hại của ma túy đá và cách phòng tránh hiệu quả", date: "20/05/2025", author: "BS. Nguyễn An", excerpt: "Ma túy đá, hay còn gọi là methamphetamine, là một chất kích thích cực mạnh gây nghiện và tàn phá sức khỏe nghiêm trọng...", image: "https://images.unsplash.com/photo-1590099030599-3a7a344eb983?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" },
   { id: 2, title: "Vai trò của gia đình trong việc giáo dục phòng chống ma túy cho con em", date: "15/05/2025", author: "Chuyên gia tâm lý Trần Mai", excerpt: "Gia đình là nền tảng vững chắc nhất giúp trẻ hình thành nhân cách và tránh xa các tệ nạn xã hội, bao gồm cả ma túy...", image: "https://images.unsplash.com/photo-1550358864-1017243f076a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" },
   { id: 3, title: "Kỹ năng từ chối lời mời sử dụng ma túy dành cho thanh thiếu niên", date: "10/05/2025", author: "Cô giáo Hoàng Yến", excerpt: "Đối mặt với áp lực từ bạn bè và những lời mời gọi thử ma túy, thanh thiếu niên cần được trang bị những kỹ năng từ chối mạnh mẽ...", image: "https://images.unsplash.com/photo-1604881989480-68d07586a9ab?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" },
@@ -16,9 +22,12 @@ const placeholderPosts = [
 ];
 
 const BlogPage = () => {
+  // Lấy thông tin người dùng đã đăng nhập từ AuthContext
   const { user } = useAuth();
+  // Kiểm tra quyền hạn: chỉ ADMIN, MANAGER và STAFF mới được phép viết bài mới
   const canCreatePost = user && [ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF].includes(user.role);
 
+  // Định nghĩa hiệu ứng animation fade-in cho các thành phần con sử dụng Framer Motion
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.6, staggerChildren: 0.1 } }
@@ -31,13 +40,17 @@ const BlogPage = () => {
       animate="visible"
       variants={fadeIn}
     >
+      {/* Hero Section: Tiêu đề trang và mô tả ngắn */}
       <section className="text-center py-12 bg-gradient-to-r from-primary/5 via-accent/5 to-sky-500/5 rounded-lg">
-        <motion.h1 variants={fadeIn} className="text-4xl md:text-5xl font-bold mb-4 gradient-text">Blog & Chia Sẻ Kinh Nghiệm</motion.h1>
+        <motion.h1 variants={fadeIn} className="text-4xl md:text-5xl font-bold mb-4 gradient-text">
+          Blog & Chia Sẻ Kinh Nghiệm
+        </motion.h1>
         <motion.p variants={fadeIn} className="text-lg text-slate-600 max-w-2xl mx-auto">
           Nơi chia sẻ kiến thức, kinh nghiệm và câu chuyện về phòng chống ma túy.
         </motion.p>
       </section>
 
+      {/* Search Section: Input tìm kiếm và nút tìm kiếm */}
       <motion.section variants={fadeIn} className="flex flex-col sm:flex-row gap-2 mb-8 max-w-2xl mx-auto">
         <Input 
           type="text" 
@@ -48,6 +61,7 @@ const BlogPage = () => {
           <Search className="h-5 w-5 mr-2" /> Tìm Kiếm
         </Button>
         {canCreatePost && (
+          // Nút điều hướng sang trang tạo bài viết mới nếu có quyền
           <Link to="/admin/blog/create"> 
             <Button variant="outline" className="border-accent text-accent hover:bg-accent hover:text-white w-full sm:w-auto font-semibold">
               <Edit className="h-5 w-5 mr-2" /> Viết Bài Mới
@@ -56,6 +70,7 @@ const BlogPage = () => {
         )}
       </motion.section>
 
+      {/* Posts Grid Section: Hiển thị danh sách bài viết dưới dạng lưới */}
       <motion.section 
         variants={fadeIn} 
         className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -63,6 +78,7 @@ const BlogPage = () => {
         {placeholderPosts.map(post => (
           <motion.div variants={fadeIn} key={post.id}>
             <Card className="light-theme-card hover:shadow-primary/15 transition-shadow duration-300 flex flex-col h-full">
+              {/* Hình ảnh đại diện của bài viết */}
               <img  
                 className="w-full h-48 object-cover rounded-t-lg" 
                 alt={post.title}
@@ -75,6 +91,7 @@ const BlogPage = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow">
+                {/* Trích đoạn nội dung bài viết */}
                 <p className="light-theme-card-content text-sm line-clamp-3">{post.excerpt}</p>
               </CardContent>
               <CardFooter>
@@ -89,6 +106,7 @@ const BlogPage = () => {
         ))}
       </motion.section>
       
+      {/* Load More Section: Nút xem thêm các bài viết cũ */}
       <motion.div variants={fadeIn} className="text-center mt-12">
         <Button size="lg" variant="outline" className="light-theme-button-outline font-semibold">
           Xem Thêm Bài Viết Cũ
