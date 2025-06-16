@@ -28,7 +28,7 @@ public class Survey {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "Status", nullable = false)
+    @Column(name = "Status")
     private SurveyStatus status = SurveyStatus.DRAFT; // default
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")

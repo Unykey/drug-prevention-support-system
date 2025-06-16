@@ -56,6 +56,8 @@ public class SurveyController {
     // ✅ Get all questions for a survey
     @GetMapping("/{id}/questions")
     public ResponseEntity<List<SurveyQuestionDto>> getQuestionsBySurveyId(@PathVariable Long id) {
+        System.out.println("GET /api/surveys/" + id + "/questions called");
+
         return ResponseEntity.ok(surveyQuestionService.getQuestionsBySurveyId(id));
     }
 
@@ -69,6 +71,14 @@ public class SurveyController {
     @GetMapping("/search")
     public ResponseEntity<List<SurveyDetailsDto>> searchSurveys(@RequestParam String keyword) {
         return ResponseEntity.ok(surveyService.searchSurveysByName(keyword));
+    }
+
+    @PostMapping("/{surveyId}/questions")
+    public ResponseEntity<SurveyQuestionDto> addQuestionToSurvey(
+            @PathVariable Long surveyId,
+            @RequestBody SurveyQuestionDto questionDto) {
+        SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(surveyId, questionDto);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -93,6 +103,7 @@ public class SurveyController {
 
     @PostMapping("/submitanswer")
     public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request) {
+
         SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(request);
         return new ResponseEntity<>(submitted, HttpStatus.CREATED);
     }

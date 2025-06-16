@@ -1,9 +1,12 @@
 package com.swp08.dpss.service.impl;
 
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
+import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.entity.SurveyQuestion;
 import com.swp08.dpss.repository.SurveyQuestionRepository;
+import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyQuestionService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,14 +16,18 @@ import java.util.stream.Collectors;
 public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     private final SurveyQuestionRepository repository;
+    private final SurveyRepository surveyRepository;
 
-    public SurveyQuestionServiceImpl(SurveyQuestionRepository repository) {
+    public SurveyQuestionServiceImpl(SurveyQuestionRepository repository, SurveyRepository surveyRepository) {
         this.repository = repository;
+        this.surveyRepository = surveyRepository;
     }
 
     @Override
     public List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId) {
-        List<SurveyQuestion> questions = repository.findBySurveyId(surveyId);
+
+        Survey survey = surveyRepository.findById(surveyId).orElseThrow(()-> new EntityNotFoundException("Survey Not Found"));
+        List<SurveyQuestion> questions = repository.findBySurvey(survey);
 
         return questions.stream().map(q -> {
             SurveyQuestionDto dto = new SurveyQuestionDto();
@@ -36,5 +43,28 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
     @Override
     public void deleteSurveyQuestionById(Long surveyQuestionId) {
         repository.deleteById(surveyQuestionId);
+    }
+
+    @Override
+    public SurveyQuestionDto addQuestionToSurvey(Long surveyId, SurveyQuestionDto dto) {
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
+
+        SurveyQuestion question = new SurveyQuestion();
+        question.setQuestion(dto.getQuestion());
+        question.setType(dto.getType());
+        question.setSolution(dto.getSolution());
+        survey.addQuestion(question);
+
+        SurveyQuestion saved = repository.save(question);
+
+        SurveyQuestionDto result = new SurveyQuestionDto();
+        result.setId(saved.getId());
+        result.setQuestion(saved.getQuestion());
+        result.setType(saved.getType());
+        result.setSolution(saved.getSolution());
+        result.setSurveyId(surveyId);
+
+        return result;
     }
 }

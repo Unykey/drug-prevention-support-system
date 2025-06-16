@@ -34,7 +34,7 @@ public class SurveyAnswer {
     private SurveyQuestion question;
 
     @ManyToOne
-    @Column (name = "User")
+    @JoinColumn (name = "\"User\"")
     private User user;
 
     public SurveyAnswer() {
