@@ -1,6 +1,7 @@
 package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.CreateSurveyRequest;
+import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.SurveyAnswerDto;
 import com.swp08.dpss.dto.responses.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
@@ -88,5 +89,11 @@ public class SurveyController {
     public ResponseEntity<Void> deleteAnswerFromSurvey(@PathVariable Long answerId) {
         surveyAnswerService.deleteSurveyAnswer(answerId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/submitanswer")
+    public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request) {
+        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(request);
+        return new ResponseEntity<>(submitted, HttpStatus.CREATED);
     }
 }

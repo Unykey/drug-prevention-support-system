@@ -42,9 +42,9 @@ public class Survey {
         question.setSurvey(this);
     }
 
-    public void addResponse(SurveyAnswer response) {
-        answers.add(response);
-        response.setSurvey(this);
+    public void addAnswer(SurveyAnswer answer) {
+        answers.add(answer);
+        answer.setSurvey(this);
     }
 
     public void removeQuestion(SurveyQuestion question) {
@@ -52,7 +52,7 @@ public class Survey {
         question.setSurvey(null);
     }
 
-    public void removeResponse(SurveyAnswer answer) {
+    public void removeAnswer(SurveyAnswer answer) {
         answers.remove(answer);
         answer.setSurvey(null);
     }

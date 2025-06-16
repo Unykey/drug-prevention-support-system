@@ -17,7 +17,7 @@ public class SurveyAnswer {
     private long id;
 
     @Column (name = "SubmittedAt")
-    private LocalDateTime submittedAt;
+    private LocalDateTime submittedAt = LocalDateTime.now();
 
     @Column (name = "ResultScore")
     private int resultScore;
@@ -33,15 +33,18 @@ public class SurveyAnswer {
     @JoinColumn (name = "Question")
     private SurveyQuestion question;
 
+    @ManyToOne
     @Column (name = "User")
     private User user;
 
     public SurveyAnswer() {
     }
 
-    public SurveyAnswer(String content) {
+    public SurveyAnswer(String content, Survey survey, SurveyQuestion question, User user) {
         this.content = content;
+        survey.addAnswer(this);
+        question.addAnswer(this);
+        this.user = user;
     }
-
 }
 

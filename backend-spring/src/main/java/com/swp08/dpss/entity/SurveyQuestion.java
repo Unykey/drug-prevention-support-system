@@ -36,14 +36,14 @@ public class SurveyQuestion {
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question")
     private List<SurveyAnswer> answers = new ArrayList<>();
 
-    public void addResponse(SurveyAnswer response) {
-        answers.add(response);
-        response.setQuestion(this);
+    public void addAnswer(SurveyAnswer answer) {
+        answers.add(answer);
+        answer.setQuestion(this);
     }
 
-    public void removeResponse(SurveyAnswer response) {
-        answers.remove(response);
-        response.setQuestion(null);
+    public void removeAnswer(SurveyAnswer answer) {
+        answers.remove(answer);
+        answer.setQuestion(null);
     }
 
     public SurveyQuestion() {
