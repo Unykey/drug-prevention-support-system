@@ -33,11 +33,15 @@ public class SurveyAnswer {
     @JoinColumn (name = "Question")
     private SurveyQuestion question;
 
+    @Column (name = "User")
+    private User user;
+
     public SurveyAnswer() {
     }
 
     public SurveyAnswer(String content) {
         this.content = content;
     }
+
 }
 

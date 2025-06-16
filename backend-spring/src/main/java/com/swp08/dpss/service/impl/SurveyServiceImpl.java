@@ -4,6 +4,7 @@ import com.swp08.dpss.dto.requests.CreateSurveyRequest;
 import com.swp08.dpss.dto.responses.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.entity.Survey;
+import com.swp08.dpss.enums.SurveyStatus;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyService;
 import org.springframework.stereotype.Service;
@@ -78,6 +79,11 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public void deleteSurveyById(long id) {
-        surveyRepository.deleteById(id);
+        if (!surveyRepository.existsById(id)) {
+            throw new RuntimeException("Survey not found with ID " + id);
+        }
+        surveyRepository.softDeleteSurveyById(id, SurveyStatus.DELETED);
     }
+
+
 }

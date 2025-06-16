@@ -39,10 +39,14 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
 
             if (a.getUser() != null) {
                 dto.setUserId(a.getUser().getId());
-                dto.setUserName(a.getUser().getUsername());
+                dto.setUserName(a.getUser().getName());
             }
 
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    public void deleteSurveyAnswer(Long surveyAnswerId) {
+        repository.deleteById(surveyAnswerId);
     }
 }

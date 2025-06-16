@@ -77,10 +77,16 @@ public class SurveyController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{surveyId}/questions/{questionId}")
+    @DeleteMapping("questions/{questionId}")
     //@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<Void> deleteQuestionFromSurvey(@PathVariable Long surveyId, @PathVariable Long questionId) {
-        surveyQuestionService.deleteQuestionFromSurvey(surveyId, questionId);
+    public ResponseEntity<Void> deleteQuestionFromSurvey(@PathVariable Long questionId) {
+        surveyQuestionService.deleteSurveyQuestionById(questionId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("answer/{answerId}")
+    public ResponseEntity<Void> deleteAnswerFromSurvey(@PathVariable Long answerId) {
+        surveyAnswerService.deleteSurveyAnswer(answerId);
         return ResponseEntity.noContent().build();
     }
 }

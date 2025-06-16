@@ -28,8 +28,8 @@ public class Survey {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @Column (name = "Status")
-    private SurveyStatus status;
+    @Column(name = "Status", nullable = false)
+    private SurveyStatus status = SurveyStatus.DRAFT; // default
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
     private List<SurveyQuestion> questions = new ArrayList<SurveyQuestion>();

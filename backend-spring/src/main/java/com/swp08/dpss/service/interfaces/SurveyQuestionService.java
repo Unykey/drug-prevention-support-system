@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface SurveyQuestionService {
     List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId);
+    void deleteSurveyQuestionById(Long surveyQuestionId);
 }

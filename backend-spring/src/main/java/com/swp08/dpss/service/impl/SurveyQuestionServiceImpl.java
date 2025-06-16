@@ -32,4 +32,9 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
             return dto;
         }).collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteSurveyQuestionById(Long surveyQuestionId) {
+        repository.deleteById(surveyQuestionId);
+    }
 }
