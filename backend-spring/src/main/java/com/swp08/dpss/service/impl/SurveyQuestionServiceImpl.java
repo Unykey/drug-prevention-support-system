@@ -1,5 +1,6 @@
 package com.swp08.dpss.service.impl;
 
+import com.swp08.dpss.dto.requests.AddSurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.entity.SurveyQuestion;
@@ -42,12 +43,14 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     @Override
     public void deleteSurveyQuestionById(Long surveyQuestionId) {
+        SurveyQuestion question = repository.findByQuestionId(surveyQuestionId);
+        question.getSurvey().removeQuestion(question);
         repository.deleteById(surveyQuestionId);
     }
 
     @Override
-    public SurveyQuestionDto addQuestionToSurvey(Long surveyId, SurveyQuestionDto dto) {
-        Survey survey = surveyRepository.findById(surveyId)
+    public SurveyQuestionDto addQuestionToSurvey(AddSurveyQuestionRequest dto) {
+        Survey survey = surveyRepository.findById(dto.getSurveyId())
                 .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
 
         SurveyQuestion question = new SurveyQuestion();
@@ -63,7 +66,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         result.setQuestion(saved.getQuestion());
         result.setType(saved.getType());
         result.setSolution(saved.getSolution());
-        result.setSurveyId(surveyId);
+        result.setSurveyId(saved.getSurvey().getId());
 
         return result;
     }

@@ -50,12 +50,12 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
             dto.setSubmittedAt(a.getSubmittedAt());
 
             if (a.getQuestion() != null) {
-                dto.setQuestionId(a.getQuestion().getId());
+                //dto.setQuestionId(a.getQuestion().getId());
                 dto.setQuestionText(a.getQuestion().getQuestion());
             }
 
             if (a.getUser() != null) {
-                dto.setUserId(a.getUser().getId());
+                //dto.setUserId(a.getUser().getId());
                 dto.setUserName(a.getUser().getName());
             }
 
@@ -64,6 +64,10 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     }
 
     public void deleteSurveyAnswer(Long surveyAnswerId) {
+        SurveyAnswer answer = (SurveyAnswer) surveyAnswerRepository.findById(surveyAnswerId).orElse(null);
+        answer.getSurvey().removeAnswer(answer);
+        answer.getQuestion().removeAnswer(answer);
+        answer.getUser().removeAnswer(answer);
         surveyAnswerRepository.deleteById(surveyAnswerId);
     }
 
@@ -81,9 +85,9 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
         SurveyAnswer answer = new SurveyAnswer();
         answer.setContent(request.getContent());
         answer.setResultScore(isCorrect ? 10 : 0);
-        answer.setSurvey(survey);
-        answer.setQuestion(question);
-        answer.setUser(user);
+        survey.addAnswer(answer);
+        question.addAnswer(answer);
+        user.addAnswer(answer);
 
         SurveyAnswer saved = surveyAnswerRepository.save(answer);
 
@@ -92,9 +96,9 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
         dto.setContent(saved.getContent());
         dto.setResultScore(saved.getResultScore());
         dto.setSubmittedAt(saved.getSubmittedAt());
-        dto.setQuestionId(question.getId());
+        //dto.setQuestionId(question.getId());
         dto.setQuestionText(question.getQuestion());
-        dto.setUserId(user.getId());
+        //dto.setUserId(user.getId());
         dto.setUserName(user.getName());
 
         return dto;
