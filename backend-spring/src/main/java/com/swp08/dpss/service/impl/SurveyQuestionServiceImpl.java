@@ -43,7 +43,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     @Override
     public void deleteSurveyQuestionById(Long surveyQuestionId) {
-        SurveyQuestion question = repository.findByQuestionId(surveyQuestionId);
+        SurveyQuestion question = repository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found"));
         question.getSurvey().removeQuestion(question);
         repository.deleteById(surveyQuestionId);
     }

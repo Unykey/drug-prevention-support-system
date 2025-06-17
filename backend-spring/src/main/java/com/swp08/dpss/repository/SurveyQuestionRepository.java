@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, Long> {
     // Get all questions by survey ID
-    SurveyQuestion findByQuestionId(Long questionId);
     List<SurveyQuestion> findBySurvey(Survey survey);
 
     List<SurveyQuestion> findBySurveyId(Long surveyId);

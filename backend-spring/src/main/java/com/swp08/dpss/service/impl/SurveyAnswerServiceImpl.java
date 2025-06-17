@@ -64,7 +64,7 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     }
 
     public void deleteSurveyAnswer(Long surveyAnswerId) {
-        SurveyAnswer answer = (SurveyAnswer) surveyAnswerRepository.findById(surveyAnswerId).orElse(null);
+        SurveyAnswer answer = surveyAnswerRepository.findById(surveyAnswerId).orElseThrow(()-> new EntityNotFoundException("Survey Answer Not Found"));
         answer.getSurvey().removeAnswer(answer);
         answer.getQuestion().removeAnswer(answer);
         answer.getUser().removeAnswer(answer);
