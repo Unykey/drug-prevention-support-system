@@ -18,7 +18,7 @@ public class SurveyQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "Id")
-    private long id;
+    private Long id;
 
     @Column (name = "Question", nullable = false)
     private String question;

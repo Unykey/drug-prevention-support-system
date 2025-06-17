@@ -12,8 +12,7 @@ public class AddSurveyQuestionRequest {
     @NotBlank
     private String type;
 
-    private String answer;
-
     @NotNull
     private Long surveyId;
+    private String solution;
 }

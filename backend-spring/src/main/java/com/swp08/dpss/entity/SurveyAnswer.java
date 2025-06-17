@@ -14,7 +14,7 @@ public class SurveyAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
-    private long id;
+    private Long id;
 
     @Column (name = "SubmittedAt")
     private LocalDateTime submittedAt = LocalDateTime.now();

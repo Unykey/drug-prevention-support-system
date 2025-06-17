@@ -1,5 +1,6 @@
 package com.swp08.dpss.controller;
 
+import com.swp08.dpss.dto.requests.AddSurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.SurveyAnswerDto;
@@ -73,12 +74,17 @@ public class SurveyController {
         return ResponseEntity.ok(surveyService.searchSurveysByName(keyword));
     }
 
-    @PostMapping("/{surveyId}/questions")
+    @PostMapping("/addquestion")
     public ResponseEntity<SurveyQuestionDto> addQuestionToSurvey(
-            @PathVariable Long surveyId,
-            @RequestBody SurveyQuestionDto questionDto) {
-        SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(surveyId, questionDto);
+            @RequestBody AddSurveyQuestionRequest questionDto) {
+        SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(questionDto);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/submitanswer")
+    public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request) {
+        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(request);
+        return new ResponseEntity<>(submitted, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -101,10 +107,5 @@ public class SurveyController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/submitanswer")
-    public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request) {
 
-        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(request);
-        return new ResponseEntity<>(submitted, HttpStatus.CREATED);
-    }
 }

@@ -19,7 +19,7 @@ public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column (name = "Id")
-    private long id;
+    private Long id;
 
     @Column (name = "Name", nullable = false, columnDefinition = "varchar(50)")
     private String name;

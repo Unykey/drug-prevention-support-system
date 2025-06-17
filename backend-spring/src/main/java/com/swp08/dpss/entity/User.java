@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -39,6 +41,9 @@ public class User {
 
     @Column(nullable = false, unique = true)
     private String phone;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<SurveyAnswer> answers = new ArrayList<>();
   
     public User() {
     }
@@ -51,6 +56,16 @@ public class User {
         this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.phone = phone;
+    }
+
+    public void addAnswer(SurveyAnswer surveyAnswer) {
+        answers.add(surveyAnswer);
+        surveyAnswer.setUser(this);
+    }
+
+    public void removeAnswer(SurveyAnswer surveyAnswer) {
+        answers.remove(surveyAnswer);
+        surveyAnswer.setUser(null);
     }
 
     public Long getId() {
