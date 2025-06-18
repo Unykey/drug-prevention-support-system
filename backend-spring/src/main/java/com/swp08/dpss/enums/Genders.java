@@ -4,5 +4,5 @@ public enum Genders {
     MALE,
     FEMALE,
     NON_BINARY,
-    PREFER_NOT_TO_STAY
+    PREFER_NOT_TO_SAY
 }
