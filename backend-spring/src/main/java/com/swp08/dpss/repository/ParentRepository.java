@@ -10,8 +10,8 @@ import java.util.Optional;
 @Repository
 public interface ParentRepository extends JpaRepository<Parent,Long> {
     Optional<Parent> findByParentEmail(String email);
-    Optional<Parent> findByParentPhone(String phone);
+
+    Optional<Parent> findByParentId(Long id);
+
 //    void deleteParentById(Long Id);
-//    Optional<User> deleteUserByEmail(String email);
-//    Optional<User> deleteUserByPhone(String phone);
 }
