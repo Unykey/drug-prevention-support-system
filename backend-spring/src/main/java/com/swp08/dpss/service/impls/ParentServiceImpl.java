@@ -1,5 +1,6 @@
 package com.swp08.dpss.service.impls;
 
+import com.swp08.dpss.dto.requests.ParentCreationRequest;
 import com.swp08.dpss.entity.Parent;
 import com.swp08.dpss.entity.User;
 import com.swp08.dpss.repository.ParentRepository;
@@ -23,8 +24,12 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
-    public Parent createNewParent(Parent parent) {
-        return parentRepository.save(parent);
+    public Parent createNewParent(ParentCreationRequest parent) {
+        Parent newParent = new Parent();
+        newParent.setParentName(parent.getParentName());
+        newParent.setParentEmail(parent.getParentEmail());
+        newParent.setParentPhone(parent.getParentPhone());
+        return parentRepository.save(newParent);
     }
 
     @Override
@@ -33,7 +38,7 @@ public class ParentServiceImpl implements ParentService {
     }
 
     @Override
-    public Optional<Parent> findByParentPhone(String phone) {
-        return parentRepository.findByParentPhone(phone);
+    public Optional<Parent> findByParentId(Long id) {
+        return parentRepository.findByParentId(id);
     }
 }
