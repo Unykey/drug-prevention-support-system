@@ -26,7 +26,7 @@ public class User {
     private String name;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String password; // In a real app, this MUST be hashed
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
