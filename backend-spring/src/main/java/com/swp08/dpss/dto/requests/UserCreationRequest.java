@@ -1,10 +1,6 @@
 package com.swp08.dpss.dto.requests;
 
 import com.swp08.dpss.enums.Genders;
-import com.swp08.dpss.enums.Roles;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -34,7 +30,7 @@ public class UserCreationRequest {
     @NotBlank(message = "Phone cannot be blank")
     private String phone;
 
-//  Require 1 parent if user_age < 18
+//  Require 1 Guardian if user_age < 18
     @Valid
-    private ParentCreationRequest parent;
+    private GuardianCreationRequest guardian;
 }

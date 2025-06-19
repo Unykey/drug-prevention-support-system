@@ -1,17 +1,16 @@
 package com.swp08.dpss.service.impls;
 
-import com.swp08.dpss.dto.requests.ParentCreationRequest;
+import com.swp08.dpss.dto.requests.GuardianCreationRequest;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
-import com.swp08.dpss.entity.Parent;
+import com.swp08.dpss.entity.Guardian;
 import com.swp08.dpss.entity.User;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import com.swp08.dpss.enums.User_Status;
 import com.swp08.dpss.repository.UserRepository;
-import com.swp08.dpss.service.interfaces.ParentService;
+import com.swp08.dpss.service.interfaces.GuardianService;
 import com.swp08.dpss.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final ParentService parentService;
+    private final GuardianService guardianService;
 
     @Override
     public List<User> findAll() {
@@ -53,7 +52,7 @@ public class UserServiceImpl implements UserService {
     public User register(UserCreationRequest request) {
         User newUser = new User();
 
-        // Set the name, password, gender, date of birth, email, phone, (and parent) from the request
+        // Set the name, password, gender, date of birth, email, phone, (and Guardian) from the request
         newUser.setName(request.getName());
 
         // Encode the password before saving it to the database
@@ -70,32 +69,32 @@ public class UserServiceImpl implements UserService {
         newUser.setEmail(request.getEmail());
         newUser.setPhone(request.getPhone());
 
-        // If a parent is provided, create a new ParentCreationRequest and add it to the list of parents for the new user
-        if (request.getParent() != null) {
-            Parent parentEntity;
+        // If a Guardian is provided, create a new GuardianCreationRequest and add it to the list of Guardians for the new user
+        if (request.getGuardian() != null) {
+            Guardian guardianEntity;
 
-            //Check if parent already exists in database
-            Optional<Parent> existParent = parentService.findByParentEmail(request.getParent().getParentEmail());
+            //Check if Guardian already exists in database
+            Optional<Guardian> existGuardian = guardianService.findByGuardianEmail(request.getGuardian().getGuardianEmail());
 
-            //If parent exists, find user based on thier parent, add parent to that user
-            if (existParent.isPresent()) {
-                System.out.println(existParent.get().getParentEmail());
-                parentEntity = existParent.get();
+            //If Guardian exists, find user based on thier Guardian, add Guardians to that user
+            if (existGuardian.isPresent()) {
+                System.out.println(existGuardian.get().getGuardianEmail());
+                guardianEntity = existGuardian.get();
             } else {
-                //If parent does not exist, create new parent and add it to the user
-                ParentCreationRequest newParent = new ParentCreationRequest();
+                //If Guardian does not exist, create new Guardian and add it to the user
+                GuardianCreationRequest newGuardian = new GuardianCreationRequest();
 
-                newParent.setParentName(request.getParent().getParentName());
-                newParent.setParentEmail(request.getParent().getParentEmail());
-                newParent.setParentPhone(request.getParent().getParentPhone());
+                newGuardian.setGuardianName(request.getGuardian().getGuardianName());
+                newGuardian.setGuardianEmail(request.getGuardian().getGuardianEmail());
+                newGuardian.setGuardianPhone(request.getGuardian().getGuardianPhone());
 
-                parentEntity = parentService.createNewParent(newParent);
+                guardianEntity = guardianService.createNewGuardian(newGuardian);
             }
 
-            newUser.addParent(parentEntity); // Add the parent to the list of parents for the new user
+            newUser.addGuardian(guardianEntity); // Add the Guardian to the list of Guardians for the new user
         } else {
-            // If no parent is provided, set the list of parents to null
-            newUser.setParents(null);
+            // If no Guardian is provided, set the list of Guardians to null
+            newUser.setGuardianList(null);
         }
 
         newUser.setRole(Roles.MEMBER);

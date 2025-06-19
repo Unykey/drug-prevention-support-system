@@ -17,6 +17,6 @@ public class UserResponse {
     private LocalDate dateOfBirth;
     private String email;
     private String phone;
-    private Set<ParentResponse>  parents;
+    private Set<GuardianResponse> guardians;
 }
 
