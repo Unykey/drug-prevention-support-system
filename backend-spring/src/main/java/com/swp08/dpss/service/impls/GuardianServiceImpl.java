@@ -4,6 +4,7 @@ import com.swp08.dpss.dto.requests.GuardianCreationRequest;
 import com.swp08.dpss.entity.Guardian;
 import com.swp08.dpss.repository.GuardianRepository;
 import com.swp08.dpss.service.interfaces.GuardianService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class GuardianServiceImpl implements GuardianService {
-    @Autowired
-    GuardianRepository guardianRepository;
+    private final GuardianRepository guardianRepository;
 
     @Override
     public List<Guardian> findAll() {

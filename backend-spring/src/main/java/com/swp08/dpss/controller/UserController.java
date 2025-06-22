@@ -7,6 +7,7 @@ import com.swp08.dpss.mapper.UserMapper;
 import com.swp08.dpss.service.impls.UserServiceImpl;
 import com.swp08.dpss.service.interfaces.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user") // Base path for all user-related operations
+@RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private UserMapper userMapper;
+    private final UserMapper userMapper;
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUser() {

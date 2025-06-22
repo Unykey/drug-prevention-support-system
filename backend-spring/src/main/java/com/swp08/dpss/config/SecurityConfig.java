@@ -3,6 +3,7 @@ package com.swp08.dpss.config;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.security.jwt.JwtRequestFilter;
 import com.swp08.dpss.service.impls.UserServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.oauth2.server.servlet.OAuth2AuthorizationServerJwtAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -23,15 +24,11 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
-    @Autowired
-    private JwtRequestFilter jwtRequestFilter;
+    private final JwtRequestFilter jwtRequestFilter;
 
     private final CustomAccessDeniedHandler accessDeniedHandler;
-
-    public SecurityConfig(CustomAccessDeniedHandler accessDeniedHandler) {
-        this.accessDeniedHandler = accessDeniedHandler;
-    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

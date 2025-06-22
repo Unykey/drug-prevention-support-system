@@ -3,6 +3,7 @@ package com.swp08.dpss.controller;
 import com.swp08.dpss.entity.Guardian;
 import com.swp08.dpss.service.interfaces.GuardianService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,9 +12,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/guardian")
+@RequiredArgsConstructor
 public class GuardianController {
-    @Autowired
-    private GuardianService guardianService;
+    private final GuardianService guardianService;
 
     @GetMapping
     public ResponseEntity getGuardian() {
