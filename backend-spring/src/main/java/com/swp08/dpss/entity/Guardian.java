@@ -31,7 +31,6 @@ public class Guardian {
     // --- Many-to-Many relationship with User ---
     // 'mappedBy' indicates that the User entity owns the relationship
     // (i.e., the @JoinTable is defined on the User side)
-//    @ManyToMany(mappedBy = "parents", fetch = FetchType.LAZY)
-    @ManyToMany(mappedBy = "guardian", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "guardians", fetch = FetchType.LAZY)
     private List<User> user = new ArrayList<>();
 }

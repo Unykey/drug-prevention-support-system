@@ -54,16 +54,16 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"), // FK column in join table referencing User
             inverseJoinColumns = @JoinColumn(name = "guardian_id") // FK column in join table referencing Guardian
     )
-    private List<Guardian> guardianList = new ArrayList<>();
+    private List<Guardian> guardians = new ArrayList<>();
 
     // Methods for managing the relationship
     public void addGuardian(Guardian guardian){
-        this.guardianList.add(guardian);
+        this.guardians.add(guardian);
         guardian.getUser().add(this); // Maintain bidirectional consistency
     }
 
     public void removeGuardian(Guardian guardian){
-        this.guardianList.remove(guardian);
+        this.guardians.remove(guardian);
         guardian.getUser().remove(this); // Maintain bidirectional consistency
     }
 
