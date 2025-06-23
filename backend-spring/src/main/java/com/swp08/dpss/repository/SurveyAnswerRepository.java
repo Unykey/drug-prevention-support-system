@@ -20,4 +20,5 @@ public interface SurveyAnswerRepository extends CrudRepository<SurveyAnswer, Lon
 
     // Get all responses for a given question and answer value (e.g., "4")
     List<SurveyAnswer> findByQuestionIdAndContent(Long questionId, String answer);
+
 }

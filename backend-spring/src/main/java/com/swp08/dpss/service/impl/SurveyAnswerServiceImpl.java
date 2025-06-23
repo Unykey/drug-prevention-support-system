@@ -1,5 +1,6 @@
 package com.swp08.dpss.service.impl;
 
+import com.swp08.dpss.dto.requests.BulkSubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.SurveyAnswerDto;
 import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.entity.SurveyAnswer;
@@ -104,4 +105,19 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
         return dto;
     }
 
+    @Override
+    public void submitAllAnswers(BulkSubmitSurveyAnswerRequest request) {
+        Survey survey = surveyRepository.findById(request.getSurveyId()).orElseThrow(()-> new EntityNotFoundException("Survey not found"));
+        SurveyQuestion question;
+        User user =  userRepository.findById(request.getUserId()).orElseThrow(()-> new EntityNotFoundException("User not found"));
+        for (BulkSubmitSurveyAnswerRequest.AnswerSubmission answer : request.getAnswers()) {
+            question = surveyQuestionRepository.findById(answer.getQuestionId()).orElseThrow(() -> new EntityNotFoundException("Question not found"));
+            SurveyAnswer surveyAnswer = new SurveyAnswer();
+            surveyAnswer.setContent(answer.getContent());
+            survey.addAnswer(surveyAnswer);
+            question.addAnswer(surveyAnswer);
+            user.addAnswer(surveyAnswer);
+            surveyAnswerRepository.save(surveyAnswer);
+        }
+    }
 }

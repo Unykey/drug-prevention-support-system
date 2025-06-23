@@ -1,6 +1,7 @@
 package com.swp08.dpss.service.impl;
 
 import com.swp08.dpss.dto.requests.AddSurveyQuestionRequest;
+import com.swp08.dpss.dto.requests.UpdateSurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.entity.SurveyQuestion;
@@ -25,8 +26,17 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
     }
 
     @Override
-    public List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId) {
+    public SurveyQuestionDto getQuestionById(Long id) {
+        SurveyQuestion surveyQuestion = repository.findById(id).get();
+        SurveyQuestionDto dto = new SurveyQuestionDto();
+        dto.setQuestion(surveyQuestion.getQuestion());
+        dto.setType(surveyQuestion.getType());
+        dto.setSolution(surveyQuestion.getSolution());
+        return dto;
+    }
 
+    @Override
+    public List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(()-> new EntityNotFoundException("Survey Not Found"));
         List<SurveyQuestion> questions = repository.findBySurvey(survey);
 
@@ -68,6 +78,22 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         result.setSolution(saved.getSolution());
         result.setSurveyId(saved.getSurvey().getId());
 
+        return result;
+    }
+
+    @Override
+    public SurveyQuestionDto updateQuestion(Long id, UpdateSurveyQuestionRequest request) {
+        SurveyQuestion question = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Survey Question Not Found"));
+        question.setQuestion(request.getQuestion());
+        question.setType(request.getType());
+        question.setSolution(request.getSolution());
+        SurveyQuestion saved = repository.save(question);
+        SurveyQuestionDto result = new SurveyQuestionDto();
+        result.setId(saved.getId());
+        result.setQuestion(saved.getQuestion());
+        result.setType(saved.getType());
+        result.setSolution(saved.getSolution());
+        result.setSurveyId(saved.getSurvey().getId());
         return result;
     }
 }

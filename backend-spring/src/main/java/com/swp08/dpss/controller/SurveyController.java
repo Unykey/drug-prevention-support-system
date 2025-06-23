@@ -41,10 +41,10 @@ public class SurveyController {
         SurveyDetailsDto created = surveyService.createSurvey(request);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
+
     // ✅ Get all surveys
-// REST API endpoint để lấy tất cả các khảo sát từ hệ thống.
-// Sử dụng phương thức HTTP GET tại đường dẫn "/api/surveys" (nếu lớp controller được gán @RequestMapping("/api/surveys"))
-    // ✅ Get all surveys
+    // REST API endpoint để lấy tất cả các khảo sát từ hệ thống.
+    // Sử dụng phương thức HTTP GET tại đường dẫn "/api/surveys" (nếu lớp controller được gán @RequestMapping("/api/surveys"))
     @GetMapping
     public ResponseEntity<List<SurveyDetailsDto>> getAllSurveys() {
         return ResponseEntity.ok(surveyService.getAllSurveys());
@@ -93,19 +93,6 @@ public class SurveyController {
     //@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public ResponseEntity<Void> deleteSurvey(@PathVariable Long id) {
         surveyService.deleteSurveyById(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("questions/{questionId}")
-    //@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<Void> deleteQuestionFromSurvey(@PathVariable Long questionId) {
-        surveyQuestionService.deleteSurveyQuestionById(questionId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("answer/{answerId}")
-    public ResponseEntity<Void> deleteAnswerFromSurvey(@PathVariable Long answerId) {
-        surveyAnswerService.deleteSurveyAnswer(answerId);
         return ResponseEntity.noContent().build();
     }
 
