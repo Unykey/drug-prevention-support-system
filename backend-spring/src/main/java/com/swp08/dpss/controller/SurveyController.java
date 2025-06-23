@@ -68,16 +68,16 @@ public class SurveyController {
         return ResponseEntity.ok(surveyService.searchSurveysByName(keyword));
     }
 
-    @PostMapping("/addquestion")
+    @PostMapping("/{id}/addquestion")
     public ResponseEntity<SurveyQuestionDto> addQuestionToSurvey(
-            @RequestBody AddSurveyQuestionRequest questionDto) {
-        SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(questionDto);
+            @RequestBody AddSurveyQuestionRequest questionDto, @PathVariable Long id) {
+        SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(id, questionDto);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    @PostMapping("/submitanswer")
-    public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request) {
-        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(request);
+    @PostMapping("/{id}/submitanswer")
+    public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request, @PathVariable Long id) {
+        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(id, request);
         return new ResponseEntity<>(submitted, HttpStatus.CREATED);
     }
 

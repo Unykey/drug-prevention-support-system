@@ -56,8 +56,8 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
     }
 
     @Override
-    public SurveyQuestionDto addQuestionToSurvey(AddSurveyQuestionRequest dto) {
-        Survey survey = surveyRepository.findById(dto.getSurveyId())
+    public SurveyQuestionDto addQuestionToSurvey(Long id, AddSurveyQuestionRequest dto) {
+        Survey survey = surveyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
 
         SurveyQuestion question = new SurveyQuestion();

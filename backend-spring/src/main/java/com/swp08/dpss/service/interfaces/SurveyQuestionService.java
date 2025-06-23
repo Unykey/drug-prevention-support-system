@@ -9,7 +9,7 @@ import java.util.List;
 public interface SurveyQuestionService {
     List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId);
     void deleteSurveyQuestionById(Long surveyQuestionId);
-    SurveyQuestionDto addQuestionToSurvey(AddSurveyQuestionRequest questionDto);
+    SurveyQuestionDto addQuestionToSurvey(Long id, AddSurveyQuestionRequest questionDto);
 
     SurveyQuestionDto getQuestionById(Long id);
 
