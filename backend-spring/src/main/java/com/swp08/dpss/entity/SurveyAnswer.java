@@ -1,5 +1,6 @@
 package com.swp08.dpss.entity;
 
+import com.swp08.dpss.enums.SurveyAnswerStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,8 +23,12 @@ public class SurveyAnswer {
     @Column (name = "ResultScore")
     private int resultScore;
 
-    @Column (name = "content")
+    @Column (name = "Content")
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    @Column (name = "Status",  nullable = false)
+    private SurveyAnswerStatus status = SurveyAnswerStatus.VISIBLE;
 
     @ManyToOne
     @JoinColumn (name = "Survey")
