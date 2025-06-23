@@ -1,5 +1,6 @@
 package com.swp08.dpss.entity;
 
+import com.swp08.dpss.enums.SurveyQuestionStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,14 +21,18 @@ public class SurveyQuestion {
     @Column (name = "Id")
     private Long id;
 
-    @Column (name = "Question", nullable = false)
+    @Column (name = "Question")
     private String question;
 
     @Column (name = "Type", nullable = false, columnDefinition = "varchar(20)")
     private String type;
 
-    @Column (name = "Solution", nullable = false)
+    @Column (name = "Solution")
     private String solution;
+
+    @Enumerated(EnumType.STRING)
+    @Column (name = "Status")
+    private SurveyQuestionStatus status = SurveyQuestionStatus.VISIBLE;
 
     @ManyToOne
     @JoinColumn(name = "Survey")
