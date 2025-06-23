@@ -41,7 +41,9 @@ public class SurveyController {
         SurveyDetailsDto created = surveyService.createSurvey(request);
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
-
+    // ✅ Get all surveys
+// REST API endpoint để lấy tất cả các khảo sát từ hệ thống.
+// Sử dụng phương thức HTTP GET tại đường dẫn "/api/surveys" (nếu lớp controller được gán @RequestMapping("/api/surveys"))
     // ✅ Get all surveys
     @GetMapping
     public ResponseEntity<List<SurveyDetailsDto>> getAllSurveys() {
