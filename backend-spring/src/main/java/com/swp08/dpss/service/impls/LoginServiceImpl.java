@@ -4,16 +4,16 @@ import com.swp08.dpss.dto.requests.LoginRequest;
 import com.swp08.dpss.entity.User;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.LoginService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
-
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     /**
      * Basic login.

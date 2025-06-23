@@ -1,10 +1,7 @@
 package com.swp08.dpss.dto.requests;
 
 import com.swp08.dpss.enums.Genders;
-import com.swp08.dpss.enums.Roles;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,12 +18,7 @@ public class UserCreationRequest {
     @NotBlank(message = "Password cannot be blank")
     private String password;
 
-//    Default = MEMBER
-    @NotNull(message = "Invalid role. Allowed roles are MEMBER, CONSULTANT, STAFF, ADMIN, MANAGER.")
-    private Roles role;
-
-//    Default = PREFER_NOT_TO_STAY
-    private Genders gender;
+    private Genders gender; //Default = PREFER_NOT_TO_STAY
 
     @NotNull(message = "Date of Birth cannot be blank")
     private LocalDate dateOfBirth;
@@ -37,4 +29,8 @@ public class UserCreationRequest {
 
     @NotBlank(message = "Phone cannot be blank")
     private String phone;
+
+//  Require 1 Guardian if user_age < 18
+    @Valid
+    private GuardianCreationRequest guardian;
 }

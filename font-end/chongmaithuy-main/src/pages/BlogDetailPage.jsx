@@ -1,12 +1,17 @@
+// BlogDetailPage.jsx: Trang hiển thị chi tiết một bài viết trên blog
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+// Icons sử dụng trong giao diện
 import { ArrowLeft, User, Calendar, Tag, MessageCircle, Edit } from 'lucide-react';
+// Thư viện cho hiệu ứng chuyển động
 import { motion } from 'framer-motion';
+// Context xác thực và cấu hình role
 import { useAuth } from '@/contexts/AuthContext';
 import { ROLES } from '@/config/roles';
 import { Textarea } from '@/components/ui/textarea';
 
+// Dữ liệu giả lập cho các bài viết (placeholder)
 const placeholderPosts = {
   1: { 
     title: "Tác hại của ma túy đá và cách phòng tránh hiệu quả", 
@@ -37,12 +42,17 @@ const placeholderPosts = {
 };
 
 const BlogDetailPage = () => {
+  // Lấy id bài viết từ URL params
   const { id } = useParams();
-  const post = placeholderPosts[id]; 
+  // Lấy dữ liệu bài viết từ placeholderPosts
+  const post = placeholderPosts[id];
+  // Lấy thông tin user hiện tại từ context xác thực
   const { user } = useAuth();
+  // Xác định quyền chỉnh sửa (ADMIN, MANAGER, STAFF)
   const canEditPost = user && [ROLES.ADMIN, ROLES.MANAGER, ROLES.STAFF].includes(user.role);
 
 
+  // Nếu không tìm thấy bài viết, hiển thị thông báo và nút quay lại
   if (!post) {
     return (
       <div className="text-center py-10">
@@ -54,6 +64,7 @@ const BlogDetailPage = () => {
     );
   }
 
+  // Cấu hình hiệu ứng fadeIn cho các phần tử
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
@@ -66,11 +77,14 @@ const BlogDetailPage = () => {
       animate="visible"
       variants={fadeIn}
     >
+      {/* Banner ảnh và thông tin tiêu đề, tác giả, ngày, chuyên mục */}
       <div className="relative shadow-xl rounded-lg overflow-hidden">
-        <img  src={post.image} alt={post.title} className="w-full h-64 md:h-[450px] object-cover" />
+        <img src={post.image} alt={post.title} className="w-full h-64 md:h-[450px] object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-6 md:p-10">
-          <motion.h1 variants={fadeIn} className="text-3xl md:text-5xl font-bold text-white mb-3 leading-tight">{post.title}</motion.h1>
+          <motion.h1 variants={fadeIn} className="text-3xl md:text-5xl font-bold text-white mb-3 leading-tight">
+            {post.title}
+          </motion.h1>
           <motion.div variants={fadeIn} className="flex flex-wrap items-center text-sm text-gray-200 gap-x-4 gap-y-2">
             <span className="flex items-center"><User className="h-4 w-4 mr-1.5 text-sky-300" /> {post.author}</span>
             <span className="flex items-center"><Calendar className="h-4 w-4 mr-1.5 text-sky-300" /> {post.date}</span>
@@ -79,6 +93,7 @@ const BlogDetailPage = () => {
         </div>
       </div>
 
+      {/* Liên kết quay lại blog và nút chỉnh sửa (nếu người dùng có quyền) */}
       <div className="flex justify-between items-center">
         <Link to="/blog" className="inline-flex items-center light-theme-text-primary hover:underline font-medium">
           <ArrowLeft className="h-5 w-5 mr-2" />
@@ -94,12 +109,14 @@ const BlogDetailPage = () => {
       </div>
 
 
+      {/* Nội dung chi tiết bài viết dưới dạng HTML đã parse */}
       <motion.article 
         variants={fadeIn} 
         className="prose prose-lg max-w-none light-theme-card p-6 md:p-8"
         dangerouslySetInnerHTML={{ __html: post.content }} 
       />
 
+      {/* Hiển thị danh sách tags của bài viết */}
       <motion.div variants={fadeIn} className="space-y-4 p-6 light-theme-card rounded-lg">
         <h3 className="text-xl font-semibold light-theme-card-header">Thẻ:</h3>
         <div className="flex flex-wrap gap-2">
@@ -109,6 +126,7 @@ const BlogDetailPage = () => {
         </div>
       </motion.div>
 
+      {/* Phần bình luận với form nhập và hiển thị số lượng bình luận */}
       <motion.section variants={fadeIn} className="space-y-6 py-8 border-t border-gray-200">
         <h2 className="text-2xl font-semibold light-theme-text-default flex items-center">
           <MessageCircle className="h-6 w-6 mr-3 light-theme-text-primary"/> Bình luận (0)

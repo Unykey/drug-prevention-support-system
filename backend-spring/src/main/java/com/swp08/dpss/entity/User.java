@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "users")
+@Table(name = "app_user")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,7 +26,7 @@ public class User {
     private String name;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String password; // In a real app, this MUST be hashed
+    private String password;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -50,21 +50,21 @@ public class User {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
-            name = "user_parent", // name of join table between user and parent
+            name = "user_guardian", // name of join table between user and Guardian
             joinColumns = @JoinColumn(name = "user_id"), // FK column in join table referencing User
-            inverseJoinColumns = @JoinColumn(name = "parent_id") // FK column in join table referencing Parent
+            inverseJoinColumns = @JoinColumn(name = "guardian_id") // FK column in join table referencing Guardian
     )
-    private List<Parent> parents = new ArrayList<>();
+    private List<Guardian> guardians = new ArrayList<>();
 
     // Methods for managing the relationship
-    public void addParent(Parent parent){
-        this.parents.add(parent);
-        parent.getUser().add(this); // Maintain bidirectional consistency
+    public void addGuardian(Guardian guardian){
+        this.guardians.add(guardian);
+        guardian.getUser().add(this); // Maintain bidirectional consistency
     }
 
-    public void removeParent(Parent parent){
-        this.parents.remove(parent);
-        parent.getUser().remove(this); // Maintain bidirectional consistency
+    public void removeGuardian(Guardian guardian){
+        this.guardians.remove(guardian);
+        guardian.getUser().remove(this); // Maintain bidirectional consistency
     }
 
 }

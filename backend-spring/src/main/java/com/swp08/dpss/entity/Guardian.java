@@ -1,7 +1,6 @@
 package com.swp08.dpss.entity;
 
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,27 +10,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "parents")
+@Table(name = "guardian")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Parent {
+public class Guardian {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long parentId;
+    private Long guardianId;
 
     @Column(nullable = false, length = 100)
-    private String parentName;
+    private String guardianName;
 
     @Column(length = 15, unique = true)
-    private String parentPhone;
+    private String guardianPhone;
 
     @Column(length = 100, unique = true)
-    private String parentEmail;
+    private String guardianEmail;
 
     // --- Many-to-Many relationship with User ---
     // 'mappedBy' indicates that the User entity owns the relationship
     // (i.e., the @JoinTable is defined on the User side)
-    @ManyToMany(mappedBy = "parents", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "guardians", fetch = FetchType.LAZY)
     private List<User> user = new ArrayList<>();
 }
