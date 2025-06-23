@@ -3,17 +3,15 @@ package com.swp08.dpss.controller;
 import com.swp08.dpss.dto.requests.UpdateSurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.service.interfaces.SurveyQuestionService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/questions")
 public class SurveyQuestionController {
     private final SurveyQuestionService surveyQuestionService;
-
-    public SurveyQuestionController(SurveyQuestionService surveyQuestionService) {
-        this.surveyQuestionService = surveyQuestionService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<SurveyQuestionDto> getQuestionById(@PathVariable Long id) {

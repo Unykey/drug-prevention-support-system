@@ -7,19 +7,17 @@ import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.enums.SurveyStatus;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepository surveyRepository;
-
-    public SurveyServiceImpl(SurveyRepository surveyRepository) {
-        this.surveyRepository = surveyRepository;
-    }
 
     @Override
     public SurveyDetailsDto createSurvey(CreateSurveyRequest request) {

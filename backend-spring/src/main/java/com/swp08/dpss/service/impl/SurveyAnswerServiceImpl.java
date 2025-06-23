@@ -1,6 +1,7 @@
 package com.swp08.dpss.service.impl;
 
 import com.swp08.dpss.dto.requests.BulkSubmitSurveyAnswerRequest;
+import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.SurveyAnswerDto;
 import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.entity.SurveyAnswer;
@@ -12,14 +13,13 @@ import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.SurveyAnswerService;
 import jakarta.persistence.EntityNotFoundException;
-import org.aspectj.weaver.patterns.TypePatternQuestions;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class SurveyAnswerServiceImpl implements SurveyAnswerService {
 
@@ -27,14 +27,6 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     private final SurveyQuestionRepository surveyQuestionRepository;
     private final UserRepository userRepository;
     private final SurveyAnswerRepository surveyAnswerRepository;
-
-    @Autowired
-    public SurveyAnswerServiceImpl(SurveyRepository surveyRepository, SurveyQuestionRepository surveyQuestionRepository, UserRepository userRepository, SurveyAnswerRepository surveyAnswerRepository) {
-        this.surveyRepository = surveyRepository;
-        this.surveyQuestionRepository = surveyQuestionRepository;
-        this.userRepository = userRepository;
-        this.surveyAnswerRepository = surveyAnswerRepository;
-    }
 
     @Override
     public List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId) {

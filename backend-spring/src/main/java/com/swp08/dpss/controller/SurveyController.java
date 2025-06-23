@@ -10,12 +10,14 @@ import com.swp08.dpss.service.interfaces.SurveyAnswerService;
 import com.swp08.dpss.service.interfaces.SurveyQuestionService;
 import com.swp08.dpss.service.interfaces.SurveyService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/surveys")
 public class SurveyController {
@@ -23,16 +25,6 @@ public class SurveyController {
     private final SurveyService surveyService;
     private final SurveyQuestionService surveyQuestionService;
     private final SurveyAnswerService surveyAnswerService;
-
-    public SurveyController(
-            SurveyService surveyService,
-            SurveyQuestionService surveyQuestionService,
-            SurveyAnswerService surveyAnswerService
-    ) {
-        this.surveyService = surveyService;
-        this.surveyQuestionService = surveyQuestionService;
-        this.surveyAnswerService = surveyAnswerService;
-    }
 
     // ✅ Create a new survey
     @PostMapping

@@ -9,21 +9,18 @@ import com.swp08.dpss.repository.SurveyQuestionRepository;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyQuestionService;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
 @Service
 public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     private final SurveyQuestionRepository repository;
     private final SurveyRepository surveyRepository;
-
-    public SurveyQuestionServiceImpl(SurveyQuestionRepository repository, SurveyRepository surveyRepository) {
-        this.repository = repository;
-        this.surveyRepository = surveyRepository;
-    }
 
     @Override
     public SurveyQuestionDto getQuestionById(Long id) {
