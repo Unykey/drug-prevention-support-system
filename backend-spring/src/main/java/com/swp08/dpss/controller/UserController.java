@@ -28,17 +28,13 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUser() {
-        List<User> users = userService.findAll();
-        List<UserResponse> userResponses = users.stream()
-                .map(userMapper::userToUserResponse)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok().body(userResponses);
+        return ResponseEntity.ok().body(userService.findAll());
     }
 
     @PostMapping("/create-user")
     public ResponseEntity<UserResponse> createNewUser(@Valid @RequestBody User user) {
         User newUser = userService.createNewUser(user);
-        return  ResponseEntity.status(HttpStatus.CREATED).body(userMapper.userToUserResponse(newUser));
+        return ResponseEntity.ok().body(userMapper.userToUserResponse(newUser));
     }
 
     // Endpoint to get a user by email
