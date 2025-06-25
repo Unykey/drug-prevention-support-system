@@ -11,6 +11,7 @@ import com.swp08.dpss.service.interfaces.SurveyQuestionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -48,6 +49,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     @Override
     public void deleteSurveyQuestionById(Long surveyQuestionId) {
         SurveyQuestion question = repository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found"));
@@ -55,6 +57,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         repository.deleteById(surveyQuestionId);
     }
 
+    @Transactional
     @Override
     public SurveyQuestionDto addQuestionToSurvey(Long id, AddSurveyQuestionRequest dto) {
         Survey survey = surveyRepository.findById(id)
@@ -78,6 +81,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         return result;
     }
 
+    @Transactional
     @Override
     public SurveyQuestionDto updateQuestion(Long id, UpdateSurveyQuestionRequest request) {
         SurveyQuestion question = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Survey Question Not Found"));

@@ -32,7 +32,7 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     public List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId) {
         List<SurveyAnswer> answers = ((List<SurveyAnswer>) surveyAnswerRepository.findAll()) // repository returns Iterable
                 .stream()
-                .filter(a -> a.getSurvey().getId() == surveyId)
+                .filter(a -> a.getSurvey().getId().equals(surveyId))
                 .collect(Collectors.toList());
 
         return answers.stream().map(a -> {

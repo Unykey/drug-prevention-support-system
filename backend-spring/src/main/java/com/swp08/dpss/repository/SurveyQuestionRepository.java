@@ -19,7 +19,4 @@ public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, 
 
     void deleteBySurvey(Survey survey);
 
-    void updateSurveyQuestion(SurveyQuestion surveyQuestion);
-
-    void updateSurveyQuestionById(SurveyQuestion surveyQuestion);
 }

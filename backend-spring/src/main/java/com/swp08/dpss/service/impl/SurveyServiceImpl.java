@@ -37,7 +37,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public SurveyDetailsDto getSurveyById(long id) {
+    public SurveyDetailsDto getSurveyById(Long id) {
         Survey survey = surveyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
         return toDto(survey);
@@ -76,10 +76,8 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public void deleteSurveyById(long id) {
-        if (!surveyRepository.existsById(id)) {
-            throw new RuntimeException("Survey not found with ID " + id);
-        }
+    public void deleteSurveyById(Long id) {
+        Survey survey = surveyRepository.findById(id).orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
         surveyRepository.softDeleteSurveyById(id, SurveyStatus.DELETED);
     }
 
