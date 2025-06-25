@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
@@ -24,9 +23,6 @@ const Footer = () => {
         </div>
         <p className="text-sm">
           &copy; {currentYear} Tổ Chức Tình Nguyện Phòng Chống Ma Túy. Bảo lưu mọi quyền.
-        </p>
-        <p className="text-xs mt-2">
-          Được phát triển bởi Khang - 0911968318
         </p>
       </div>
     </footer>
