@@ -66,5 +66,4 @@ public class User {
         this.guardians.remove(guardian);
         guardian.getUser().remove(this); // Maintain bidirectional consistency
     }
-
 }
