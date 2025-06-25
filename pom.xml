@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.dpss</groupId>
 	<artifactId>drug-prevention-support-system</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.3-SURVEY</version>
 	<name>drug-prevention-support-system</name>
 	<description>Support drug use prevention in the community</description>
 	<url/>
@@ -103,6 +103,19 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>4.9.3.0</version>
+				<dependencies>
+					<!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
+					<dependency>
+						<groupId>com.github.spotbugs</groupId>
+						<artifactId>spotbugs</artifactId>
+						<version>4.9.3</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>
