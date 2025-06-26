@@ -15,6 +15,7 @@ import com.swp08.dpss.service.interfaces.SurveyAnswerService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,19 +57,22 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
+    @Override
     public void deleteSurveyAnswer(Long surveyAnswerId) {
         SurveyAnswer answer = surveyAnswerRepository.findById(surveyAnswerId).orElseThrow(()-> new EntityNotFoundException("Survey Answer Not Found"));
-        answer.getSurvey().removeAnswer(answer);
-        answer.getQuestion().removeAnswer(answer);
-        answer.getUser().removeAnswer(answer);
-        surveyAnswerRepository.deleteById(surveyAnswerId);
+        if (answer.getSurvey()!=null) answer.getSurvey().removeAnswer(answer);
+        if (answer.getQuestion() != null) answer.getQuestion().removeAnswer(answer);
+        if (answer.getUser()!=null) answer.getUser().removeAnswer(answer);
+        surveyAnswerRepository.delete(answer);
     }
 
+    @Transactional
     @Override
-    public SurveyAnswerDto submitAnswer(Long id, SubmitSurveyAnswerRequest request) {
-        Survey survey = surveyRepository.findById(id)
+    public SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request) {
+        Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
-        SurveyQuestion question = surveyQuestionRepository.findById(request.getQuestionId())
+        SurveyQuestion question = surveyQuestionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question not found"));
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
@@ -97,6 +101,7 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
         return dto;
     }
 
+    @Transactional
     @Override
     public void submitAllAnswers(BulkSubmitSurveyAnswerRequest request) {
         Survey survey = surveyRepository.findById(request.getSurveyId()).orElseThrow(()-> new EntityNotFoundException("Survey not found"));

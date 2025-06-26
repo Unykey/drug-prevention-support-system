@@ -8,7 +8,9 @@ import com.swp08.dpss.enums.SurveyStatus;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +19,10 @@ import java.util.stream.Collectors;
 @Service
 public class SurveyServiceImpl implements SurveyService {
 
+    @Autowired
     private final SurveyRepository surveyRepository;
 
+    @Transactional
     @Override
     public SurveyDetailsDto createSurvey(CreateSurveyRequest request) {
         Survey survey = new Survey();
@@ -75,6 +79,7 @@ public class SurveyServiceImpl implements SurveyService {
         return dto;
     }
 
+    @Transactional
     @Override
     public void deleteSurveyById(Long id) {
         Survey survey = surveyRepository.findById(id).orElseThrow(() -> new RuntimeException("Survey not found with id " + id));

@@ -75,9 +75,9 @@ public class SurveyController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
-    @PostMapping("/{id}/submitanswer")
-    public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request, @PathVariable Long id) {
-        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(id, request);
+    @PostMapping("/{surveyId}/{questionId}/submitanswer")
+    public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request, @PathVariable Long surveyId, @PathVariable Long questionId) {
+        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(surveyId, questionId, request);
         return new ResponseEntity<>(submitted, HttpStatus.CREATED);
     }
 

@@ -20,8 +20,8 @@ public class SurveyQuestionController {
 
     @DeleteMapping("/{id}")
     //@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<Void> deleteQuestionFromSurvey(@PathVariable Long questionId) {
-        surveyQuestionService.deleteSurveyQuestionById(questionId);
+    public ResponseEntity<Void> deleteQuestionFromSurvey(@PathVariable Long id) {
+        surveyQuestionService.deleteSurveyQuestionById(id);
         return ResponseEntity.noContent().build();
     }
 

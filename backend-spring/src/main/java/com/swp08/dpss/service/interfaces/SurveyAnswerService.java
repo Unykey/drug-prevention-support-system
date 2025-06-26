@@ -9,7 +9,7 @@ import java.util.List;
 public interface SurveyAnswerService {
     List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId);
     void deleteSurveyAnswer(Long surveyAnswerId);
-    SurveyAnswerDto submitAnswer(Long id, SubmitSurveyAnswerRequest request);
+    SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request);
 
     void submitAllAnswers(BulkSubmitSurveyAnswerRequest request);
 }
