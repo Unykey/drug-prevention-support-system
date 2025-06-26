@@ -5,6 +5,7 @@ import com.swp08.dpss.dto.requests.UpdateSurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.entity.SurveyQuestion;
+import com.swp08.dpss.enums.SurveyQuestionStatus;
 import com.swp08.dpss.repository.SurveyQuestionRepository;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyQuestionService;
@@ -54,10 +55,18 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     @Transactional
     @Override
-    public void deleteSurveyQuestionById(Long surveyQuestionId) {
-        SurveyQuestion question = questionRepository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found"));
+    public void hardDeleteSurveyQuestionById(Long surveyQuestionId) {
+        SurveyQuestion question = questionRepository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found with id" + surveyQuestionId));
         if (question.getSurvey()!=null) question.getSurvey().removeQuestion(question);
         questionRepository.deleteById(surveyQuestionId);
+    }
+
+    @Transactional
+    @Override
+    public void softDeleteSurveyQuestionById(Long surveyQuestionId) {
+        SurveyQuestion question = questionRepository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found with id" + surveyQuestionId));
+        if (question.getSurvey()!=null) question.getSurvey().removeQuestion(question);
+        question.setStatus(SurveyQuestionStatus.DELETED);
     }
 
     @Transactional

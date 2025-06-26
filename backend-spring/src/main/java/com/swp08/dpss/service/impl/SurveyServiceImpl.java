@@ -7,8 +7,8 @@ import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.enums.SurveyStatus;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 @Service
 public class SurveyServiceImpl implements SurveyService {
 
-    @Autowired
     private final SurveyRepository surveyRepository;
 
     @Transactional
@@ -81,10 +80,16 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Transactional
     @Override
-    public void deleteSurveyById(Long id) {
+    public void softDeleteSurveyById(Long id) {
         Survey survey = surveyRepository.findById(id).orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
-        surveyRepository.softDeleteSurveyById(id, SurveyStatus.DELETED);
+        survey.setStatus(SurveyStatus.DELETED);
     }
 
-
+    @Override
+    public void hardDeleteSurveyById(Long id) {
+        if (!surveyRepository.existsById(id)) {
+            throw new EntityNotFoundException("Survey Not Found with id " + id);
+        }
+        surveyRepository.deleteById(id);
+    }
 }

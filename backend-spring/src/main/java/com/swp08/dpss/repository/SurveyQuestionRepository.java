@@ -17,6 +17,4 @@ public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, 
     // Find all multiple-choice questions
     List<SurveyQuestion> findByType(String type);
 
-    void deleteBySurvey(Survey survey);
-
 }

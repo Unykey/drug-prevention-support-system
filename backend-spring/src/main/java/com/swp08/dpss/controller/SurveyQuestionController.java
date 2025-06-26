@@ -3,25 +3,36 @@ package com.swp08.dpss.controller;
 import com.swp08.dpss.dto.requests.UpdateSurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.service.interfaces.SurveyQuestionService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/questions")
 public class SurveyQuestionController {
     private final SurveyQuestionService surveyQuestionService;
+
+    @Autowired
+    public SurveyQuestionController(SurveyQuestionService surveyQuestionService) {
+        this.surveyQuestionService = surveyQuestionService;
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<SurveyQuestionDto> getQuestionById(@PathVariable Long id) {
         return ResponseEntity.ok(surveyQuestionService.getQuestionById(id));
     }
 
+    //@PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    //@PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
-    public ResponseEntity<Void> deleteQuestionFromSurvey(@PathVariable Long id) {
-        surveyQuestionService.deleteSurveyQuestionById(id);
+    public ResponseEntity<Void> softDeleteQuestionFromSurvey(@PathVariable Long id) {
+        surveyQuestionService.softDeleteSurveyQuestionById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    //@PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<Void> hardDeleteQuestionFromSurvey(@PathVariable Long id) {
+        surveyQuestionService.hardDeleteSurveyQuestionById(id);
         return ResponseEntity.noContent().build();
     }
 

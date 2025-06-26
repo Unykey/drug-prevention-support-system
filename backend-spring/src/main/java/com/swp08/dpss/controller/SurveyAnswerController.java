@@ -9,14 +9,27 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/answers")
 public class SurveyAnswerController {
-    @Autowired
+
     private SurveyAnswerService surveyAnswerService;
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAnswer(@PathVariable Long id) {
-        surveyAnswerService.deleteSurveyAnswer(id);
+    @Autowired
+    public SurveyAnswerController(SurveyAnswerService surveyAnswerService) {
+        this.surveyAnswerService = surveyAnswerService;
+    }
+
+    //@PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<Void> hardDeleteSurveyAnswer(@PathVariable Long id) {
+        surveyAnswerService.hardDeleteSurveyAnswer(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> softDeleteSurveyAnswer(@PathVariable Long id) {
+        surveyAnswerService.softDeleteSurveyAnswer(id);
+        return ResponseEntity.noContent().build();
+    }
+
 
     @PostMapping("/bulk")
     public ResponseEntity<Void> submitMultipleAnswers(@RequestBody BulkSubmitSurveyAnswerRequest request) {

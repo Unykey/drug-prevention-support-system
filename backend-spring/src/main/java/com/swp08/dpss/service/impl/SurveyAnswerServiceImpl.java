@@ -7,20 +7,20 @@ import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.entity.SurveyAnswer;
 import com.swp08.dpss.entity.SurveyQuestion;
 import com.swp08.dpss.entity.User;
+import com.swp08.dpss.enums.SurveyAnswerStatus;
 import com.swp08.dpss.repository.SurveyAnswerRepository;
 import com.swp08.dpss.repository.SurveyQuestionRepository;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.SurveyAnswerService;
 import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@RequiredArgsConstructor
 @Service
 public class SurveyAnswerServiceImpl implements SurveyAnswerService {
 
@@ -28,6 +28,14 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     private final SurveyQuestionRepository surveyQuestionRepository;
     private final UserRepository userRepository;
     private final SurveyAnswerRepository surveyAnswerRepository;
+
+    @Autowired
+    public SurveyAnswerServiceImpl(SurveyRepository surveyRepository, SurveyQuestionRepository surveyQuestionRepository, UserRepository userRepository, SurveyAnswerRepository surveyAnswerRepository) {
+        this.surveyRepository = surveyRepository;
+        this.surveyQuestionRepository = surveyQuestionRepository;
+        this.userRepository = userRepository;
+        this.surveyAnswerRepository = surveyAnswerRepository;
+    }
 
     @Override
     public List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId) {
@@ -59,13 +67,21 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
 
     @Transactional
     @Override
-    public void deleteSurveyAnswer(Long surveyAnswerId) {
-        SurveyAnswer answer = surveyAnswerRepository.findById(surveyAnswerId).orElseThrow(()-> new EntityNotFoundException("Survey Answer Not Found"));
-        if (answer.getSurvey()!=null) answer.getSurvey().removeAnswer(answer);
-        if (answer.getQuestion() != null) answer.getQuestion().removeAnswer(answer);
-        if (answer.getUser()!=null) answer.getUser().removeAnswer(answer);
-        surveyAnswerRepository.delete(answer);
+    public void softDeleteSurveyAnswer(Long id) {
+        SurveyAnswer answer = surveyAnswerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Survey Answer Not Found"));
+        answer.setStatus(SurveyAnswerStatus.DELETED);
     }
+
+    @Transactional
+    @Override
+    public void hardDeleteSurveyAnswer(Long id) {
+        if (!surveyAnswerRepository.existsById(id)) {
+            throw new EntityNotFoundException("Survey Answer Not Found with id " + id);
+        }
+        surveyAnswerRepository.deleteById(id);
+    }
+
 
     @Transactional
     @Override

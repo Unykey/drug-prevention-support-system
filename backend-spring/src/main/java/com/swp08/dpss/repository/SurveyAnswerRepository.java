@@ -1,9 +1,7 @@
 package com.swp08.dpss.repository;
 
-import com.swp08.dpss.entity.Survey;
 import com.swp08.dpss.entity.SurveyAnswer;
-import com.swp08.dpss.entity.SurveyQuestion;
-import com.swp08.dpss.entity.User;
+import com.swp08.dpss.enums.SurveyAnswerStatus;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,4 +19,7 @@ public interface SurveyAnswerRepository extends CrudRepository<SurveyAnswer, Lon
     // Get all responses for a given question and answer value (e.g., "4")
     List<SurveyAnswer> findByQuestionIdAndContent(Long questionId, String answer);
 
+    List<SurveyAnswer> findBySurveyIdAndUserIdAndStatus(Long surveyId, Long userId, SurveyAnswerStatus status);
+
+    List<SurveyAnswer> findByQuestionIdAndContentAndStatus(Long questionId, String content, SurveyAnswerStatus status);
 }
