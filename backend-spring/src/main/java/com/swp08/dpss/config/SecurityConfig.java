@@ -11,13 +11,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // ✅ disable CSRF for APIs (safe if you're using stateless auth like JWT or Basic Auth)
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().permitAll()
-                )
-                .httpBasic(); // ✅ basic auth enabled
-
+                        .anyRequest().permitAll() // 🔓 allow all endpoints
+                );
         return http.build();
     }
 }
