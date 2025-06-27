@@ -2,6 +2,7 @@ package com.swp08.dpss.dto.requests;
 
 import com.swp08.dpss.enums.SurveyStatus;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,5 +14,6 @@ public class UpdateSurveyRequest {
 
     private String description;
 
+    @NotNull
     private SurveyStatus status;
 }

@@ -111,13 +111,18 @@ public class SurveyController {
     }
 
     // ✅ Update survey
-    // ROLE: MANAGER, ADMIN (only when DRAFT)
-        @PutMapping("/{id}")
-        public ResponseEntity<SurveyDetailsDto> updateSurvey(
-                @PathVariable Long id,
-                @Valid @RequestBody UpdateSurveyRequest request) {
-            return ResponseEntity.ok(surveyService.updateSurvey(id, request));
-        }
+    // ROLE: MANAGER, ADMIN
+    // ✅ Update an existing survey (including status)
+    // ROLE: MANAGER, ADMIN
+    @PutMapping("/{id}")
+    public ResponseEntity<SurveyDetailsDto> updateSurvey(
+            @PathVariable Long id,
+            @Valid@RequestBody UpdateSurveyRequest request // or UpdateSurveyRequest if separate
+    ) {
+        SurveyDetailsDto updated = surveyService.updateSurvey(id, request);
+        return ResponseEntity.ok(updated);
+    }
+
 
 
     // ✅ Soft delete a survey
