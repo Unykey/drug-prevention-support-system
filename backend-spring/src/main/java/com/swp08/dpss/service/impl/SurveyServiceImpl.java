@@ -1,6 +1,7 @@
 package com.swp08.dpss.service.impl;
 
 import com.swp08.dpss.dto.requests.CreateSurveyRequest;
+import com.swp08.dpss.dto.requests.UpdateSurveyRequest;
 import com.swp08.dpss.dto.responses.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.entity.Survey;
@@ -102,5 +103,23 @@ public class SurveyServiceImpl implements SurveyService {
             throw new EntityNotFoundException("Survey Not Found with id " + id);
         }
         surveyRepository.deleteById(id);
+    }
+
+    @Transactional
+    @Override
+    public SurveyDetailsDto updateSurvey(Long id, UpdateSurveyRequest request) {
+        Survey survey = surveyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
+
+        // Only allow updates if status is DRAFT or PUBLISHED
+        if (survey.getStatus() == SurveyStatus.DELETED) {
+            throw new IllegalStateException("Cannot edit a deleted survey.");
+        }
+
+        survey.setName(request.getName());
+        survey.setDescription(request.getDescription());
+        survey.setStatus(request.getStatus());
+
+        return toDto(survey);
     }
 }
