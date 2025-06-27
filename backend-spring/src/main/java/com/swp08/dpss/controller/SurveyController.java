@@ -14,6 +14,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +36,7 @@ public class SurveyController {
     }
 
     // ✅ Create a new survey
+    // ROLE: MANAGER, ADMIN
     @PostMapping
     public ResponseEntity<SurveyDetailsDto> createSurvey(
             @Valid @RequestBody CreateSurveyRequest request) {
@@ -41,18 +44,19 @@ public class SurveyController {
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
-    // ✅ Get all surveys
-    // REST API endpoint để lấy tất cả các khảo sát từ hệ thống.
-    // Sử dụng phương thức HTTP GET tại đường dẫn "/api/surveys" (nếu lớp controller được gán @RequestMapping("/api/surveys"))
+    // ✅ Get published surveys (default for MEMBER)
+    // ROLE: MEMBER
     @GetMapping
     public ResponseEntity<List<SurveyDetailsDto>> getPublishedSurveys() {
         return ResponseEntity.ok(surveyService.getSurveysByStatus(SurveyStatus.PUBLISHED));
     }
 
-    //@PreAuthorize("hasAnyRole('ADMIN','MANAGER','STAFF')")
-    @GetMapping
+    // ✅ Get all surveys with optional status param
+    // ROLE: ADMIN, MANAGER, STAFF
+    @GetMapping("/all")
     public ResponseEntity<List<SurveyDetailsDto>> getAllSurveys(
-            @RequestParam(required = false) SurveyStatus status
+            @RequestParam(required = false) SurveyStatus status,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         if (status != null) {
             return ResponseEntity.ok(surveyService.getSurveysByStatus(status));
@@ -61,31 +65,35 @@ public class SurveyController {
     }
 
     // ✅ Get a single survey by ID
+    // ROLE: ALL ROLES, depending on visibility logic
     @GetMapping("/{id}")
     public ResponseEntity<SurveyDetailsDto> getSurveyById(@PathVariable Long id) {
         return ResponseEntity.ok(surveyService.getSurveyById(id));
     }
 
-    // ✅ Get all questions for a survey
+    // ✅ Get questions for a survey
+    // ROLE: ALL ROLES (visible filtered by role in service logic)
     @GetMapping("/{id}/questions")
     public ResponseEntity<List<SurveyQuestionDto>> getQuestionsBySurveyId(@PathVariable Long id) {
-        System.out.println("GET /api/surveys/" + id + "/questions called");
-
         return ResponseEntity.ok(surveyQuestionService.getQuestionsBySurveyId(id));
     }
 
-    // ✅ Get all answers submitted to a survey
+    // ✅ Get answers submitted to a survey
+    // ROLE: MEMBER (own answers), STAFF, MANAGER, ADMIN
     @GetMapping("/{id}/answers")
     public ResponseEntity<List<SurveyAnswerDto>> getAnswersBySurveyId(@PathVariable Long id) {
         return ResponseEntity.ok(surveyAnswerService.getAnswersBySurveyId(id));
     }
 
     // ✅ Search surveys by name
+    // ROLE: ALL
     @GetMapping("/search")
     public ResponseEntity<List<SurveyDetailsDto>> searchSurveys(@RequestParam String keyword) {
         return ResponseEntity.ok(surveyService.searchSurveysByName(keyword));
     }
 
+    // ✅ Add question to survey
+    // ROLE: MANAGER, ADMIN
     @PostMapping("/{id}/addquestion")
     public ResponseEntity<SurveyQuestionDto> addQuestionToSurvey(
             @RequestBody AddSurveyQuestionRequest questionDto, @PathVariable Long id) {
@@ -93,19 +101,24 @@ public class SurveyController {
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
 
+    // ✅ Submit answer
+    // ROLE: MEMBER
     @PostMapping("/{surveyId}/{questionId}/submitanswer")
     public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request, @PathVariable Long surveyId, @PathVariable Long questionId) {
         SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(surveyId, questionId, request);
         return new ResponseEntity<>(submitted, HttpStatus.CREATED);
     }
 
+    // ✅ Soft delete a survey
+    // ROLE: MANAGER, ADMIN
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> softDeleteSurvey(@PathVariable Long id) {
         surveyService.softDeleteSurveyById(id);
         return ResponseEntity.noContent().build();
     }
 
-    //@PreAuthorize("hasRole('ADMIN')")
+    // ✅ Hard delete a survey
+    // ROLE: ADMIN
     @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> hardDeleteSurvey(@PathVariable Long id) {
         surveyService.hardDeleteSurveyById(id);
