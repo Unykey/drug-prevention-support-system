@@ -4,6 +4,8 @@ import com.swp08.dpss.dto.requests.CreateSurveyRequest;
 import com.swp08.dpss.dto.responses.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.entity.Survey;
+import com.swp08.dpss.enums.SurveyAnswerStatus;
+import com.swp08.dpss.enums.SurveyQuestionStatus;
 import com.swp08.dpss.enums.SurveyStatus;
 import com.swp08.dpss.repository.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyService;
@@ -47,6 +49,12 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
+    public List<SurveyDetailsDto> getSurveysByStatus(SurveyStatus surveyStatus) {
+        List<Survey> surveys = surveyRepository.findByStatus(surveyStatus);
+        return surveys.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+    @Override
     public List<SurveyDetailsDto> searchSurveysByName(String name) {
         List<Survey> surveys = surveyRepository.findByNameContainingIgnoreCase(name);
         return surveys.stream()
@@ -83,8 +91,11 @@ public class SurveyServiceImpl implements SurveyService {
     public void softDeleteSurveyById(Long id) {
         Survey survey = surveyRepository.findById(id).orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
         survey.setStatus(SurveyStatus.DELETED);
+        survey.getQuestions().forEach(q -> q.setStatus(SurveyQuestionStatus.DELETED));
+        survey.getAnswers().forEach(a -> a.setStatus(SurveyAnswerStatus.DELETED));
     }
 
+    @Transactional
     @Override
     public void hardDeleteSurveyById(Long id) {
         if (!surveyRepository.existsById(id)) {

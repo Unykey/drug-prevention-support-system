@@ -4,7 +4,9 @@ import com.swp08.dpss.dto.requests.AddSurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.UpdateSurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
 import com.swp08.dpss.entity.Survey;
+import com.swp08.dpss.entity.SurveyAnswer;
 import com.swp08.dpss.entity.SurveyQuestion;
+import com.swp08.dpss.enums.SurveyAnswerStatus;
 import com.swp08.dpss.enums.SurveyQuestionStatus;
 import com.swp08.dpss.repository.SurveyQuestionRepository;
 import com.swp08.dpss.repository.SurveyRepository;
@@ -57,8 +59,18 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
     @Override
     public void hardDeleteSurveyQuestionById(Long surveyQuestionId) {
         SurveyQuestion question = questionRepository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found with id" + surveyQuestionId));
+        // Remove answers associated with the question
         if (question.getSurvey()!=null) question.getSurvey().removeQuestion(question);
-        questionRepository.deleteById(surveyQuestionId);
+        for (SurveyAnswer answer : question.getAnswers()) {
+            if (answer.getSurvey() != null) {
+                answer.getSurvey().removeAnswer(answer);
+            }
+            if (answer.getUser() != null) {
+                answer.getUser().removeAnswer(answer);
+            }
+        }
+        question.getAnswers().clear();
+        questionRepository.delete(question);
     }
 
     @Transactional
@@ -67,6 +79,9 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         SurveyQuestion question = questionRepository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found with id" + surveyQuestionId));
         if (question.getSurvey()!=null) question.getSurvey().removeQuestion(question);
         question.setStatus(SurveyQuestionStatus.DELETED);
+        for (SurveyAnswer answer : question.getAnswers()) {
+            answer.setStatus(SurveyAnswerStatus.DELETED);
+        }
     }
 
     @Transactional

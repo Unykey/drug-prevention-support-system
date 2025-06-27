@@ -76,8 +76,16 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     @Transactional
     @Override
     public void hardDeleteSurveyAnswer(Long id) {
-        if (!surveyAnswerRepository.existsById(id)) {
-            throw new EntityNotFoundException("Survey Answer Not Found with id " + id);
+        SurveyAnswer answer = surveyAnswerRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Survey Answer Not Found with id " + id));
+        if (answer.getSurvey() != null) {
+            answer.getSurvey().removeAnswer(answer);
+        }
+        if (answer.getQuestion() != null) {
+            answer.getQuestion().removeAnswer(answer);
+        }
+        if (answer.getUser() != null) {
+            answer.getUser().removeAnswer(answer);
         }
         surveyAnswerRepository.deleteById(id);
     }

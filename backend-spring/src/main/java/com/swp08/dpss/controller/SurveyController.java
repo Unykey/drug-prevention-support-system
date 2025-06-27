@@ -6,6 +6,7 @@ import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.SurveyAnswerDto;
 import com.swp08.dpss.dto.responses.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
+import com.swp08.dpss.enums.SurveyStatus;
 import com.swp08.dpss.service.interfaces.SurveyAnswerService;
 import com.swp08.dpss.service.interfaces.SurveyQuestionService;
 import com.swp08.dpss.service.interfaces.SurveyService;
@@ -44,7 +45,18 @@ public class SurveyController {
     // REST API endpoint để lấy tất cả các khảo sát từ hệ thống.
     // Sử dụng phương thức HTTP GET tại đường dẫn "/api/surveys" (nếu lớp controller được gán @RequestMapping("/api/surveys"))
     @GetMapping
-    public ResponseEntity<List<SurveyDetailsDto>> getAllSurveys() {
+    public ResponseEntity<List<SurveyDetailsDto>> getPublishedSurveys() {
+        return ResponseEntity.ok(surveyService.getSurveysByStatus(SurveyStatus.PUBLISHED));
+    }
+
+    //@PreAuthorize("hasAnyRole('ADMIN','MANAGER','STAFF')")
+    @GetMapping
+    public ResponseEntity<List<SurveyDetailsDto>> getAllSurveys(
+            @RequestParam(required = false) SurveyStatus status
+    ) {
+        if (status != null) {
+            return ResponseEntity.ok(surveyService.getSurveysByStatus(status));
+        }
         return ResponseEntity.ok(surveyService.getAllSurveys());
     }
 
