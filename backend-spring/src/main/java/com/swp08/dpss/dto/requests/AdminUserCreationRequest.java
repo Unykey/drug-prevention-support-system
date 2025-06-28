@@ -1,6 +1,8 @@
 package com.swp08.dpss.dto.requests;
 
 import com.swp08.dpss.enums.Genders;
+import com.swp08.dpss.enums.Roles;
+import com.swp08.dpss.enums.User_Status;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -20,7 +22,7 @@ public class AdminUserCreationRequest {
 
     @NotNull(message = "Role cannot be blank")
     @Pattern(regexp = "MEMBER|STAFF|CONSULTANT|MANAGER|ADMIN", message = "Invalid role")
-    private String role;
+    private Roles role;
 
     private Genders gender; // Default will be handled in service if null
 
@@ -38,7 +40,7 @@ public class AdminUserCreationRequest {
 
     @NotNull(message = "Status cannot be blank")
     @Pattern(regexp = "PENDING|VERIFIED|SUSPENDED|EXPIRED|LOCKED|BANNED|DELETED", message = "Invalid status")
-    private String status;
+    private User_Status status;
 
     //  Require 1 Guardian if user_age < 18
     @Valid
