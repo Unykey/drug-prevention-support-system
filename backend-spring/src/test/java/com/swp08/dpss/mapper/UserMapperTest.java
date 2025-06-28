@@ -1,5 +1,6 @@
 package com.swp08.dpss.mapper;
 
+import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
 import com.swp08.dpss.entity.Guardian;
@@ -61,6 +62,34 @@ public class UserMapperTest {
         assertEquals(User_Status.PENDING, user.getStatus());
         assertTrue(user.getGuardians().isEmpty()); // Guardians are not mapped to the User entity yet
     }
+
+    public void AdminTestToEntity() {
+        // Arrange
+        AdminUserCreationRequest request = new AdminUserCreationRequest();
+        request.setName("John Doe");
+        request.setEmail("john@example.com");
+        request.setPhone("123456789");
+        request.setPassword("test123");
+        request.setGender(Genders.MALE);
+        request.setDateOfBirth(LocalDate.of(2000, 1, 1));
+        request.setRole(Roles.ADMIN);
+        request.setStatus(User_Status.VERIFIED);
+
+        // Act
+        User user = userMapper.toEntity(request, passwordEncoder);
+
+        // Assert
+        assertEquals("John Doe", user.getName());
+        assertEquals("john@example.com", user.getEmail());
+        assertEquals("123456789", user.getPhone());
+        assertTrue(passwordEncoder.matches("test123", user.getPassword())); // Password is encoded
+        assertEquals(Genders.MALE, user.getGender());
+        assertEquals(LocalDate.of(2000, 1, 1), user.getDateOfBirth());
+        assertEquals(Roles.ADMIN, user.getRole());
+        assertEquals(User_Status.VERIFIED, user.getStatus());
+        assertTrue(user.getGuardians().isEmpty()); // Guardians are not mapped to the User entity yet
+    }
+
 
     @Test
     void testToResponse() {
