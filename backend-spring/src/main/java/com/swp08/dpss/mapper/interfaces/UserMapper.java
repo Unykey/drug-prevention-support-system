@@ -1,5 +1,6 @@
 package com.swp08.dpss.mapper.interfaces;
 
+import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
 import com.swp08.dpss.entity.User;
@@ -12,7 +13,6 @@ import org.mapstruct.Mapping;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
-//my generate impl not auto import class, it missing passwordEncoder now
 @Mapper(componentModel = "spring", config = CustomMapperConfig.class)
 public interface UserMapper {
     @Mapping(target = "password", expression = "java(passwordEncoder.encode(request.getPassword()))")
@@ -23,10 +23,11 @@ public interface UserMapper {
     @Mapping(target = "status", expression = "java(com.swp08.dpss.enums.User_Status.PENDING)")
     User toEntity(UserCreationRequest request, @Context PasswordEncoder passwordEncoder);
 
-    @Mapping(target = "userId", expression = "java(user.getId() == null ? null : user.getId())")
-    @Mapping(target = "name",expression = "java(user.getName())")
-    @Mapping(target = "email", expression = "java(user.getEmail())")
-    @Mapping(target = "phone", expression = "java(user.getPhone())")
+    @Mapping(target = "password", expression = "java(passwordEncoder.encode(request.getPassword()))")
+    @Mapping(target = "guardians", ignore = true) // Handled in service
+    User toEntity(AdminUserCreationRequest request, @Context PasswordEncoder passwordEncoder);
+
+    @Mapping(target = "userId", expression = "java(user.getId())")
     @Mapping(target = "guardianIds", expression = "java(user.getGuardians().stream().map(com.swp08.dpss.entity.Guardian::getGuardianId).collect(java.util.stream.Collectors.toList()))")
     UserResponse toResponse(User user);
 
