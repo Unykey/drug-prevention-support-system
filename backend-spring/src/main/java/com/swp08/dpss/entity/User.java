@@ -1,7 +1,6 @@
 package com.swp08.dpss.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import jakarta.persistence.*;
@@ -10,7 +9,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -45,6 +46,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<SurveyAnswer> answers = new ArrayList<>();
+
     @JsonBackReference // This side will NOT be serialized when serializing a Parent that contains this User
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -65,4 +69,13 @@ public class User {
         parent.getUser().remove(this); // Maintain bidirectional consistency
     }
 
+    public void removeAnswer(SurveyAnswer answer) {
+        answers.remove(answer);
+        answer.setUser(null);
+    }
+
+    public void addAnswer(SurveyAnswer answer) {
+        answers.add(answer);
+        answer.setUser(this);
+    }
 }
