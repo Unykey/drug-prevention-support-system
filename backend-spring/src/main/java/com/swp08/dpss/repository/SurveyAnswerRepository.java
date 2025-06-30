@@ -1,6 +1,6 @@
 package com.swp08.dpss.repository;
 
-import com.swp08.dpss.entity.SurveyAnswer;
+import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.enums.SurveyAnswerStatus;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

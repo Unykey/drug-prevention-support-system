@@ -4,7 +4,7 @@ import com.swp08.dpss.dto.requests.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.UpdateSurveyRequest;
 import com.swp08.dpss.dto.responses.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.SurveyQuestionDto;
-import com.swp08.dpss.entity.Survey;
+import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.SurveyAnswerStatus;
 import com.swp08.dpss.enums.SurveyQuestionStatus;
 import com.swp08.dpss.enums.SurveyStatus;

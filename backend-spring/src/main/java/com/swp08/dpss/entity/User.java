@@ -1,6 +1,7 @@
 package com.swp08.dpss.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import jakarta.persistence.*;
