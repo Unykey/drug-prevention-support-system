@@ -1,4 +1,4 @@
-package com.swp08.dpss.entity;
+package com.swp08.dpss.entity.survey;
 
 import com.swp08.dpss.enums.SurveyQuestionStatus;
 import jakarta.persistence.*;
