@@ -1,9 +1,15 @@
 package com.swp08.dpss.dto.requests;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+//@Data
+@Getter
+@AllArgsConstructor
 public class AuthRequest {
-    private String email;
-    private String password;
+    private final String email;
+    private final String password;
+
+
 }

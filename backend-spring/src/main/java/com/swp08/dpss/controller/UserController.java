@@ -1,21 +1,18 @@
 package com.swp08.dpss.controller;
 
-import com.swp08.dpss.dto.requests.UserCreationRequest;
+import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
 import com.swp08.dpss.entity.User;
-import com.swp08.dpss.mapper.UserMapper;
-import com.swp08.dpss.service.impls.UserServiceImpl;
+import com.swp08.dpss.mapper.interfaces.UserMapper;
 import com.swp08.dpss.service.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user") // Base path for all user-related operations
@@ -26,15 +23,19 @@ public class UserController {
 
     private final UserMapper userMapper;
 
+//    private final UserMapper userMapper;
+
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUser() {
         return ResponseEntity.ok().body(userService.findAll());
     }
 
     @PostMapping("/create-user")
-    public ResponseEntity<UserResponse> createNewUser(@Valid @RequestBody User user) {
+    public ResponseEntity<UserResponse> createNewUser(@Valid @RequestBody AdminUserCreationRequest user) {
         User newUser = userService.createNewUser(user);
-        return ResponseEntity.ok().body(userMapper.userToUserResponse(newUser));
+        // Convert the new User to a UserResponse object and return it to the client
+        UserResponse userResponse = userMapper.toResponse(newUser);
+        return ResponseEntity.ok().body(userResponse);
     }
 
     // Endpoint to get a user by email
