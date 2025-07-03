@@ -33,7 +33,7 @@ public class CourseLesson {
     @Column (name = "Order", nullable = false)
     private int orderIndex;
 
-    @OneToOne
+    @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "courseLesson")
     @Column (name = "SurveyId")
     private Survey survey; // optional
 

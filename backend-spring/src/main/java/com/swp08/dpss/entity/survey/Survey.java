@@ -1,5 +1,6 @@
 package com.swp08.dpss.entity.survey;
 
+import com.swp08.dpss.entity.course.CourseLesson;
 import com.swp08.dpss.enums.SurveyStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -35,6 +36,9 @@ public class Survey {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
     private List<SurveyAnswer> answers = new ArrayList<SurveyAnswer>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
+    private CourseLesson courseLesson =  new CourseLesson();
 
     public void addQuestion(SurveyQuestion question) {
         questions.add(question);
