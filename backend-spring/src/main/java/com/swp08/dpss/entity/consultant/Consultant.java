@@ -1,5 +1,6 @@
 package com.swp08.dpss.entity.consultant;
 
+import com.swp08.dpss.entity.User;
 import jakarta.persistence.*;
 
 import java.util.Set;
@@ -11,7 +12,9 @@ public class Consultant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long consultantId;
 
-    private String consultantName;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @OneToMany(mappedBy = "consultant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Qualification> qualificationSet;
@@ -28,4 +31,6 @@ public class Consultant {
     private Set<Availability> timeSlots;
 
     private String bio;
+
+    private String profilePicture;
 }

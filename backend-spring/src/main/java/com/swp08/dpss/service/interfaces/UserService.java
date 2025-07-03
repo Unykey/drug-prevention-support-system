@@ -1,5 +1,7 @@
 package com.swp08.dpss.service.interfaces;
 
+import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
+import com.swp08.dpss.dto.responses.UserResponse;
 import com.swp08.dpss.entity.User;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
 
@@ -7,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    List<User> findAll();
+    List<UserResponse> findAll();
 
     Optional<User> findByEmail(String email);
 
@@ -19,6 +21,6 @@ public interface UserService {
     User register(UserCreationRequest user);
 
     // Admin-Created Accounts
-    User createNewUser(User user);
+    User createNewUser(AdminUserCreationRequest user);
 
 }
