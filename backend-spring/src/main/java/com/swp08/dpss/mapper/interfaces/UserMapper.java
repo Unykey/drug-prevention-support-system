@@ -24,6 +24,8 @@ public interface UserMapper {
     User toEntity(UserCreationRequest request, @Context PasswordEncoder passwordEncoder);
 
     @Mapping(target = "password", expression = "java(passwordEncoder.encode(request.getPassword()))")
+    @Mapping(target = "gender", expression = "java(request.getGender() == null ? com.swp08.dpss.enums.Genders.PREFER_NOT_TO_SAY : request.getGender())")
+    @Mapping(target = "status", expression = "java(request.getStatus() == null ? com.swp08.dpss.enums.User_Status.VERIFIED : request.getStatus())")
     @Mapping(target = "guardians", ignore = true) // Handled in service
     User toEntity(AdminUserCreationRequest request, @Context PasswordEncoder passwordEncoder);
 
