@@ -1,6 +1,7 @@
 package com.swp08.dpss.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.swp08.dpss.entity.course.CourseEnrollment;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
@@ -50,6 +51,9 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private List<SurveyAnswer> answers = new ArrayList<>();
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<CourseEnrollment> courseEnrollments = new ArrayList<>();
+
     @JsonBackReference // This side will NOT be serialized when serializing a Parent that contains this User
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
@@ -78,5 +82,15 @@ public class User {
     public void addAnswer(SurveyAnswer answer) {
         answers.add(answer);
         answer.setUser(this);
+    }
+
+    public void addCourseEnrollment(CourseEnrollment courseEnrollment) {
+        courseEnrollments.add(courseEnrollment);
+        courseEnrollment.setUser(this);
+    }
+
+    public void removeCourseEnrollment(CourseEnrollment courseEnrollment) {
+        courseEnrollments.remove(courseEnrollment);
+        courseEnrollment.setUser(null);
     }
 }
