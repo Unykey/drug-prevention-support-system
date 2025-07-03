@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.dpss</groupId>
     <artifactId>drug-prevention-support-system</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.5-AFTERMERGE</version>
     <name>drug-prevention-support-system</name>
     <description>Support drug use prevention in the community</description>
     <url/>
@@ -132,6 +132,8 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
         </dependency>
+
+
     </dependencies>
 
     <build>
