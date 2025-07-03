@@ -1,5 +1,6 @@
 package com.swp08.dpss.service.interfaces;
 
+import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
 import com.swp08.dpss.entity.User;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
@@ -20,6 +21,6 @@ public interface UserService {
     User register(UserCreationRequest user);
 
     // Admin-Created Accounts
-    User createNewUser(User user);
+    User createNewUser(AdminUserCreationRequest user);
 
 }
