@@ -1,4 +1,4 @@
-package com.dpss.drug_prevention_support_system;
+package com.swp08.dpss;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
