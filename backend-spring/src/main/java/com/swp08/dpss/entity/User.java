@@ -1,5 +1,8 @@
 package com.swp08.dpss.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.swp08.dpss.entity.course.CourseEnrollment;
+import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import com.swp08.dpss.enums.User_Status;
@@ -10,7 +13,9 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "app_user")
@@ -26,7 +31,7 @@ public class User {
     private String name;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String password;
+    private String password; // In a real app, this MUST be hashed
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -44,6 +49,13 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<SurveyAnswer> answers = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<CourseEnrollment> courseEnrollments = new ArrayList<>();
+
+    @JsonBackReference // This side will NOT be serialized when serializing a Parent that contains this User
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private User_Status status;
@@ -65,5 +77,25 @@ public class User {
     public void removeGuardian(Guardian guardian){
         this.guardians.remove(guardian);
         guardian.getUser().remove(this); // Maintain bidirectional consistency
+    }
+
+    public void removeAnswer(SurveyAnswer answer) {
+        answers.remove(answer);
+        answer.setUser(null);
+    }
+
+    public void addAnswer(SurveyAnswer answer) {
+        answers.add(answer);
+        answer.setUser(this);
+    }
+
+    public void addCourseEnrollment(CourseEnrollment courseEnrollment) {
+        courseEnrollments.add(courseEnrollment);
+        courseEnrollment.setUser(this);
+    }
+
+    public void removeCourseEnrollment(CourseEnrollment courseEnrollment) {
+        courseEnrollments.remove(courseEnrollment);
+        courseEnrollment.setUser(null);
     }
 }
