@@ -34,7 +34,6 @@ public class CourseLesson {
     private int orderIndex;
 
     @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "courseLesson")
-    @Column (name = "SurveyId")
     private Survey survey; // optional
 
     public CourseLesson(String title, String type, String content, Course course, int orderIndex) {

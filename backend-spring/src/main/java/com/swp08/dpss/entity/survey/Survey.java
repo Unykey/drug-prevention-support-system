@@ -37,8 +37,9 @@ public class Survey {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
     private List<SurveyAnswer> answers = new ArrayList<SurveyAnswer>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
-    private CourseLesson courseLesson =  new CourseLesson();
+    @OneToOne
+    @JoinColumn (name = "CourseLesson")
+    private CourseLesson courseLesson;
 
     public void addQuestion(SurveyQuestion question) {
         questions.add(question);

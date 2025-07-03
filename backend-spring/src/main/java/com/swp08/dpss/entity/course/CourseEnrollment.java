@@ -32,7 +32,6 @@ public class CourseEnrollment {
     private LocalDateTime enrolledAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "enrollment", cascade = CascadeType.ALL)
-    @Column (name = "Progress")
     private List<LessonProgress> progress = new ArrayList<>();
 
     public void addProgress(LessonProgress progress) {
