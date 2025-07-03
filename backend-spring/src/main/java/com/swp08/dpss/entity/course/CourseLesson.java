@@ -30,7 +30,7 @@ public class CourseLesson {
     @JoinColumn (name = "CourseId")
     private Course course;
 
-    @Column (name = "Order", nullable = false)
+    @Column (name = "OrderIndex", nullable = false)
     private int orderIndex;
 
     @OneToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "courseLesson")
