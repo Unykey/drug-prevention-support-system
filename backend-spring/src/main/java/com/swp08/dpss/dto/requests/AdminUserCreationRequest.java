@@ -6,12 +6,14 @@ import com.swp08.dpss.enums.User_Status;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class AdminUserCreationRequest {
     @NotBlank(message = "Name cannot be blank")
     private String name;

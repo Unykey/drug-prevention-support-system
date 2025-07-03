@@ -11,6 +11,4 @@ public interface GuardianRepository extends JpaRepository<Guardian,Long> {
     Optional<Guardian> findByGuardianEmail(String email);
 
     Optional<Guardian> findByGuardianId(Long id);
-
-//    void deleteParentById(Long Id);
 }

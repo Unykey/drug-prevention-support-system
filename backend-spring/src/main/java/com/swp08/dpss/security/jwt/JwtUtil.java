@@ -25,6 +25,7 @@ public class JwtUtil {
                 .subject(userDetails.getUsername())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+//                .expiration(new Date(System.currentTimeMillis() + 1000 * 10)) // 10 seconds for test
                 .signWith(key, SignatureAlgorithm.HS256) // 512 bits = 64 bytes for HS512
                 .compact();
     }
