@@ -1,7 +1,7 @@
 package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.BulkSubmitSurveyAnswerRequest;
-import com.swp08.dpss.service.interfaces.SurveyAnswerService;
+import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

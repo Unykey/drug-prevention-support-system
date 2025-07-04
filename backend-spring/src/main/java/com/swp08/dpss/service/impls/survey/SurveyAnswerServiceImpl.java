@@ -1,4 +1,4 @@
-package com.swp08.dpss.service.impls;
+package com.swp08.dpss.service.impls.survey;
 
 import com.swp08.dpss.dto.requests.BulkSubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;
@@ -12,7 +12,7 @@ import com.swp08.dpss.repository.survey.SurveyAnswerRepository;
 import com.swp08.dpss.repository.survey.SurveyQuestionRepository;
 import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.repository.UserRepository;
-import com.swp08.dpss.service.interfaces.SurveyAnswerService;
+import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

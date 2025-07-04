@@ -1,4 +1,4 @@
-package com.swp08.dpss.service.interfaces;
+package com.swp08.dpss.service.interfaces.survey;
 
 import com.swp08.dpss.dto.requests.BulkSubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;

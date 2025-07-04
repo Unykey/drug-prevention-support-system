@@ -1,4 +1,4 @@
-package com.swp08.dpss.service.impls;
+package com.swp08.dpss.service.impls.survey;
 
 import com.swp08.dpss.dto.requests.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.UpdateSurveyRequest;
@@ -9,7 +9,7 @@ import com.swp08.dpss.enums.SurveyAnswerStatus;
 import com.swp08.dpss.enums.SurveyQuestionStatus;
 import com.swp08.dpss.enums.SurveyStatus;
 import com.swp08.dpss.repository.survey.SurveyRepository;
-import com.swp08.dpss.service.interfaces.SurveyService;
+import com.swp08.dpss.service.interfaces.survey.SurveyService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
