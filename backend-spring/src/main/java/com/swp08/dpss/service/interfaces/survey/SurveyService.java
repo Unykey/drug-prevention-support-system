@@ -1,8 +1,8 @@
 package com.swp08.dpss.service.interfaces.survey;
 
-import com.swp08.dpss.dto.requests.CreateSurveyRequest;
-import com.swp08.dpss.dto.requests.UpdateSurveyRequest;
-import com.swp08.dpss.dto.responses.SurveyDetailsDto;
+import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
+import com.swp08.dpss.dto.requests.survey.UpdateSurveyRequest;
+import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.enums.SurveyStatus;
 
 import java.util.List;

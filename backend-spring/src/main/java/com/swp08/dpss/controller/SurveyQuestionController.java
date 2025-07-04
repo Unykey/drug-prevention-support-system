@@ -1,7 +1,7 @@
 package com.swp08.dpss.controller;
 
-import com.swp08.dpss.dto.requests.UpdateSurveyQuestionRequest;
-import com.swp08.dpss.dto.responses.SurveyQuestionDto;
+import com.swp08.dpss.dto.requests.survey.UpdateSurveyQuestionRequest;
+import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

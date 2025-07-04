@@ -1,4 +1,4 @@
-package com.swp08.dpss.dto.requests;
+package com.swp08.dpss.dto.requests.survey;
 
 import com.swp08.dpss.enums.SurveyStatus;
 import jakarta.validation.constraints.NotBlank;

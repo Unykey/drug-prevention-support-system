@@ -1,12 +1,12 @@
 package com.swp08.dpss.controller;
 
-import com.swp08.dpss.dto.requests.AddSurveyQuestionRequest;
-import com.swp08.dpss.dto.requests.CreateSurveyRequest;
-import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;
-import com.swp08.dpss.dto.requests.UpdateSurveyRequest;
-import com.swp08.dpss.dto.responses.SurveyAnswerDto;
-import com.swp08.dpss.dto.responses.SurveyDetailsDto;
-import com.swp08.dpss.dto.responses.SurveyQuestionDto;
+import com.swp08.dpss.dto.requests.survey.AddSurveyQuestionRequest;
+import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
+import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
+import com.swp08.dpss.dto.requests.survey.UpdateSurveyRequest;
+import com.swp08.dpss.dto.responses.survey.SurveyAnswerDto;
+import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
+import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.enums.SurveyStatus;
 import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;

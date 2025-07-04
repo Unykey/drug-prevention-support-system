@@ -1,8 +1,8 @@
 package com.swp08.dpss.service.interfaces.survey;
 
 import com.swp08.dpss.dto.requests.BulkSubmitSurveyAnswerRequest;
-import com.swp08.dpss.dto.requests.SubmitSurveyAnswerRequest;
-import com.swp08.dpss.dto.responses.SurveyAnswerDto;
+import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
+import com.swp08.dpss.dto.responses.survey.SurveyAnswerDto;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.swp08.dpss.dto.requests;
+package com.swp08.dpss.dto.requests.survey;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
