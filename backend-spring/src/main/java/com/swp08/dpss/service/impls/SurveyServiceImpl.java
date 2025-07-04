@@ -8,7 +8,7 @@ import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.SurveyAnswerStatus;
 import com.swp08.dpss.enums.SurveyQuestionStatus;
 import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.repository.SurveyRepository;
+import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.service.interfaces.SurveyService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.swp08.dpss.repository;
+package com.swp08.dpss.repository.survey;
 
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.SurveyStatus;
