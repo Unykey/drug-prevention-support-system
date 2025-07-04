@@ -30,7 +30,7 @@ public interface UserMapper {
     User toEntity(AdminUserCreationRequest request, @Context PasswordEncoder passwordEncoder);
 
     @Mapping(target = "userId", expression = "java(user.getId())")
-    @Mapping(target = "guardianIds", expression = "java(user.getGuardians().stream().map(com.swp08.dpss.entity.Guardian::getGuardianId).collect(java.util.stream.Collectors.toList()))")
+    @Mapping(target = "guardianIds", expression = "java(user.getGuardians().stream().map(com.swp08.dpss.entity.client.Guardian::getGuardianId).collect(java.util.stream.Collectors.toList()))")
     UserResponse toResponse(User user);
 
     List<UserResponse> toUserResponseList(List<User> userList);
