@@ -50,7 +50,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponse> getAllPosts() {
-        return postRepository.findByStatusNot(PostStatus.DELETED)
+        return postRepository.findByStatusIsNot(PostStatus.DELETED)
                 .stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
