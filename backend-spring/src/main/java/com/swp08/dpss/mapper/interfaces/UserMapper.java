@@ -13,7 +13,7 @@ import org.mapstruct.Mapping;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
-@Mapper(componentModel = "spring", config = CustomMapperConfig.class)
+@Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "password", expression = "java(passwordEncoder.encode(request.getPassword()))")
     @Mapping(target = "gender", expression = "java(request.getGender() == null ? Genders.PREFER_NOT_TO_SAY : request.getGender())")
