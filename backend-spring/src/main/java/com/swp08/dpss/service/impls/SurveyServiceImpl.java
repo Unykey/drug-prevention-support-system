@@ -51,7 +51,7 @@ public class SurveyServiceImpl implements SurveyService {
 
     @Override
     public List<SurveyDetailsDto> getSurveysByStatus(SurveyStatus surveyStatus) {
-        List<Survey> surveys = surveyRepository.findByStatus(surveyStatus);
+        List<Survey> surveys = surveyRepository.findAllByStatus(surveyStatus);
         return surveys.stream().map(this::toDto).collect(Collectors.toList());
     }
 

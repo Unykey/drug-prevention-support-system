@@ -42,7 +42,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
     @Override
     public List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId).orElseThrow(()-> new EntityNotFoundException("Survey Not Found"));
-        List<SurveyQuestion> questions = questionRepository.findBySurvey(survey);
+        List<SurveyQuestion> questions = survey.getQuestions();
 
         return questions.stream().map(q -> {
             SurveyQuestionDto dto = new SurveyQuestionDto();
@@ -66,7 +66,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
                 answer.getSurvey().removeAnswer(answer);
             }
             if (answer.getUser() != null) {
-                answer.getUser().removeAnswer(answer);
+                //answer.getUser().removeAnswer(answer);
             }
         }
         question.getAnswers().clear();
