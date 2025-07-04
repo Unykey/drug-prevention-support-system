@@ -1,4 +1,4 @@
-package com.swp08.dpss.entity;
+package com.swp08.dpss.entity.client;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.swp08.dpss.entity.course.CourseEnrollment;
