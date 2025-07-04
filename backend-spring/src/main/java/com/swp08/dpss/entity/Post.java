@@ -1,5 +1,6 @@
 package com.swp08.dpss.entity;
 
+import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.enums.PostStatus;
 import jakarta.persistence.*;
 import lombok.Getter;

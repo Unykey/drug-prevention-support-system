@@ -3,7 +3,7 @@ package com.swp08.dpss.service.impls;
 import com.swp08.dpss.dto.requests.PostRequest;
 import com.swp08.dpss.dto.responses.PostResponse;
 import com.swp08.dpss.entity.Post;
-import com.swp08.dpss.entity.User;
+import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.enums.PostStatus;
 import com.swp08.dpss.repository.PostRepository;
 import com.swp08.dpss.repository.UserRepository;

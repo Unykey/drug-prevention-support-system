@@ -1,7 +1,7 @@
 package com.swp08.dpss.service.impls;
 
 import com.swp08.dpss.dto.requests.LoginRequest;
-import com.swp08.dpss.entity.User;
+import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.LoginService;
 import lombok.RequiredArgsConstructor;

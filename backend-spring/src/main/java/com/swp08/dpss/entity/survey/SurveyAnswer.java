@@ -1,6 +1,6 @@
 package com.swp08.dpss.entity.survey;
 
-import com.swp08.dpss.entity.User;
+import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.enums.SurveyAnswerStatus;
 import jakarta.persistence.*;
 import lombok.Getter;

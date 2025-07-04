@@ -6,7 +6,7 @@ import com.swp08.dpss.dto.responses.SurveyAnswerDto;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.entity.survey.SurveyQuestion;
-import com.swp08.dpss.entity.User;
+import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.enums.SurveyAnswerStatus;
 import com.swp08.dpss.repository.SurveyAnswerRepository;
 import com.swp08.dpss.repository.SurveyQuestionRepository;

@@ -2,7 +2,7 @@ package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
-import com.swp08.dpss.entity.User;
+import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.mapper.interfaces.UserMapper;
 import com.swp08.dpss.service.interfaces.UserService;
 import jakarta.validation.Valid;

@@ -3,7 +3,7 @@ package com.swp08.dpss.mapper.interfaces;
 import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
-import com.swp08.dpss.entity.User;
+import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.User_Status;
 import com.swp08.dpss.enums.Roles;
