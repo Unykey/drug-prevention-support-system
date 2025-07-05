@@ -6,9 +6,7 @@ import com.swp08.dpss.entity.client.Guardian;
 import com.swp08.dpss.service.interfaces.GuardianService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +25,7 @@ public class GuardianController {
     }
 
     @PostMapping
+//    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<GuardianResponse> createNewGuardian(@Valid @RequestBody GuardianCreationRequest guardian, Authentication authentication) {
         String email = authentication.getName();
         GuardianResponse response = guardianService.addNewGuardian(guardian, email);
@@ -34,4 +33,8 @@ public class GuardianController {
     }
 
 //    @PreAuthorize("hasRole('ADMIN')")
+//    public ResponseEntity createNewGuardian(@Valid @RequestBody GuardianCreationRequest guardian) {
+//        Guardian newGuardian1 = new Guardian();
+//        return ResponseEntity.ok().body(newGuardian1);
+//    }
 }
