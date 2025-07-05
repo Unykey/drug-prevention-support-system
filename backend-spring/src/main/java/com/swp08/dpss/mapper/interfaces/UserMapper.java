@@ -4,9 +4,6 @@ import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
 import com.swp08.dpss.entity.client.User;
-import com.swp08.dpss.enums.Genders;
-import com.swp08.dpss.enums.User_Status;
-import com.swp08.dpss.enums.Roles;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -21,6 +18,8 @@ public interface UserMapper {
     @Mapping(target = "guardians", ignore = true) // Handled in service
     @Mapping(target = "role", expression = "java(com.swp08.dpss.enums.Roles.MEMBER)")
     @Mapping(target = "status", expression = "java(com.swp08.dpss.enums.User_Status.PENDING)")
+    @Mapping(target = "answers" , expression = "java(java.util.Collections.emptyList())")
+    @Mapping(target = "courseEnrollments" , expression = "java(java.util.Collections.emptyList())")
     User toEntity(UserCreationRequest request, @Context PasswordEncoder passwordEncoder);
 
     @Mapping(target = "password", expression = "java(passwordEncoder.encode(request.getPassword()))")
