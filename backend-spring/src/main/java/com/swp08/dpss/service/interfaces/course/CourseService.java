@@ -1,5 +1,6 @@
 package com.swp08.dpss.service.interfaces.course;
 
+import com.swp08.dpss.dto.requests.CourseRequest;
 import com.swp08.dpss.entity.course.Course;
 import com.swp08.dpss.entity.course.CourseEnrollment;
 import com.swp08.dpss.entity.course.CourseLesson;
@@ -8,9 +9,7 @@ import com.swp08.dpss.entity.course.LessonProgress;
 import java.util.List;
 
 public interface CourseService {
-    List<Course> findAll();
-
-    Course createCourse(Course course);
+    Course createCourse(CourseRequest request);
 
     List<Course> getAllCourses();
 
@@ -18,7 +17,9 @@ public interface CourseService {
 
     Course updateCourse(Long id, Course updated);
 
-    void deleteCourse(Long id);
+    void softDeleteCourse(Long id);
+
+    void hardDeleteCourse(Long id);
 
     CourseLesson addLessonToCourse(Long courseId, CourseLesson lesson);
 

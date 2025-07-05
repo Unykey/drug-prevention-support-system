@@ -1,5 +1,6 @@
 package com.swp08.dpss.controller;
 
+import com.swp08.dpss.dto.requests.CourseRequest;
 import com.swp08.dpss.entity.Post;
 import com.swp08.dpss.entity.course.Course;
 import com.swp08.dpss.entity.course.CourseEnrollment;
@@ -25,8 +26,8 @@ public class CourseController {
 
     // CRUD for Course
     @PostMapping
-    public ResponseEntity<Course> createCourse(@RequestBody Course course) {
-        return ResponseEntity.ok(courseService.createCourse(course));
+    public ResponseEntity<Course> createCourse(@RequestBody CourseRequest request) {
+        return ResponseEntity.ok(courseService.createCourse(request));
     }
 
     @GetMapping
@@ -45,8 +46,14 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
+    public ResponseEntity<Void> softDeleteCourse(@PathVariable Long id) {
+        courseService.softDeleteCourse(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
-        courseService.deleteCourse(id);
+        courseService.hardDeleteCourse(id);
         return ResponseEntity.noContent().build();
     }
 
