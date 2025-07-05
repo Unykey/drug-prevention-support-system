@@ -47,17 +47,12 @@ public class User {
     @Column(nullable = false, unique = true)
     private String phone;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<SurveyAnswer> answers = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<CourseEnrollment> courseEnrollments = new ArrayList<>();
-
     @JsonBackReference // This side will NOT be serialized when serializing a Parent that contains this User
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private User_Status status;
 
+    // Guardian
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_guardian", // name of join table between user and Guardian
@@ -65,6 +60,14 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "guardian_id") // FK column in join table referencing Guardian
     )
     private List<Guardian> guardians = new ArrayList<>();
+
+    // Survey Answers
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<SurveyAnswer> answers = new ArrayList<>();
+
+    // Course Enrollments
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<CourseEnrollment> courseEnrollments = new ArrayList<>();
 
     // Methods for managing the relationship
     public void addGuardian(Guardian guardian){
