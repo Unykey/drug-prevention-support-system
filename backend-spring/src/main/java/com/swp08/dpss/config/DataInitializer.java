@@ -3,16 +3,13 @@ package com.swp08.dpss.config;
 import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.GuardianCreationRequest;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
-import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import com.swp08.dpss.enums.User_Status;
-import com.swp08.dpss.service.interfaces.GuardianService;
 import com.swp08.dpss.service.interfaces.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -22,13 +19,9 @@ import java.time.LocalDate;
 @Profile("dev")
 public class DataInitializer implements CommandLineRunner {
     private final UserService userService;
-    private final GuardianService guardianService;
-//    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
-//        User member = new User(1, "Sammy Cudde", passwordEncoder.encode("yN6/f=wX"), Roles.MEMBER, Genders.MALE, LocalDate.of(1999, 1, 4), "scudde0@ifeng.com", "0934567890", User_Status.PENDING, null);
-
         // Guest Self-Registration
         // No Guardian
         UserCreationRequest member1 = new UserCreationRequest();
