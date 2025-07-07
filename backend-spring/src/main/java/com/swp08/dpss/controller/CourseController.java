@@ -2,6 +2,8 @@ package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.course.CourseLessonRequest;
 import com.swp08.dpss.dto.requests.course.CourseRequest;
+import com.swp08.dpss.dto.requests.course.LessonProgressRequest;
+import com.swp08.dpss.dto.responses.course.*;
 import com.swp08.dpss.entity.course.Course;
 import com.swp08.dpss.entity.course.CourseEnrollment;
 import com.swp08.dpss.entity.course.CourseLesson;
@@ -17,14 +19,14 @@ import java.util.List;
 @RequestMapping("api/courses")
 public class CourseController {
 
-    CourseService courseService;
+    private final CourseService courseService;
 
     @Autowired
     public CourseController(CourseService courseService) {
         this.courseService = courseService;
     }
 
-    // CRUD for Course
+    // --- Course ---
     @PostMapping
     public ResponseEntity<Course> createCourse(@RequestBody CourseRequest request) {
         return ResponseEntity.ok(courseService.createCourse(request));
@@ -52,15 +54,15 @@ public class CourseController {
     }
 
     @DeleteMapping("/admin/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
+    public ResponseEntity<Void> hardDeleteCourse(@PathVariable Long id) {
         courseService.hardDeleteCourse(id);
         return ResponseEntity.noContent().build();
     }
 
-    // CRUD for CourseLesson
+    // --- Lesson ---
     @PostMapping("/{courseId}/lessons")
-    public ResponseEntity<CourseLesson> addLesson(@PathVariable Long courseId, @RequestBody CourseLessonRequest lesson) {
-        return ResponseEntity.ok(courseService.addLessonToCourse(courseId, lesson));
+    public ResponseEntity<CourseLessonResponse> addLesson(@PathVariable Long courseId, @RequestBody CourseLessonRequest request) {
+        return ResponseEntity.ok(courseService.addLessonToCourse(courseId, request));
     }
 
     @GetMapping("/{courseId}/lessons")
@@ -69,8 +71,8 @@ public class CourseController {
     }
 
     @PutMapping("/lessons/{lessonId}")
-    public ResponseEntity<CourseLesson> updateLesson(@PathVariable Long lessonId, @RequestBody CourseLessonRequest updated) {
-        return ResponseEntity.ok(courseService.updateLesson(lessonId, updated));
+    public ResponseEntity<CourseLessonResponse> updateLesson(@PathVariable Long lessonId, @RequestBody CourseLessonRequest request) {
+        return ResponseEntity.ok(courseService.updateLesson(lessonId, request));
     }
 
     @DeleteMapping("/lessons/{lessonId}")
@@ -79,9 +81,9 @@ public class CourseController {
         return ResponseEntity.noContent().build();
     }
 
-    // CRUD for CourseEnrollment
+    // --- Enrollment ---
     @PostMapping("/{courseId}/enroll")
-    public ResponseEntity<CourseEnrollment> enrollUser(@PathVariable Long courseId, @RequestParam Long userId) {
+    public ResponseEntity<CourseEnrollmentResponse> enrollUser(@PathVariable Long courseId, @RequestParam Long userId) {
         return ResponseEntity.ok(courseService.enrollUser(courseId, userId));
     }
 
@@ -90,20 +92,19 @@ public class CourseController {
         return ResponseEntity.ok(courseService.getEnrollmentsByCourse(courseId));
     }
 
-    // CRUD for LessonProgress
+    // --- Progress ---
     @PostMapping("/progress")
-    public ResponseEntity<LessonProgress> addProgress(@RequestBody LessonProgress progress) {
-        return ResponseEntity.ok(courseService.addLessonProgress(progress));
+    public ResponseEntity<LessonProgressResponse> addProgress(@RequestBody LessonProgressRequest request) {
+        return ResponseEntity.ok(courseService.addLessonProgress(request));
     }
 
     @PutMapping("/progress/{progressId}")
-    public ResponseEntity<LessonProgress> updateProgress(@PathVariable Long progressId, @RequestBody LessonProgress progress) {
-        return ResponseEntity.ok(courseService.updateLessonProgress(progressId, progress));
+    public ResponseEntity<LessonProgressResponse> updateProgress(@PathVariable Long progressId, @RequestBody LessonProgressRequest request) {
+        return ResponseEntity.ok(courseService.updateLessonProgress(progressId, request));
     }
 
     @GetMapping("/progress/{enrollmentId}")
     public ResponseEntity<List<LessonProgress>> getProgressByEnrollment(@PathVariable Long enrollmentId) {
         return ResponseEntity.ok(courseService.getProgressByEnrollment(enrollmentId));
     }
-
 }
