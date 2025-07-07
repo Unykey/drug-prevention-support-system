@@ -21,7 +21,7 @@ public class LessonProgress {
     @JoinColumn (name = "Enrollment")
     private CourseEnrollment enrollment;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn (name = "Lesson")
     private CourseLesson lesson;
 

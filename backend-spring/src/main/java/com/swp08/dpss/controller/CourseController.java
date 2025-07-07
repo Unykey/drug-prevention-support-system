@@ -1,7 +1,7 @@
 package com.swp08.dpss.controller;
 
-import com.swp08.dpss.dto.requests.CourseRequest;
-import com.swp08.dpss.entity.Post;
+import com.swp08.dpss.dto.requests.course.CourseLessonRequest;
+import com.swp08.dpss.dto.requests.course.CourseRequest;
 import com.swp08.dpss.entity.course.Course;
 import com.swp08.dpss.entity.course.CourseEnrollment;
 import com.swp08.dpss.entity.course.CourseLesson;
@@ -59,7 +59,7 @@ public class CourseController {
 
     // CRUD for CourseLesson
     @PostMapping("/{courseId}/lessons")
-    public ResponseEntity<CourseLesson> addLesson(@PathVariable Long courseId, @RequestBody CourseLesson lesson) {
+    public ResponseEntity<CourseLesson> addLesson(@PathVariable Long courseId, @RequestBody CourseLessonRequest lesson) {
         return ResponseEntity.ok(courseService.addLessonToCourse(courseId, lesson));
     }
 
@@ -69,7 +69,7 @@ public class CourseController {
     }
 
     @PutMapping("/lessons/{lessonId}")
-    public ResponseEntity<CourseLesson> updateLesson(@PathVariable Long lessonId, @RequestBody CourseLesson updated) {
+    public ResponseEntity<CourseLesson> updateLesson(@PathVariable Long lessonId, @RequestBody CourseLessonRequest updated) {
         return ResponseEntity.ok(courseService.updateLesson(lessonId, updated));
     }
 

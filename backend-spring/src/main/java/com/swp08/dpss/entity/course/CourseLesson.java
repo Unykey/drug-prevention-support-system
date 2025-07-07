@@ -26,6 +26,9 @@ public class CourseLesson {
     @Column (name = "ContentLink")
     private String content; // for reading, text, or video URL
 
+    @OneToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "lesson")
+    private LessonProgress lessonProgress;
+
     @ManyToOne
     @JoinColumn (name = "CourseId")
     private Course course;
