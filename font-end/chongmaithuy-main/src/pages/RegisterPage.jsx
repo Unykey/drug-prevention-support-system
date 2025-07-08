@@ -34,6 +34,28 @@ const RegisterPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault(); // Ngăn chặn hành vi submit mặc định của form
 
+        // Kiểm tra xem đã nhập email hoặc số điện thoại chưa
+        if (!email.trim() && !phone.trim()) {
+            toast({
+                title: "Lỗi đăng ký",
+                description: "Vui lòng nhập email hoặc số điện thoại.",
+                variant: "destructive", // Hiển thị toast với style lỗi
+            })
+            return;
+        }
+
+        // Kiểm tra xem đã nhập email hoặc số điện thoại chưa
+        if (age != null && age < 18) {
+            if (!guardianEmail.trim() || !guardianPhone.trim()) {
+                toast({
+                    title: "Lỗi đăng ký",
+                    description: "Vui lòng nhập email hoặc số điện thoại của người giám hộ.",
+                    variant: "destructive", // Hiển thị toast với style lỗi
+                })
+                return;
+            }
+        }
+
         // Kiểm tra xác nhận mật khẩu có khớp không
         if (password !== confirmPassword) {
             toast({
@@ -114,6 +136,7 @@ const RegisterPage = () => {
             setBirthdayError("");
         }
     }, [birthday]);
+
 
     return (
         // Container chính với layout flex căn giữa, chiều cao tối thiểu và padding
@@ -207,7 +230,6 @@ const RegisterPage = () => {
                                             placeholder="email@example.com"
                                             value={guardianEmail}
                                             onChange={(e) => setGuardianEmail(e.target.value)} // Cập nhật state khi user nhập
-                                            required // Trường bắt buộc
                                             className="light-theme-input"
                                         />
                                     </div>
@@ -241,7 +263,6 @@ const RegisterPage = () => {
                                 placeholder="email@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)} // Cập nhật state khi user nhập
-                                required // Trường bắt buộc
                                 className="light-theme-input"
                             />
                         </div>
@@ -257,7 +278,6 @@ const RegisterPage = () => {
                                 placeholder="0123456789"
                                 value={phone}
                                 onChange={(e) => setPhone(e.target.value)} // Cập nhật state khi user nhập
-                            // required // Trường bắt buộc
                                 className="light-theme-input"
                             />
                         </div>
