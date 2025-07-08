@@ -15,6 +15,7 @@ const RegisterPage = () => {
     const [birthday, setBirthday] = useState(''); // Ngày sinh
     const [age, setAge] = useState(null);
     const [birthdayError, setBirthdayError] = useState('');
+    const [gender, setGender] = useState(''); // Giới tính
     const [email, setEmail] = useState(''); // Email đăng ký
     const [phone, setPhone] = useState(''); // Số điện thoại
     const [password, setPassword] = useState(''); // Mật khẩu
@@ -251,6 +252,25 @@ const RegisterPage = () => {
                                 </div>
                             </div>
                         )}
+
+                        {/* Field nhập giới tính */}
+                        <div className="space-y-1">
+                            <Label htmlFor="gender" className="light-theme-text-default flex items-center">
+                                <KeyRound className="h-4 w-4 mr-2 text-accent"/> Giới Tính
+                            </Label>
+                            <select
+                                id="gender"
+                                value={gender}
+                                onChange={(e) => setGender(e.target.value)} // Cập nhật state khi user nhập
+                                className="light-theme-input"
+                            >
+                                <option value="" disabled selected>Chọn giới tính</option>
+                                <option value="MALE">Nam</option>
+                                <option value="FEMALE">Nữ</option>
+                                <option value="NON_BINARY">Khác</option>
+                                <option value="PREFER_NOT_TO_SAY">Không muốn tiết lộ</option>
+                            </select>
+                        </div>
 
                         {/* Field nhập email */}
                         <div className="space-y-1">
