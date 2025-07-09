@@ -1,9 +1,13 @@
 package com.swp08.dpss.dto.requests.survey;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AddSurveyQuestionRequest {
     @NotBlank
     private String question;
@@ -12,4 +16,5 @@ public class AddSurveyQuestionRequest {
     private String type;
 
     private String solution;
+
 }

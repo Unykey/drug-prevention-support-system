@@ -103,13 +103,21 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
 
         boolean isCorrect = question.getSolution().trim().equalsIgnoreCase(request.getContent().trim());
 
-        SurveyAnswer answer = new SurveyAnswer();
+        SurveyAnswer answer = null;
+        for (SurveyAnswer answers : question.getAnswers()) {
+            if (answers.getUser().getId().equals(user.getId())) {
+                answer = answers;
+                break;
+            }
+        }
+        if (answer == null) {
+            answer = new SurveyAnswer();
+            survey.addAnswer(answer);
+            question.addAnswer(answer);
+            user.addAnswer(answer);
+        }
         answer.setContent(request.getContent());
         answer.setResultScore(isCorrect ? 10 : 0);
-        survey.addAnswer(answer);
-        question.addAnswer(answer);
-        user.addAnswer(answer);
-
         SurveyAnswer saved = surveyAnswerRepository.save(answer);
 
         SurveyAnswerDto dto = new SurveyAnswerDto();

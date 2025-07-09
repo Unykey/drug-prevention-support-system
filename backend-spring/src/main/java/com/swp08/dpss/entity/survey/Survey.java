@@ -38,7 +38,7 @@ public class Survey {
     private List<SurveyAnswer> answers = new ArrayList<SurveyAnswer>();
 
     @OneToOne
-    @JoinColumn (name = "CourseLesson")
+    @JoinColumn (name = "CourseLessonId")
     private CourseLesson courseLesson;
 
     public void addQuestion(SurveyQuestion question) {
@@ -67,6 +67,8 @@ public class Survey {
     public Survey(long id, String name, String description, SurveyStatus status) {
         this.name = name;
         this.description = description;
+        this.id = id;
+        this.status = status;
     }
 
 
