@@ -74,7 +74,7 @@ public class AuthController {
         // TODO: Find by Phone number
         // Email/Phone number of Guardian if User is a child (<18 years old)
         if (userRepository.existsUserByEmail(request.getEmail())) {
-            userService.sendResetRequest(request.getEmail());
+            //userService.sendResetRequest(request.getEmail());
         }
 
         return ResponseEntity.ok(new ApiResponse<>(true, null, "If the email is registered, a reset link has been sent"));
