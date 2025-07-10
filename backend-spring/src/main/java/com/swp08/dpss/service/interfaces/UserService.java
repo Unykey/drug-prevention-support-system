@@ -23,4 +23,6 @@ public interface UserService {
     // Admin-Created Accounts
     User createNewUser(AdminUserCreationRequest user);
 
+    // Password Reset
+    String sendResetRequest(String email);
 }
