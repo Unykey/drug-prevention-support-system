@@ -28,7 +28,7 @@ import java.time.LocalDate;
 @Slf4j //Log stuffs :D
 @Component
 @AllArgsConstructor
-@Profile("dev")
+@Profile("local")
 public class DataInitializer implements CommandLineRunner {
     private final UserService userService;
     private final SurveyService surveyService;
