@@ -4,4 +4,5 @@ import com.swp08.dpss.entity.course.CourseEnrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollment,Long> {
+    CourseEnrollment findByCourse_IdAndUser_Id(Long courseId, Long userId);
 }

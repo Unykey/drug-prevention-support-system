@@ -122,10 +122,33 @@ public class CourseServiceImpl implements CourseService {
         for (CourseEnrollment enrollment : course.getEnrollments()) {
             enrollment.setCourse(null);
             courseEnrollmentRepository.delete(enrollment);
+            enrollment.getUser().removeCourseEnrollment(enrollment);
         }
         course.getEnrollments().clear();
 
         courseRepository.delete(course);
+    }
+
+    @Transactional
+    @Override
+    public void unenrollUser(Long courseId, Long userId) {
+        CourseEnrollment enrollment = courseEnrollmentRepository
+                .findByCourse_IdAndUser_Id(courseId, userId);
+
+        // Delete lesson progress
+        for (LessonProgress progress : enrollment.getProgress()) {
+            enrollment.removeProgress(progress);
+            lessonProgressRepository.delete(progress);
+        }
+
+        // Remove from course
+        enrollment.getCourse().removeEnrollment(enrollment);
+
+        // Remove from user (if you maintain a bidirectional mapping)
+        enrollment.getUser().removeCourseEnrollment(enrollment);
+
+        // Delete enrollment
+        courseEnrollmentRepository.delete(enrollment);
     }
 
 
@@ -158,6 +181,12 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseLesson> getLessonsByCourse(Long courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(()-> new EntityNotFoundException("Course Not Found with id" + courseId));
         return course.getLessons();
+    }
+
+    @Override
+    public CourseLessonResponse getLesson(Long lessonId) {
+        CourseLesson lesson = courseLessonRepository.findById(lessonId).orElseThrow(()-> new EntityNotFoundException("Lesson Not Found with id " + lessonId));
+        return toDto(lesson);
     }
 
     @Transactional
@@ -220,8 +249,8 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(courseId).orElseThrow(()-> new EntityNotFoundException("Course Not Found with id " + courseId));
         User user = userRepository.findById(userId).orElseThrow(()-> new EntityNotFoundException("User not found with id " + userId));
         CourseEnrollment enrollment = new CourseEnrollment();
-        enrollment.setCourse(course);
-        enrollment.setUser(user);
+        course.addEnrollment(enrollment);
+        user.addCourseEnrollment(enrollment);
         courseEnrollmentRepository.save(enrollment);
         return toDto(enrollment);
     }

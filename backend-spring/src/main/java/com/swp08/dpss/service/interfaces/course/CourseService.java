@@ -27,9 +27,13 @@ public interface CourseService {
 
     void hardDeleteCourse(Long id);
 
+    void unenrollUser(Long courseId, Long userId);
+
     CourseLessonResponse addLessonToCourse(Long courseId, CourseLessonRequest lesson);
 
     List<CourseLesson> getLessonsByCourse(Long courseId);
+
+    CourseLessonResponse getLesson(Long lessonId);
 
     CourseLessonResponse updateLesson(Long lessonId, CourseLessonRequest updated);
 

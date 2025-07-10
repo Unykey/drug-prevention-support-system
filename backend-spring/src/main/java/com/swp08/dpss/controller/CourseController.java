@@ -59,6 +59,12 @@ public class CourseController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{courseId}/unenroll")
+    public ResponseEntity<Void> unenrollUser(@PathVariable Long courseId, @RequestParam Long userId) {
+        courseService.unenrollUser(courseId, userId);
+        return ResponseEntity.noContent().build();
+    }
+
     // --- Lesson ---
     @PostMapping("/{courseId}/lessons")
     public ResponseEntity<CourseLessonResponse> addLesson(@PathVariable Long courseId, @RequestBody CourseLessonRequest request) {
@@ -68,6 +74,11 @@ public class CourseController {
     @GetMapping("/{courseId}/lessons")
     public ResponseEntity<List<CourseLesson>> getLessonsByCourse(@PathVariable Long courseId) {
         return ResponseEntity.ok(courseService.getLessonsByCourse(courseId));
+    }
+
+    @GetMapping("/lessons/{lessonId}")
+    public ResponseEntity<CourseLessonResponse> getLesson(@PathVariable Long lessonId) {
+        return ResponseEntity.ok(courseService.getLesson(lessonId));
     }
 
     @PutMapping("/lessons/{lessonId}")
