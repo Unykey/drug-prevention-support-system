@@ -3,14 +3,17 @@ package com.swp08.dpss.dto.requests.course;
 import com.swp08.dpss.enums.CourseStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 import java.time.LocalDate;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CourseRequest {
     @NotBlank
     private String title;

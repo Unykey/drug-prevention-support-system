@@ -1,11 +1,14 @@
 package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.AuthRequest;
+import com.swp08.dpss.dto.requests.ForgotPasswordRequest;
+import com.swp08.dpss.dto.requests.ResetPasswordRequest;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
 import com.swp08.dpss.dto.responses.ApiResponse;
 import com.swp08.dpss.dto.responses.AuthResponse;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.security.jwt.JwtUtil;
+import com.swp08.dpss.service.interfaces.TokenService;
 import com.swp08.dpss.service.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +33,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
     private final UserService userService;
+    private final TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
@@ -63,6 +67,31 @@ public class AuthController {
 
         userService.register(user);
         return ResponseEntity.ok(new ApiResponse<>(true, user, "User registered successfully"));
-//        return ResponseEntity.ok("User registered successfully");
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        // TODO: Find by Phone number
+        // Email/Phone number of Guardian if User is a child (<18 years old)
+        if (userRepository.existsUserByEmail(request.getEmail())) {
+            //userService.sendResetRequest(request.getEmail());
+        }
+
+        return ResponseEntity.ok(new ApiResponse<>(true, null, "If the email is registered, a reset link has been sent"));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        // Check if password and confirmation match
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            return ResponseEntity.ok(new ApiResponse<>(false, null, "Password and confirmation do not match!"));
+        }
+
+        boolean success = tokenService.resetPassword(request.getToken(), request.getPassword());
+        if (success) {
+            return ResponseEntity.ok(new ApiResponse<>(true, null, "Password has been reset successfully!"));
+        } else {
+            return ResponseEntity.ok(new ApiResponse<>(false, null, "Reset token is invalid or expired!"));
+        }
     }
 }

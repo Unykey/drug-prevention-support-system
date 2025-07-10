@@ -2,8 +2,9 @@
 .env
 .env.*.local
 *.env
-application-dev.properties
-application-prod.properties
+application.properties
+application-local.properties
+application-cloud.properties
 backend-spring/src/main/resources/application.properties
 
 # Build artifacts

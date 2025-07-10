@@ -3,22 +3,37 @@ package com.swp08.dpss.config;
 import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.GuardianCreationRequest;
 import com.swp08.dpss.dto.requests.UserCreationRequest;
+import com.swp08.dpss.dto.requests.survey.AddSurveyQuestionRequest;
+import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
+import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
+import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
+import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
 import com.swp08.dpss.enums.User_Status;
 import com.swp08.dpss.service.interfaces.UserService;
+
+import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
+import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
+import com.swp08.dpss.service.interfaces.survey.SurveyService;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+
+@Slf4j //Log stuffs :D
 @Component
 @AllArgsConstructor
 @Profile("dev")
 public class DataInitializer implements CommandLineRunner {
     private final UserService userService;
+    private final SurveyService surveyService;
+    private final SurveyQuestionService surveyQuestionService;
+    private final SurveyAnswerService surveyAnswerService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -118,6 +133,68 @@ public class DataInitializer implements CommandLineRunner {
         userService.createNewUser(staff1);
         userService.createNewUser(staff2);
         userService.createNewUser(consultant1);
-        System.out.println("Created Admin User");
+        log.info("Created Admin User");
+
+        try {
+            surveyInit();
+            log.info("Survey initialization complete.");
+        } catch (Exception e) {
+            e.printStackTrace(); // good for pinpointing which line failed
+            log.info("Survey initialization failed:" + e.getMessage());
+        }
+
+        try {
+            answerInit();
+            log.info("Survey Answer initialization complete.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.info("Survey Answer initialization failed: " + e.getMessage());
+        }
+
+        log.info("DataInitializer finished.");
     }
+
+    private void surveyInit(){
+        SurveyDetailsDto assist = surveyService.createSurvey(new CreateSurveyRequest("ASSIST", "Đánh giá mức độ sử dụng chất gây nghiện"));
+        SurveyDetailsDto crafft = surveyService.createSurvey(new CreateSurveyRequest("CRAFFT", "Sàng lọc nguy cơ sử dụng chất gây nghiện"));
+        SurveyDetailsDto dast10 = surveyService.createSurvey(new CreateSurveyRequest("DAST-10", "Khảo sát mức độ nghiện các loại ma túy"));
+
+        surveyQuestionService.addQuestionToSurvey(assist.getId(), new AddSurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", "TEXT", "Có"));
+        surveyQuestionService.addQuestionToSurvey(assist.getId(), new AddSurveyQuestionRequest("Bạn có hút thuốc lá không?", "TEXT", "Không"));
+
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new AddSurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", "TEXT", "Có"));
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new AddSurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", "TEXT", "Có"));
+
+        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new AddSurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", "TEXT", "Không"));
+        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new AddSurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", "TEXT", "Có"));
+    }
+
+    private void answerInit() {
+        // Create survey
+        SurveyDetailsDto survey = surveyService.createSurvey(new CreateSurveyRequest("DEMO_SURVEY", "Demo survey for testing answers"));
+        Long surveyId = survey.getId();
+
+        // Create questions and get IDs
+        SurveyQuestionDto q1 = surveyQuestionService.addQuestionToSurvey(surveyId,
+                new AddSurveyQuestionRequest("Bạn có uống rượu không?", "TEXT", "Có"));
+        SurveyQuestionDto q2 = surveyQuestionService.addQuestionToSurvey(surveyId,
+                new AddSurveyQuestionRequest("Bạn có hút thuốc không?", "TEXT", "Không"));
+
+        Long q1Id = q1.getId();
+        Long q2Id = q2.getId();
+
+        // Submit answers from user 1
+        SubmitSurveyAnswerRequest answer1 = new SubmitSurveyAnswerRequest();
+        answer1.setUserId(1L);
+        answer1.setContent("Có");
+
+        SubmitSurveyAnswerRequest answer2 = new SubmitSurveyAnswerRequest();
+        answer2.setUserId(1L);
+        answer2.setContent("Không");
+
+        surveyAnswerService.submitAnswer(surveyId, q1Id, answer1);
+        surveyAnswerService.submitAnswer(surveyId, q2Id, answer2);
+    }
+
+
 }
