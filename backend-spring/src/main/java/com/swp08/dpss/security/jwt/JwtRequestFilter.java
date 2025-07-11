@@ -2,12 +2,12 @@ package com.swp08.dpss.security.jwt;
 
 // Intercepts requests to extract and validate JWT, then sets authentication in the context.
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,26 +25,30 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
 
+    private static final String HEADER = "Authorization";
+    private static final String PREFIX = "Bearer ";
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String authorizationHeader = request.getHeader("Authorization");
-
+        final String authHeader = request.getHeader(HEADER);
         String username = null;
         String jwt = null;
 
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7).trim();
+        if (authHeader != null && authHeader.startsWith(PREFIX)) {
+            jwt = authHeader.substring(7);
+
             try {
                 username = jwtUtil.extractUsername(jwt);
-            } catch (Exception e) {
-                System.out.println("Invalid JWT token");
-                System.out.println("Unable to extract JWT: " + e.getMessage());
+            } catch (JwtException e) {
+                logger.warn("Invalid JWT token");
+                logger.warn("Unable to extract JWT: " + e.getMessage());
+                return;
             }
+        } else {
+            logger.debug("No Bearer token found in Authorization header");
         }
 
-        System.out.println("=".repeat(50));
-
+        // If user not yet authenticated in current request
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // User is still valid, set authentication
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -55,8 +59,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-
-        System.out.println(jwt);
         filterChain.doFilter(request, response);
     }
 }
