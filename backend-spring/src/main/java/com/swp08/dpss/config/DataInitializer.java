@@ -92,6 +92,7 @@ public class DataInitializer implements CommandLineRunner {
         System.out.println("Created User");
 
         // Admin-Created Accounts
+        // Admin role
         AdminUserCreationRequest admin1 = new AdminUserCreationRequest();
         admin1.setName("admin1");
         admin1.setPassword("12345678");
@@ -101,6 +102,7 @@ public class DataInitializer implements CommandLineRunner {
         admin1.setPhone("260-993-0884");
         admin1.setStatus(User_Status.VERIFIED);
 
+        // Staff role
         AdminUserCreationRequest staff1 = new AdminUserCreationRequest();
         staff1.setName("staff1");
         staff1.setPassword("qweasdzxc");
@@ -121,6 +123,7 @@ public class DataInitializer implements CommandLineRunner {
         staff2.setPhone("0932366542");
         staff2.setStatus(User_Status.LOCKED);
 
+        // Consultant role
         AdminUserCreationRequest consultant1 = new AdminUserCreationRequest();
         consultant1.setName("consultant1");
         consultant1.setPassword("cV8#U}4@<");
@@ -129,11 +132,21 @@ public class DataInitializer implements CommandLineRunner {
         consultant1.setEmail("consultant1@example.com");
         consultant1.setPhone("094232342");
 
+        // Manager role
+        AdminUserCreationRequest manager1 = new AdminUserCreationRequest();
+        manager1.setName("manager1");
+        manager1.setPassword("manager123");
+        manager1.setRole(Roles.MANAGER);
+        manager1.setDateOfBirth(LocalDate.of(1980, 1, 6));
+        manager1.setEmail("manager@gmail.com");
+        manager1.setPhone("0123675432");
+
         userService.createNewUser(admin1);
         userService.createNewUser(staff1);
         userService.createNewUser(staff2);
+        userService.createNewUser(manager1);
         userService.createNewUser(consultant1);
-        log.info("Created Admin User");
+        System.out.println("Created Admin User");
 
         try {
             surveyInit();
