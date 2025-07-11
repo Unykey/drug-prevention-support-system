@@ -23,8 +23,6 @@ public class UserController {
 
     private final UserMapper userMapper;
 
-//    private final UserMapper userMapper;
-
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUser() {
         return ResponseEntity.ok().body(userService.findAll());

@@ -7,5 +7,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class DrugPreventionSupportSystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(DrugPreventionSupportSystemApplication.class, args);
+        System.out.println("Server is running...");
     }
 }
