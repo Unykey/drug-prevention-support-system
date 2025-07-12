@@ -21,8 +21,17 @@ public class JwtUtil {
 
     // Create a JWT for a given user
     public String generateToken(UserDetails userDetails) {
+        System.out.println(userDetails.getAuthorities());
+        String role = userDetails
+                .getAuthorities()
+                .stream()
+                .findFirst()
+                .map(auth -> auth.getAuthority().replace("ROLE_", ""))
+                .orElseThrow(() -> new JwtException("No role found"));
+
         return Jwts.builder()
                 .subject(userDetails.getUsername())
+                .claim("role", role)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
                 .setHeaderParam("typ", "JWT")

@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -48,13 +51,17 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             logger.debug("No Bearer token found in Authorization header");
         }
 
-        // If user not yet authenticated in current request
+        // If the JWT is valid, set the authentication in the context
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // User is still valid, set authentication
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (jwtUtil.validateToken(jwt, userDetailsService.loadUserByUsername(username))) {
+                // Extract the user's role from the JWT claims
+                String role = jwtUtil.extractClaim(jwt, claims -> claims.get("role", String.class));
 
-            if (userDetails != null && jwt != null && jwtUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                // Create a new GrantedAuthority object for the user's role'
+                List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+
+                // Create a new UsernamePasswordAuthenticationToken object with the user's username and authorities'
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
