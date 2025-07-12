@@ -13,7 +13,9 @@ public interface UserService {
 
     Optional<User> findByEmail(String email);
 
-    Optional<User> findById(Long id);
+    Optional<UserResponse> findUserById(Long id);
+
+    Optional<User> findUserDetailById(Long id);
 
     void deleteById(Long id);
 
@@ -25,4 +27,6 @@ public interface UserService {
 
     // Password Reset
     String sendResetRequest(String email);
+
+    List<UserResponse> searchUser(String name, String email);
 }

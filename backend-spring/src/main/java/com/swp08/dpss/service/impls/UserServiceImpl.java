@@ -8,6 +8,7 @@ import com.swp08.dpss.mapper.interfaces.UserMapper;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.GuardianService;
 import com.swp08.dpss.service.interfaces.UserService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,7 +46,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<UserResponse> findUserById(Long id) {
+        return userRepository.findById(id).map(userMapper::toResponse);
+    }
+
+    @Override
+    public Optional<User> findUserDetailById(Long id) {
         return userRepository.findById(id);
     }
 
@@ -96,5 +102,23 @@ public class UserServiceImpl implements UserService {
         //TODO: send email to user with reset link
         //emailService.sendEmail(email, "Reset Password", resetLink);
         return resetLink; // Return the reset link to the client. This link will be used to reset the user's password.
+    }
+
+    @Override
+    public List<UserResponse> searchUser(String name, String email) {
+        //Find users by name or email or both
+        List<User> userList;
+
+        if (name != null && email != null) {
+            userList = userRepository.findByNameContainingIgnoreCaseAndEmailContainingIgnoreCase(name, email);
+        } else if (name != null) {
+            userList = userRepository.findByNameContainingIgnoreCase(name);
+        } else if (email != null) {
+            userList = userRepository.findByEmailContainingIgnoreCase(email);
+        } else {
+            //If no search parameters are provided, return all users
+            userList = userRepository.findAll();
+        }
+        return userMapper.toUserResponseList(userList);
     }
 }
