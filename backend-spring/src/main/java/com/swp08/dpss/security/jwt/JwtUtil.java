@@ -21,7 +21,6 @@ public class JwtUtil {
 
     // Create a JWT for a given user
     public String generateToken(UserDetails userDetails) {
-        System.out.println(userDetails.getAuthorities());
         String role = userDetails
                 .getAuthorities()
                 .stream()
