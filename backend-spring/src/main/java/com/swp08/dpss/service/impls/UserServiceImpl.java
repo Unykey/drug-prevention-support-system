@@ -1,14 +1,15 @@
 package com.swp08.dpss.service.impls;
 
-import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
-import com.swp08.dpss.dto.requests.UserCreationRequest;
+import com.swp08.dpss.dto.requests.client.AdminUserCreationRequest;
+import com.swp08.dpss.dto.requests.client.UpdateUserRequest;
+import com.swp08.dpss.dto.requests.client.UserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
 import com.swp08.dpss.entity.client.User;
+import com.swp08.dpss.enums.User_Status;
 import com.swp08.dpss.mapper.interfaces.UserMapper;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.GuardianService;
 import com.swp08.dpss.service.interfaces.UserService;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,8 @@ public class UserServiceImpl implements UserService {
         // Convert User list to a list of UserResponses using the UserMapper class
         List<UserResponse> userResponseList = userMapper.toUserResponseList(userList);
         return userResponseList;
+
+//        return userList;
     }
 
 
@@ -51,13 +54,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findUserDetailById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserResponse> findUserDetailById(Long id) {
+        return userRepository.findById(id).map(userMapper::toResponse);
     }
 
     @Override
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
+    public boolean deleteById(Long id) {
+        // Find user by id
+        Optional<User> userOptional = userRepository.findById(id);
+        System.out.println();
+        // Change status of user to inactive
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setStatus(User_Status.DELETED);
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+//        userRepository.deleteById(id);
     }
 
     // Guest Self-Registration
@@ -120,5 +134,50 @@ public class UserServiceImpl implements UserService {
             userList = userRepository.findAll();
         }
         return userMapper.toUserResponseList(userList);
+    }
+
+    @Override
+    public Optional<User> updateUserByAdmin(Long id, UpdateUserRequest request) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            applyUpdate(user, request, true);
+            userRepository.save(user);
+            return Optional.of(user);
+        }
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<User> updateOwnProfile(String email, UpdateUserRequest request) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            applyUpdate(user, request, false);
+            userRepository.save(user);
+            return Optional.of(user);
+        }
+        return Optional.empty();
+    }
+
+    private void applyUpdate(User user, UpdateUserRequest request, boolean isAdmin) {
+        if (request.getName() != null) {
+            user.setName(request.getName());
+        }
+        if (request.getGender() != null) {
+            user.setGender(request.getGender());
+        }
+        if (request.getDateOfBirth() != null) {
+            user.setDateOfBirth(request.getDateOfBirth());
+        }
+
+        if (isAdmin) {
+            if (request.getRole() != null) {
+                user.setRole(request.getRole());
+            }
+            if (request.getStatus() != null) {
+                user.setStatus(request.getStatus());
+            }
+        }
     }
 }
