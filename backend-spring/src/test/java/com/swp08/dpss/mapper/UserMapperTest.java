@@ -1,7 +1,7 @@
 package com.swp08.dpss.mapper;
 
-import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
-import com.swp08.dpss.dto.requests.UserCreationRequest;
+import com.swp08.dpss.dto.requests.client.AdminUserCreationRequest;
+import com.swp08.dpss.dto.requests.client.UserCreationRequest;
 import com.swp08.dpss.dto.responses.UserResponse;
 import com.swp08.dpss.entity.client.Guardian;
 import com.swp08.dpss.entity.client.User;

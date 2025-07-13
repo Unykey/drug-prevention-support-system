@@ -1,6 +1,6 @@
 package com.swp08.dpss.service.interfaces;
 
-import com.swp08.dpss.dto.requests.GuardianCreationRequest;
+import com.swp08.dpss.dto.requests.client.GuardianCreationRequest;
 import com.swp08.dpss.dto.responses.GuardianResponse;
 import com.swp08.dpss.entity.client.Guardian;
 import com.swp08.dpss.entity.client.User;

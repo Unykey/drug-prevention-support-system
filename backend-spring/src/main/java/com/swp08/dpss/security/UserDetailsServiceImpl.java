@@ -3,7 +3,6 @@ package com.swp08.dpss.security;
 import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

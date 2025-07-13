@@ -38,8 +38,6 @@ public class UserServiceImpl implements UserService {
         // Convert User list to a list of UserResponses using the UserMapper class
         List<UserResponse> userResponseList = userMapper.toUserResponseList(userList);
         return userResponseList;
-
-//        return userList;
     }
 
 
@@ -71,7 +69,6 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
-//        userRepository.deleteById(id);
     }
 
     // Guest Self-Registration
