@@ -29,6 +29,7 @@ public class UserCreationRequest {
     @NotBlank(message = "Email cannot be blank")
     private String email;
 
+    @Pattern(regexp = "^\\+?\\d{10,15}$", message = "Invalid phone number, phone number must be between 10 and 15 digits")
     @NotBlank(message = "Phone cannot be blank")
     private String phone;
 
