@@ -1,18 +1,16 @@
 package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.AuthRequest;
-import com.swp08.dpss.dto.requests.ForgotPasswordRequest;
-import com.swp08.dpss.dto.requests.ResetPasswordRequest;
-import com.swp08.dpss.dto.requests.UserCreationRequest;
+import com.swp08.dpss.dto.requests.client.ForgotPasswordRequest;
+import com.swp08.dpss.dto.requests.client.ResetPasswordRequest;
+import com.swp08.dpss.dto.requests.client.UserCreationRequest;
 import com.swp08.dpss.dto.responses.ApiResponse;
-import com.swp08.dpss.dto.responses.AuthResponse;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.security.jwt.JwtUtil;
 import com.swp08.dpss.service.interfaces.TokenService;
 import com.swp08.dpss.service.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,15 +41,12 @@ public class AuthController {
             );
         } catch (AuthenticationException e) {
             e.printStackTrace();
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password. " + request.getEmail() + " " + request.getPassword() + " " + e.getMessage());
             return ResponseEntity.ok(new ApiResponse<>(false, null, "Invalid email or password."));
         }
-        // Create a new User object with the email and password from the request
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
 
         final String jwt = jwtUtil.generateToken(userDetails);
 
-//        return ResponseEntity.ok(new AuthResponse(jwt));
         return ResponseEntity.ok(new ApiResponse<>(true, jwt, "Login successfully"));
     }
 
