@@ -1,4 +1,4 @@
-package com.swp08.dpss.dto.requests;
+package com.swp08.dpss.dto.requests.client;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

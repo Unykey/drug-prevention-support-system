@@ -1,8 +1,8 @@
 package com.swp08.dpss.config;
 
-import com.swp08.dpss.dto.requests.AdminUserCreationRequest;
-import com.swp08.dpss.dto.requests.GuardianCreationRequest;
-import com.swp08.dpss.dto.requests.UserCreationRequest;
+import com.swp08.dpss.dto.requests.client.AdminUserCreationRequest;
+import com.swp08.dpss.dto.requests.client.GuardianCreationRequest;
+import com.swp08.dpss.dto.requests.client.UserCreationRequest;
 import com.swp08.dpss.dto.requests.survey.AddSurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
