@@ -39,9 +39,10 @@ public class SecurityConfig {
             "api/user/profile"
     };
 
-    private static final String[] PUBLIC_GET_URLS = {
+    private static final String[] PUBLIC_USER_URLS = {
             "/api/user/search",
-            "/api/user/search/{id}"
+            "/api/user/search/{id}",
+            "api/user/delete/{id}"
     };
 
     private static final String[] ADMIN_URLS = {
@@ -62,13 +63,9 @@ public class SecurityConfig {
                 // Configure authorization rules using the lambda DSL
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
                                 .requestMatchers(PUBLIC_URLS).permitAll()
-//                                .requestMatchers(HttpMethod.GET, PUBLIC_GET_URLS).has
-//                                .requestMatchers(PUBLIC_URLS).permitAll()       // Permit all requests to PUBLIC_URLS
-//                                .requestMatchers(HttpMethod.GET, PUBLIC_GET_URLS).permitAll() // Permit GET to specific public URLs
-//                                .requestMatchers("/api/admin/**").hasRole("ADMIN") // Example role-based restriction
-//                                .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "MANAGER")
-                                .requestMatchers(ADMIN_URLS).hasAnyRole("ADMIN", "MANAGER")
-                                .requestMatchers(HttpMethod.POST, ADMIN_URLS).hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, PUBLIC_USER_URLS).hasAnyRole("STAFF", "MANAGER", "ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, PUBLIC_USER_URLS).hasAnyRole("STAFF", "MANAGER", "ADMIN")
+                                .requestMatchers(ADMIN_URLS).hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(e->e.accessDeniedHandler(accessDeniedHandler)

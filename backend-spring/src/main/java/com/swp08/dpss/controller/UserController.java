@@ -38,6 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'MANAGER')")
     public ResponseEntity<ApiResponse<List<UserResponse>>> searchUser(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String email) {
@@ -50,6 +51,7 @@ public class UserController {
     }
 
     @GetMapping("/search/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'MANAGER')")
     public ResponseEntity<ApiResponse<UserResponse>> searchUserById(@PathVariable Long id) {
         return userService.findUserById(id)
                 .map(user -> ResponseEntity.ok().body(new ApiResponse<>(true, user, "User Found")))
@@ -57,6 +59,7 @@ public class UserController {
     }
 
     @GetMapping("{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<UserResponse>> getUserDetailById(@PathVariable Long id) {
         return userService.findUserDetailById(id)
                 .map(user -> ResponseEntity.ok().body(new ApiResponse<>(true, user, "Get Full user info successfully")))
@@ -64,6 +67,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<UserResponse>> createNewUser(@Valid @RequestBody AdminUserCreationRequest user) {
         User newUser = userService.createNewUser(user);
         // Convert the new User to a UserResponse object and return it to the client
@@ -85,6 +89,7 @@ public class UserController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
         boolean delete = userService.deleteById(id);
         if (delete) {
