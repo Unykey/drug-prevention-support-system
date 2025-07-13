@@ -17,6 +17,9 @@ import { ROLES } from '@/config/roles'; // Import định nghĩa các vai trò t
  * Props:
  * - children: Component con sẽ được render nếu pass qua các kiểm tra
  * - allowedRoles: Array các vai trò được phép truy cập route này
+ *
+ * @param, {ReactNode} children - Component con sẽ được render nếu pass qua các kiểm tra
+ * @param, {Array} allowedRoles - Array các vai trò được phép truy cập route này
  */
 const ProtectedRoute = ({ children, allowedRoles }) => {
   // Lấy thông tin user và trạng thái loading từ AuthContext
@@ -47,7 +50,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   // Nếu có định nghĩa allowedRoles và user không có quyền
   if (allowedRoles && !allowedRoles.includes(userRole)) {
     // Không đủ quyền -> redirect về trang chủ
-    return <Navigate to="/" replace />; 
+    return <Navigate to="/not-found" replace />;
   }
 
   // User đã đăng nhập và có đủ quyền -> render component con

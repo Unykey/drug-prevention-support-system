@@ -7,4 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class AuthResponse {
     private String jwt;
+    private UserResponse user;
 }

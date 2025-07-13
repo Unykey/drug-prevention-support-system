@@ -19,6 +19,7 @@ public class UserResponse {
     private final LocalDate dateOfBirth;
     private final String email;
     private final String phone;
+    private final Roles role;
     private final List<Long> guardianIds; // avoid circular reference
 }
 

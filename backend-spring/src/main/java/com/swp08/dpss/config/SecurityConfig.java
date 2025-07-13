@@ -61,10 +61,10 @@ public class SecurityConfig {
         http
                 // Disable CSRF since JWT is stateless
                 .csrf(AbstractHttpConfigurer::disable)
-
+//                .csrf(csrf -> csrf.disable())
                 // Allow CORS if needed (optional, especially when frontend is separate)
                 .cors(Customizer.withDefaults())
-
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // Authorize endpoints
                 // Configure authorization rules using the lambda DSL
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
@@ -101,7 +101,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:3000")); // Only allow requests from localhost frontend
+        config.setAllowedOrigins(List.of("http://localhost:5173")); // Only allow requests from localhost frontend
         config.setAllowedMethods(List.of("*")); // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
         config.setAllowedHeaders(List.of("*")); // Allow all headers (e.g., Content-Type, Authorization)
         config.setAllowCredentials(true); // Allow sending cookies / Authorization headers

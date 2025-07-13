@@ -5,6 +5,10 @@ import com.swp08.dpss.dto.requests.client.ForgotPasswordRequest;
 import com.swp08.dpss.dto.requests.client.ResetPasswordRequest;
 import com.swp08.dpss.dto.requests.client.UserCreationRequest;
 import com.swp08.dpss.dto.responses.ApiResponse;
+import com.swp08.dpss.dto.responses.AuthResponse;
+import com.swp08.dpss.dto.responses.UserResponse;
+import com.swp08.dpss.entity.client.User;
+import com.swp08.dpss.mapper.interfaces.UserMapper;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.security.jwt.JwtUtil;
 import com.swp08.dpss.service.interfaces.TokenService;
@@ -32,6 +36,7 @@ public class AuthController {
     private final UserDetailsService userDetailsService;
     private final UserService userService;
     private final TokenService tokenService;
+    private final UserMapper userMapper;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
@@ -44,10 +49,14 @@ public class AuthController {
             return ResponseEntity.ok(new ApiResponse<>(false, null, "Invalid email or password."));
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
-
         final String jwt = jwtUtil.generateToken(userDetails);
 
-        return ResponseEntity.ok(new ApiResponse<>(true, jwt, "Login successfully"));
+        User user = userService.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found with email: "));
+
+        UserResponse userResponse = userMapper.toResponse(user);
+        AuthResponse authResponse = new AuthResponse(jwt, userResponse);
+        return ResponseEntity.ok(new ApiResponse<>(true, authResponse, "Login successfully"));
     }
 
     @PostMapping("/register")
