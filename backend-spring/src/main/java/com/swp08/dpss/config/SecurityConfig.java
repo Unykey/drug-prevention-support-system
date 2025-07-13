@@ -24,6 +24,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.HttpStatusEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -36,13 +41,14 @@ public class SecurityConfig {
             "/api/auth/**",
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "api/user/profile"
+            "/api/user/profile",
+            "/actuator/**"
     };
 
     private static final String[] PUBLIC_USER_URLS = {
             "/api/user/search",
             "/api/user/search/{id}",
-            "api/user/delete/{id}"
+            "/api/user/delete/{id}"
     };
 
     private static final String[] ADMIN_URLS = {
@@ -90,5 +96,19 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of("http://localhost:3000")); // Only allow requests from localhost frontend
+        config.setAllowedMethods(List.of("*")); // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
+        config.setAllowedHeaders(List.of("*")); // Allow all headers (e.g., Content-Type, Authorization)
+        config.setAllowCredentials(true); // Allow sending cookies / Authorization headers
+        config.setMaxAge(3600L); // How long the preflight response can be cached
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
