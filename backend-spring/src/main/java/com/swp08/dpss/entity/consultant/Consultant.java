@@ -2,11 +2,17 @@ package com.swp08.dpss.entity.consultant;
 
 import com.swp08.dpss.entity.client.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
 @Entity
 @Table(name = "consultant")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Consultant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +36,7 @@ public class Consultant {
     @OneToMany(mappedBy = "consultant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Availability> timeSlots;
 
+    @Column(length = 255)
     private String bio;
 
     private String profilePicture;
