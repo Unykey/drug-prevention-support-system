@@ -1,6 +1,6 @@
 package com.swp08.dpss.service.impls;
 
-import com.swp08.dpss.dto.requests.GuardianCreationRequest;
+import com.swp08.dpss.dto.requests.client.GuardianCreationRequest;
 import com.swp08.dpss.dto.responses.GuardianResponse;
 import com.swp08.dpss.entity.client.Guardian;
 import com.swp08.dpss.entity.client.User;
@@ -8,7 +8,6 @@ import com.swp08.dpss.repository.GuardianRepository;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.GuardianService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -5,7 +5,6 @@ import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.LoginService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
