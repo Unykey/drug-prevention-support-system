@@ -49,12 +49,14 @@ public class Survey {
     @Column(nullable = false)
     private LocalDate created_at;
 
-    @OneToMany(mappedBy = "survey",
+    @OneToMany(
+            mappedBy = "survey",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<SurveyAnswer> answers = new ArrayList<>();
 
-    @OneToMany(mappedBy = "survey",
+    @OneToMany(
+            mappedBy = "survey",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<SurveyQuestion> questions = new ArrayList<>();

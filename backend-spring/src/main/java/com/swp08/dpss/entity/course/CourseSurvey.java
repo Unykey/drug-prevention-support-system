@@ -16,7 +16,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CourseSurvey {
     @EmbeddedId
-    private CourseSurveyId id;
+    private CourseSurveyId courseSurveyId;
 
     @ManyToOne
     @MapsId("courseId")

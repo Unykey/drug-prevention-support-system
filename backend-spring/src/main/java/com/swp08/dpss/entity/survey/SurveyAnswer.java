@@ -17,7 +17,7 @@ public class SurveyAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
-    private Long id;
+    private Long answer_id;
 
     @ManyToOne
     @JoinColumn(name = "survey_id")

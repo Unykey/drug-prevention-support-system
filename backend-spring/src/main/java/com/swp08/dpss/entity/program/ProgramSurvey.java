@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ProgramSurvey {
     @EmbeddedId
-    private ProgramSurveyId id;
+    private ProgramSurveyId programSurveyId;
 
     @ManyToOne
     @MapsId("programId")
