@@ -1,6 +1,6 @@
 package com.swp08.dpss.controller;
 
-import com.swp08.dpss.dto.requests.survey.AddSurveyQuestionRequest;
+import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.requests.survey.UpdateSurveyRequest;
@@ -108,7 +108,7 @@ public class SurveyController {
 
     @PostMapping("/{id}/addquestion")
     public ResponseEntity<ApiResponse<SurveyQuestionDto>> addQuestionToSurvey(
-            @RequestBody AddSurveyQuestionRequest questionDto, @PathVariable Long id) {
+            @RequestBody SurveyQuestionRequest questionDto, @PathVariable Long id) {
         SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(id, questionDto);
         return ResponseEntity.status(201).body(new ApiResponse<>(true, saved, "Question added to survey"));
     }
