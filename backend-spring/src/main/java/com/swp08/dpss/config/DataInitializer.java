@@ -169,7 +169,7 @@ public class DataInitializer implements CommandLineRunner {
         SurveyDetailsDto assist = surveyService.createSurvey(
                 new CreateSurveyRequest(
                         "ASSIST",
-                        SurveyType.Survey,
+                        SurveyTypes.QUIZ,
                         SurveyStatus.PUBLISHED,
                         "Đánh giá mức độ sử dụng chất gây nghiện"
                 )
@@ -178,7 +178,7 @@ public class DataInitializer implements CommandLineRunner {
         SurveyDetailsDto crafft = surveyService.createSurvey(
                 new CreateSurveyRequest(
                         "CRAFFT",
-                        SurveyType.Survey,
+                        SurveyTypes.QUIZ,
                         SurveyStatus.PUBLISHED,
                         "Sàng lọc nguy cơ sử dụng chất gây nghiện"
                 )
@@ -187,33 +187,33 @@ public class DataInitializer implements CommandLineRunner {
         SurveyDetailsDto dast10 = surveyService.createSurvey(
                 new CreateSurveyRequest(
                         "DAST-10",
-                        SurveyType.Survey,
+                        SurveyTypes.QUIZ,
                         SurveyStatus.PUBLISHED,
                         "Khảo sát mức độ nghiện các loại ma túy"
                 )
         );
 
-        surveyQuestionService.addQuestionToSurvey(assist.getId(), new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", "TEXT", "Có"));
-        surveyQuestionService.addQuestionToSurvey(assist.getId(), new SurveyQuestionRequest("Bạn có hút thuốc lá không?", "TEXT", "Không"));
+        surveyQuestionService.addQuestionToSurvey(assist.getId(), new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", QuestionTypes.YN, "Có"));
+        surveyQuestionService.addQuestionToSurvey(assist.getId(), new SurveyQuestionRequest("Bạn có hút thuốc lá không?", QuestionTypes.YN, "Không"));
 
-        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", "TEXT", "Có"));
-        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", "TEXT", "Có"));
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", QuestionTypes.YN, "Có"));
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", QuestionTypes.YN, "Có"));
 
-        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", "TEXT", "Không"));
-        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", "TEXT", "Có"));
+        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", QuestionTypes.YN, "Không"));
+        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", QuestionTypes.YN, "Có"));
     }
 
 
     private void answerInit() {
         // Create survey
-        SurveyDetailsDto survey = surveyService.createSurvey(new CreateSurveyRequest("DEMO_SURVEY",SurveyType.Survey,SurveyStatus.PUBLISHED, "Demo survey for testing answers"));
+        SurveyDetailsDto survey = surveyService.createSurvey(new CreateSurveyRequest("DEMO_SURVEY",SurveyTypes.QUIZ,SurveyStatus.PUBLISHED, "Demo survey for testing answers"));
         Long surveyId = survey.getId();
 
         // Create questions and get IDs
         SurveyQuestionDto q1 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new SurveyQuestionRequest("Bạn có uống rượu không?", "TEXT", "Có"));
+                new SurveyQuestionRequest("Bạn có uống rượu không?", QuestionTypes.YN, "Có"));
         SurveyQuestionDto q2 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new SurveyQuestionRequest("Bạn có hút thuốc không?", "TEXT", "Không"));
+                new SurveyQuestionRequest("Bạn có hút thuốc không?", QuestionTypes.YN, "Không"));
 
         Long q1Id = q1.getId();
         Long q2Id = q2.getId();

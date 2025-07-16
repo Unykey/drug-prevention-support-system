@@ -75,10 +75,10 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
     public void hardDeleteSurveyQuestionById(Long surveyQuestionId) {
         SurveyQuestion question = questionRepository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found with id" + surveyQuestionId));
         // Remove answers associated with the question
-        if (question.getSurvey()!=null) question.getSurvey().removeQuestion(question);
+        if (question.getSurvey_id()!=null) question.getSurvey_id().removeQuestion(question);
         for (SurveyAnswer answer : question.getAnswers()) {
-            if (answer.getSurvey() != null) {
-                answer.getSurvey().removeAnswer(answer);
+            if (answer.getSurvey_id() != null) {
+                answer.getSurvey_id().removeAnswer(answer);
             }
             if (answer.getUser() != null) {
                 //answer.getUser().removeAnswer(answer);
@@ -86,16 +86,5 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         }
         question.getAnswers().clear();
         questionRepository.delete(question);
-    }
-
-    @Transactional
-    @Override
-    public void softDeleteSurveyQuestionById(Long surveyQuestionId) {
-        SurveyQuestion question = questionRepository.findById(surveyQuestionId).orElseThrow(()-> new EntityNotFoundException("Survey Question Not Found with id" + surveyQuestionId));
-        if (question.getSurvey()!=null) question.getSurvey().removeQuestion(question);
-        question.setStatus(SurveyQuestionStatus.DELETED);
-        for (SurveyAnswer answer : question.getAnswers()) {
-            answer.setStatus(SurveyAnswerStatus.DELETED);
-        }
     }
 }

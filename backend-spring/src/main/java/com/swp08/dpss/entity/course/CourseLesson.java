@@ -41,5 +41,14 @@ public class CourseLesson {
 
     @Column(name = "OrderIndex", nullable = false)
     private int orderIndex;
+
+    public void addCourseLessonProgress(CourseLessonProgress courseLessonProgress) {
+        courseLessonProgress.setLesson(this);
+        this.courseLessonProgressList.add(courseLessonProgress);
+    }
+    public void removeCourseLessonProgress(CourseLessonProgress courseLessonProgress) {
+        this.courseLessonProgressList.remove(courseLessonProgress);
+        courseLessonProgress.setLesson(null);
+    }
 }
 

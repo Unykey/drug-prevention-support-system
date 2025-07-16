@@ -13,10 +13,7 @@ import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.CourseStatus;
 import com.swp08.dpss.enums.ProgramSurveyRoles;
 import com.swp08.dpss.repository.UserRepository;
-import com.swp08.dpss.repository.course.CourseEnrollmentRepository;
-import com.swp08.dpss.repository.course.CourseLessonRepository;
-import com.swp08.dpss.repository.course.CourseRepository;
-import com.swp08.dpss.repository.course.LessonProgressRepository;
+import com.swp08.dpss.repository.course.*;
 import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.service.interfaces.course.CourseService;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,6 +26,7 @@ import java.util.List;
 
 @Service
 public class CourseServiceImpl implements CourseService {
+    private final CourseLessonProgressRepository courseLessonProgressRepository;
     CourseRepository courseRepository;
     CourseEnrollmentRepository courseEnrollmentRepository;
     CourseLessonRepository courseLessonRepository;
@@ -37,13 +35,14 @@ public class CourseServiceImpl implements CourseService {
     UserRepository userRepository;
 
     @Autowired
-    public CourseServiceImpl(CourseRepository courseRepository, CourseEnrollmentRepository courseEnrollmentRepository, CourseLessonRepository courseLessonRepository, LessonProgressRepository lessonProgressRepository, SurveyRepository surveyRepository, UserRepository userRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, CourseEnrollmentRepository courseEnrollmentRepository, CourseLessonRepository courseLessonRepository, LessonProgressRepository lessonProgressRepository, SurveyRepository surveyRepository, UserRepository userRepository, CourseLessonProgressRepository courseLessonProgressRepository) {
         this.courseRepository = courseRepository;
         this.courseEnrollmentRepository = courseEnrollmentRepository;
         this.courseLessonRepository = courseLessonRepository;
         this.lessonProgressRepository = lessonProgressRepository;
         this.surveyRepository = surveyRepository;
         this.userRepository = userRepository;
+        this.courseLessonProgressRepository = courseLessonProgressRepository;
     }
 
     @Transactional
@@ -58,13 +57,14 @@ public class CourseServiceImpl implements CourseService {
         course.setEndDate(request.getEndDate());
 
         CourseSurvey courseSurvey = new CourseSurvey();
-        courseSurvey.setId(new CourseSurveyId());
+        courseSurvey.setCourseSurveyId(new CourseSurveyId());
         course.addCourseSurvey(courseSurvey);
 
         for (Long s : request.getSurveyId()){
             Survey survey = surveyRepository.findById(s).orElseThrow(() -> new EntityNotFoundException("Survey Not Found"));
             survey.addCourseSurvey(courseSurvey);
-            survey.setType(request.getSurveyRole());
+            //TODO: Set type
+            //survey.setType(request.getSurveyRole());
         }
 
         courseRepository.save(course);
@@ -180,7 +180,7 @@ public class CourseServiceImpl implements CourseService {
         lesson.setOrderIndex(request.getOrderIndex());
         lesson.setCourse(course);
 
-        course.addCourseLesson(lesson);
+        course.addLesson(lesson);
         courseRepository.save(course); // or use courseLessonRepository.save(lesson) if available
 
         return toDto(lesson);
@@ -222,19 +222,17 @@ public class CourseServiceImpl implements CourseService {
 
         // Detach from course
         if (lesson.getCourse() != null) {
-            lesson.getCourse().getLessons().remove(lesson);
-            lesson.setCourse(null);
+            lesson.getCourse().removeLesson(lesson);
         }
 
         // Detach lesson progress if exists
-        if (lesson.getCourseLessonProgress() != null) {
-            CourseLessonProgress progress = lesson.getCourseLessonProgress();
-            progress.setLesson(null);
-            progress.setEnrollment(null); // unlink both sides if needed
-            lesson.setCourseLessonProgress(null);
-            lessonProgressRepository.delete(progress);
+        if (lesson.getCourseLessonProgressList() != null) {
+            for (CourseLessonProgress progress : lesson.getCourseLessonProgressList()) { // unlink both sides if needed
+                lesson.removeCourseLessonProgress(progress);
+                progress.getEnrollment().removeProgress(progress);
+            }
+//            courseLessonProgressRepository.deleteAll(lesson.getCourseLessonProgressList()); //Not sure if this command is necessary
         }
-
         courseLessonRepository.delete(lesson);
     }
 
@@ -277,8 +275,8 @@ public class CourseServiceImpl implements CourseService {
 
         CourseLessonProgress progress = new CourseLessonProgress();
         enrollment.addProgress(progress);
-        lesson.setCourseLessonProgress(progress);
-        progress.setLesson(lesson);
+        lesson.addCourseLessonProgress(progress);
+
         progress.setCompleted(request.isCompleted());
         progress.setCompletedAt(request.isCompleted() ? LocalDateTime.now() : null);
 
@@ -292,18 +290,14 @@ public class CourseServiceImpl implements CourseService {
     public LessonProgressResponse updateLessonProgress(Long progressId, LessonProgressRequest request) {
         CourseLesson lesson = courseLessonRepository.findById(request.getLessonId()).orElseThrow(()-> new EntityNotFoundException("Lesson not found with id " + request.getLessonId()));
         CourseEnrollment enrollment = courseEnrollmentRepository.findById(request.getEnrollmentId()).orElseThrow(()-> new EntityNotFoundException("Enrollment not found with id " + request.getEnrollmentId()));
+
         CourseLessonProgress progress = lessonProgressRepository.findById(progressId)
                 .orElseThrow(() -> new EntityNotFoundException("Progress not found with id " + progressId));
         progress.setCompleted(request.isCompleted());
         progress.setCompletedAt(request.isCompleted() ? LocalDateTime.now() : null);
-        progress.setLesson(lesson);
-        lesson.setCourseLessonProgress(progress);
-        enrollment.addProgress(progress);
         lessonProgressRepository.save(progress);
-
         return toDto(progress);
     }
-
 
     @Override
     public List<CourseLessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId) {
