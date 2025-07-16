@@ -3,7 +3,7 @@ package com.swp08.dpss.config;
 import com.swp08.dpss.dto.requests.client.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.client.GuardianCreationRequest;
 import com.swp08.dpss.dto.requests.client.UserCreationRequest;
-import com.swp08.dpss.dto.requests.survey.AddSurveyQuestionRequest;
+import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
@@ -193,14 +193,14 @@ public class DataInitializer implements CommandLineRunner {
                 )
         );
 
-        surveyQuestionService.addQuestionToSurvey(assist.getId(), new AddSurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", "TEXT", "Có"));
-        surveyQuestionService.addQuestionToSurvey(assist.getId(), new AddSurveyQuestionRequest("Bạn có hút thuốc lá không?", "TEXT", "Không"));
+        surveyQuestionService.addQuestionToSurvey(assist.getId(), new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", "TEXT", "Có"));
+        surveyQuestionService.addQuestionToSurvey(assist.getId(), new SurveyQuestionRequest("Bạn có hút thuốc lá không?", "TEXT", "Không"));
 
-        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new AddSurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", "TEXT", "Có"));
-        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new AddSurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", "TEXT", "Có"));
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", "TEXT", "Có"));
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", "TEXT", "Có"));
 
-        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new AddSurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", "TEXT", "Không"));
-        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new AddSurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", "TEXT", "Có"));
+        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", "TEXT", "Không"));
+        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", "TEXT", "Có"));
     }
 
 
@@ -211,9 +211,9 @@ public class DataInitializer implements CommandLineRunner {
 
         // Create questions and get IDs
         SurveyQuestionDto q1 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new AddSurveyQuestionRequest("Bạn có uống rượu không?", "TEXT", "Có"));
+                new SurveyQuestionRequest("Bạn có uống rượu không?", "TEXT", "Có"));
         SurveyQuestionDto q2 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new AddSurveyQuestionRequest("Bạn có hút thuốc không?", "TEXT", "Không"));
+                new SurveyQuestionRequest("Bạn có hút thuốc không?", "TEXT", "Không"));
 
         Long q1Id = q1.getId();
         Long q2Id = q2.getId();

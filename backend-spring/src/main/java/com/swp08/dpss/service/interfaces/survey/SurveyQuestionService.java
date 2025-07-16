@@ -1,8 +1,9 @@
 package com.swp08.dpss.service.interfaces.survey;
 
-import com.swp08.dpss.dto.requests.survey.AddSurveyQuestionRequest;
+import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.UpdateSurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -12,9 +13,10 @@ public interface SurveyQuestionService {
 
     void hardDeleteSurveyQuestionById(Long surveyQuestionId);
 
-    SurveyQuestionDto addQuestionToSurvey(Long id, AddSurveyQuestionRequest questionDto);
+    SurveyQuestionDto addQuestionToSurvey(Long id, SurveyQuestionRequest questionDto);
 
     SurveyQuestionDto getQuestionById(Long id);
 
-    SurveyQuestionDto updateQuestion(Long id, UpdateSurveyQuestionRequest request);
+    @Transactional
+    SurveyQuestionDto updateQuestion(Long id, SurveyQuestionRequest request);
 }

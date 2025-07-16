@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddSurveyQuestionRequest {
+public class SurveyQuestionRequest {
     @NotBlank
     private String question;
 

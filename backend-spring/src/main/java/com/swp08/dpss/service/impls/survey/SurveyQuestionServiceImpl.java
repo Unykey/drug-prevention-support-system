@@ -1,7 +1,6 @@
 package com.swp08.dpss.service.impls.survey;
 
-import com.swp08.dpss.dto.requests.survey.AddSurveyQuestionRequest;
-import com.swp08.dpss.dto.requests.survey.UpdateSurveyQuestionRequest;
+import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
@@ -86,7 +85,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     @Transactional
     @Override
-    public SurveyQuestionDto addQuestionToSurvey(Long id, AddSurveyQuestionRequest dto) {
+    public SurveyQuestionDto addQuestionToSurvey(Long id, SurveyQuestionRequest dto) {
         Survey survey = surveyRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
 
@@ -96,25 +95,20 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         question.setSolution(dto.getSolution());
         survey.addQuestion(question);
 
-        SurveyQuestion saved = questionRepository.save(question);
-
-        SurveyQuestionDto result = new SurveyQuestionDto();
-        result.setId(saved.getId());
-        result.setQuestion(saved.getQuestion());
-        result.setType(saved.getType());
-        result.setSolution(saved.getSolution());
-        result.setSurveyId(saved.getSurvey().getId());
-
-        return result;
+        return toDto(question);
     }
 
     @Transactional
     @Override
-    public SurveyQuestionDto updateQuestion(Long id, UpdateSurveyQuestionRequest request) {
+    public SurveyQuestionDto updateQuestion(Long id, SurveyQuestionRequest request) {
         SurveyQuestion question = questionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Survey Question Not Found"));
         question.setQuestion(request.getQuestion());
         question.setType(request.getType());
         question.setSolution(request.getSolution());
+        return toDto(question);
+    }
+
+    private SurveyQuestionDto toDto(SurveyQuestion question) {
         SurveyQuestion saved = questionRepository.save(question);
         SurveyQuestionDto result = new SurveyQuestionDto();
         result.setId(saved.getId());

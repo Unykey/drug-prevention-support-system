@@ -1,5 +1,6 @@
 package com.swp08.dpss.controller;
 
+import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.UpdateSurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
@@ -39,7 +40,7 @@ public class SurveyQuestionController {
     @PutMapping("/{id}")
     public ResponseEntity<SurveyQuestionDto> updateQuestion(
             @PathVariable Long id,
-            @RequestBody UpdateSurveyQuestionRequest request) {
+            @RequestBody SurveyQuestionRequest request) {
         SurveyQuestionDto updated = surveyQuestionService.updateQuestion(id, request);
         return ResponseEntity.ok(updated);
     }
