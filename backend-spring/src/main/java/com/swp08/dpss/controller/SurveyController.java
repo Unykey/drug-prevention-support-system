@@ -11,7 +11,7 @@ import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.enums.Roles;
 import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyType;
+import com.swp08.dpss.enums.SurveyTypes;
 import com.swp08.dpss.service.interfaces.UserService;
 import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
@@ -67,7 +67,7 @@ public class SurveyController {
     @GetMapping("/filter")
     @PreAuthorize("hasAnyRole('MEMBER', 'STAFF', 'MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<List<SurveyDetailsDto>>> filterSurveys(
-            @RequestParam SurveyType type,
+            @RequestParam SurveyTypes type,
             @RequestParam(required = false) SurveyStatus status,
             @AuthenticationPrincipal UserDetails userDetails
     ) {

@@ -4,7 +4,8 @@ import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.survey.UpdateSurveyRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyType;
+
+import com.swp08.dpss.enums.SurveyTypes;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface SurveyService {
 
     SurveyDetailsDto updateSurvey(Long id, UpdateSurveyRequest request);
 
-    List<SurveyDetailsDto> getSurveysByTypeAndStatus(SurveyType type, SurveyStatus status);
+    List<SurveyDetailsDto> getSurveysByTypeAndStatus(SurveyTypes type, SurveyStatus status);
 
-    List<SurveyDetailsDto> getSurveysByType(SurveyType type);
+    List<SurveyDetailsDto> getSurveysByType(SurveyTypes type);
 }
