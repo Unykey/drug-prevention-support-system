@@ -18,17 +18,17 @@ public class SurveyAnswerController {
     }
 
     //@PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/admin/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> hardDeleteSurveyAnswer(@PathVariable Long id) {
         surveyAnswerService.hardDeleteSurveyAnswer(id);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> softDeleteSurveyAnswer(@PathVariable Long id) {
-        surveyAnswerService.softDeleteSurveyAnswer(id);
-        return ResponseEntity.noContent().build();
-    }
+//    @DeleteMapping("/{id}")
+//    public ResponseEntity<Void> softDeleteSurveyAnswer(@PathVariable Long id) {
+//        surveyAnswerService.softDeleteSurveyAnswer(id);
+//        return ResponseEntity.noContent().build();
+//    }
 
 
     @PostMapping("/bulk")

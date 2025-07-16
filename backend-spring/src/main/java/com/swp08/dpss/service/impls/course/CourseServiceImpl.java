@@ -37,7 +37,7 @@ public class CourseServiceImpl implements CourseService {
     UserRepository userRepository;
 
     @Autowired
-    public CourseServiceImpl(CourseRepository courseRepository, CourseEnrollmentRepository courseEnrollmentRepository, CourseLessonRepository courseLessonRepository, LessonProgressRepository lessonProgressRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, CourseEnrollmentRepository courseEnrollmentRepository, CourseLessonRepository courseLessonRepository, LessonProgressRepository lessonProgressRepository, SurveyRepository surveyRepository, UserRepository userRepository) {
         this.courseRepository = courseRepository;
         this.courseEnrollmentRepository = courseEnrollmentRepository;
         this.courseLessonRepository = courseLessonRepository;
@@ -57,10 +57,14 @@ public class CourseServiceImpl implements CourseService {
         course.setStartDate(request.getStartDate());
         course.setEndDate(request.getEndDate());
 
+        CourseSurvey courseSurvey = new CourseSurvey();
+        courseSurvey.setId(new CourseSurveyId());
+        course.addCourseSurvey(courseSurvey);
+
         for (Long s : request.getSurveyId()){
             Survey survey = surveyRepository.findById(s).orElseThrow(() -> new EntityNotFoundException("Survey Not Found"));
-            course.addSurvey(survey);
-            survey.setType(ProgramSurveyRoles.CourseSurvey);
+            survey.addCourseSurvey(courseSurvey);
+            survey.setType(request.getSurveyRole());
         }
 
         courseRepository.save(course);

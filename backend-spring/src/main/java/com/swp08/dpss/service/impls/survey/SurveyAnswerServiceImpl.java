@@ -7,7 +7,6 @@ import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.entity.survey.SurveyQuestion;
 import com.swp08.dpss.entity.client.User;
-import com.swp08.dpss.enums.SurveyAnswerStatus;
 import com.swp08.dpss.mapper.interfaces.SurveyAnswerMapper;
 import com.swp08.dpss.repository.survey.SurveyAnswerRepository;
 import com.swp08.dpss.repository.survey.SurveyQuestionRepository;
@@ -47,7 +46,7 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     @Override
     public List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId) {
         return surveyAnswerRepository.findAll().stream()
-                .filter(a -> a.getSurvey().getId().equals(surveyId))
+                .filter(a -> a.getSurvey_id().getId().equals(surveyId))
                 .map(surveyAnswerMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -100,26 +99,24 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
 
     // ... unchanged delete methods ...
 
-
-
-    @Transactional
-    @Override
-    public void softDeleteSurveyAnswer(Long id) {
-        SurveyAnswer answer = surveyAnswerRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Survey Answer Not Found"));
-        answer.setStatus(SurveyAnswerStatus.DELETED);
-    }
+//    @Transactional
+//    @Override
+//    public void softDeleteSurveyAnswer(Long id) {
+//        SurveyAnswer answer = surveyAnswerRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Survey Answer Not Found"));
+//        answer.setStatus(SurveyAnswerStatus.DELETED);
+//    }
 
     @Transactional
     @Override
     public void hardDeleteSurveyAnswer(Long id) {
         SurveyAnswer answer = surveyAnswerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Survey Answer Not Found with id " + id));
-        if (answer.getSurvey() != null) {
-            answer.getSurvey().removeAnswer(answer);
+        if (answer.getSurvey_id() != null) {
+            answer.getSurvey_id().removeAnswer(answer);
         }
-        if (answer.getQuestion() != null) {
-            answer.getQuestion().removeAnswer(answer);
+        if (answer.getQuestion_id() != null) {
+            answer.getQuestion_id().removeAnswer(answer);
         }
         if (answer.getUser() != null) {
             answer.getUser().removeAnswer(answer);

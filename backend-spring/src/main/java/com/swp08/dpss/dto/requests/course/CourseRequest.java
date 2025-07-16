@@ -1,6 +1,7 @@
 package com.swp08.dpss.dto.requests.course;
 
 import com.swp08.dpss.enums.CourseStatus;
+import com.swp08.dpss.enums.CourseSurveyRoles;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,8 @@ public class CourseRequest {
     private String title;
 
     private String description;
+
+    private CourseSurveyRoles surveyRole;
 
     private CourseStatus status = CourseStatus.DRAFT;
 

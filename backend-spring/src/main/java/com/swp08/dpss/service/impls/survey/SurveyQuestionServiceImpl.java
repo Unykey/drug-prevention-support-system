@@ -5,15 +5,12 @@ import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.entity.survey.SurveyQuestion;
-import com.swp08.dpss.enums.SurveyAnswerStatus;
-import com.swp08.dpss.enums.SurveyQuestionStatus;
 import com.swp08.dpss.mapper.interfaces.SurveyQuestionMapper;
 import com.swp08.dpss.repository.survey.SurveyQuestionRepository;
 import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
