@@ -119,7 +119,7 @@ public class CourseController {
     }
 
     @GetMapping("/progress/{enrollmentId}")
-    public ResponseEntity<ApiResponse<List<LessonProgress>>> getProgressByEnrollment(@PathVariable CourseEnrollmentId enrollmentId) {
+    public ResponseEntity<ApiResponse<List<CourseLessonProgress>>> getProgressByEnrollment(@PathVariable CourseEnrollmentId enrollmentId) {
         return ResponseEntity.ok(new ApiResponse<>(true, courseService.getProgressByEnrollment(enrollmentId), "Progress retrieved"));
     }
 }

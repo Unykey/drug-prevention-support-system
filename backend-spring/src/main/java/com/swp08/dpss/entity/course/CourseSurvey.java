@@ -1,27 +1,27 @@
-package com.swp08.dpss.entity.program;
+package com.swp08.dpss.entity.course;
 
-import com.swp08.dpss.entity.client.User;
+import com.swp08.dpss.entity.program.Program;
+import com.swp08.dpss.entity.program.ProgramSurveyId;
 import com.swp08.dpss.entity.survey.Survey;
+import com.swp08.dpss.enums.CourseSurveyRoles;
 import com.swp08.dpss.enums.ProgramSurveyRoles;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProgramSurvey {
+public class CourseSurvey {
     @EmbeddedId
-    private ProgramSurveyId id;
+    private CourseSurveyId id;
 
     @ManyToOne
-    @MapsId("programId")
-    @JoinColumn(name = "program_id")
-    private Program program;
+    @MapsId("courseId")
+    @JoinColumn(name = "course_id")
+    private Course course;
 
     @ManyToOne
     @MapsId("suveyId")
@@ -29,5 +29,5 @@ public class ProgramSurvey {
     private Survey survey;
 
     @Column(name = "Type", nullable = false)
-    private ProgramSurveyRoles role;
+    private CourseSurveyRoles role;
 }
