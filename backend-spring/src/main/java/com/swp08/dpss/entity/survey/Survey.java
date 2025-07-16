@@ -50,13 +50,13 @@ public class Survey {
     private LocalDate created_at;
 
     @OneToMany(
-            mappedBy = "survey",
+            mappedBy = "survey_id",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<SurveyAnswer> answers = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "survey",
+            mappedBy = "survey_id",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<SurveyQuestion> questions = new ArrayList<>();
