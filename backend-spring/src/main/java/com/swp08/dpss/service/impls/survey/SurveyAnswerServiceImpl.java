@@ -39,30 +39,12 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
 
     @Override
     public List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId) {
-        List<SurveyAnswer> answers = ((List<SurveyAnswer>) surveyAnswerRepository.findAll()) // repository returns Iterable
+        List<SurveyAnswer> answers = surveyAnswerRepository.findAll() // repository returns Iterable
                 .stream()
                 .filter(a -> a.getSurvey().getId().equals(surveyId))
-                .collect(Collectors.toList());
+                .toList();
 
-        return answers.stream().map(a -> {
-            SurveyAnswerDto dto = new SurveyAnswerDto();
-            dto.setId(a.getId());
-            dto.setContent(a.getContent());
-            dto.setResultScore(a.getResultScore());
-            dto.setSubmittedAt(a.getSubmittedAt());
-
-            if (a.getQuestion() != null) {
-                //dto.setQuestionId(a.getQuestion().getId());
-                dto.setQuestionText(a.getQuestion().getQuestion());
-            }
-
-            if (a.getUser() != null) {
-                //dto.setUserId(a.getUser().getId());
-                dto.setUserName(a.getUser().getName());
-            }
-
-            return dto;
-        }).collect(Collectors.toList());
+        return answers.stream().map(a -> toDto(a)).collect(Collectors.toList());
     }
 
     @Transactional
@@ -120,16 +102,21 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
         answer.setResultScore(isCorrect ? 10 : 0);
         SurveyAnswer saved = surveyAnswerRepository.save(answer);
 
+        SurveyAnswerDto dto = toDto(saved);
+
+        return dto;
+    }
+
+    private static SurveyAnswerDto toDto(SurveyAnswer saved) {
         SurveyAnswerDto dto = new SurveyAnswerDto();
         dto.setId(saved.getId());
         dto.setContent(saved.getContent());
         dto.setResultScore(saved.getResultScore());
         dto.setSubmittedAt(saved.getSubmittedAt());
-        //dto.setQuestionId(question.getId());
-        dto.setQuestionText(question.getQuestion());
-        //dto.setUserId(user.getId());
-        dto.setUserName(user.getName());
-
+        dto.setQuestionId(saved.getQuestion().getId());
+        dto.setQuestionText(saved.getQuestion().getQuestion());
+        dto.setUserId(saved.getUser().getId());
+        dto.setUserId(saved.getUser().getId());
         return dto;
     }
 
