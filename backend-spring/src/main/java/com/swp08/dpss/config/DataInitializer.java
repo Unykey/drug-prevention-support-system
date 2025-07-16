@@ -8,9 +8,7 @@ import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
-import com.swp08.dpss.enums.Genders;
-import com.swp08.dpss.enums.Roles;
-import com.swp08.dpss.enums.User_Status;
+import com.swp08.dpss.enums.*;
 import com.swp08.dpss.service.interfaces.UserService;
 
 import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
@@ -167,10 +165,33 @@ public class DataInitializer implements CommandLineRunner {
         log.info("DataInitializer finished.");
     }
 
-    private void surveyInit(){
-        SurveyDetailsDto assist = surveyService.createSurvey(new CreateSurveyRequest("ASSIST", "Đánh giá mức độ sử dụng chất gây nghiện"));
-        SurveyDetailsDto crafft = surveyService.createSurvey(new CreateSurveyRequest("CRAFFT", "Sàng lọc nguy cơ sử dụng chất gây nghiện"));
-        SurveyDetailsDto dast10 = surveyService.createSurvey(new CreateSurveyRequest("DAST-10", "Khảo sát mức độ nghiện các loại ma túy"));
+    private void surveyInit() {
+        SurveyDetailsDto assist = surveyService.createSurvey(
+                new CreateSurveyRequest(
+                        "ASSIST",
+                        SurveyType.Survey,
+                        SurveyStatus.PUBLISHED,
+                        "Đánh giá mức độ sử dụng chất gây nghiện"
+                )
+        );
+
+        SurveyDetailsDto crafft = surveyService.createSurvey(
+                new CreateSurveyRequest(
+                        "CRAFFT",
+                        SurveyType.Survey,
+                        SurveyStatus.PUBLISHED,
+                        "Sàng lọc nguy cơ sử dụng chất gây nghiện"
+                )
+        );
+
+        SurveyDetailsDto dast10 = surveyService.createSurvey(
+                new CreateSurveyRequest(
+                        "DAST-10",
+                        SurveyType.Survey,
+                        SurveyStatus.PUBLISHED,
+                        "Khảo sát mức độ nghiện các loại ma túy"
+                )
+        );
 
         surveyQuestionService.addQuestionToSurvey(assist.getId(), new AddSurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", "TEXT", "Có"));
         surveyQuestionService.addQuestionToSurvey(assist.getId(), new AddSurveyQuestionRequest("Bạn có hút thuốc lá không?", "TEXT", "Không"));
@@ -182,9 +203,10 @@ public class DataInitializer implements CommandLineRunner {
         surveyQuestionService.addQuestionToSurvey(dast10.getId(), new AddSurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", "TEXT", "Có"));
     }
 
+
     private void answerInit() {
         // Create survey
-        SurveyDetailsDto survey = surveyService.createSurvey(new CreateSurveyRequest("DEMO_SURVEY", "Demo survey for testing answers"));
+        SurveyDetailsDto survey = surveyService.createSurvey(new CreateSurveyRequest("DEMO_SURVEY",SurveyType.Survey,SurveyStatus.PUBLISHED, "Demo survey for testing answers"));
         Long surveyId = survey.getId();
 
         // Create questions and get IDs

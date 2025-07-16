@@ -31,6 +31,13 @@ public class SurveyServiceImpl implements SurveyService {
         survey.setName(request.getName());
         survey.setDescription(request.getDescription());
 
+        if (request.getSurveyType() != null) {
+            survey.setType(request.getSurveyType());
+        }
+        if (request.getSurveyStatus() != null) {
+            survey.setStatus(request.getSurveyStatus());
+        }
+
         return toDto(surveyRepository.save(survey));
     }
 
@@ -69,7 +76,8 @@ public class SurveyServiceImpl implements SurveyService {
         dto.setId(survey.getId());
         dto.setName(survey.getName());
         dto.setDescription(survey.getDescription());
-
+        dto.setSurveyType(survey.getType());
+        dto.setSurveyStatus(survey.getStatus());
         dto.setQuestions(
                 survey.getQuestions()
                         .stream()
@@ -119,7 +127,9 @@ public class SurveyServiceImpl implements SurveyService {
         survey.setName(request.getName());
         survey.setDescription(request.getDescription());
         survey.setStatus(request.getStatus());
+        survey.setType(request.getType());
+        survey.setStatus(request.getStatus());
 
-        return toDto(survey);
+        return toDto(surveyRepository.save(survey));
     }
 }

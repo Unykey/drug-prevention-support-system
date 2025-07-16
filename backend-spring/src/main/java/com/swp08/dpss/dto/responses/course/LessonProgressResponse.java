@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 @Setter
 public class LessonProgressResponse {
     private Long id;
-    private Long enrollmentId;
+    private Long surveyId;
+    private Long userId;
     private Long lessonId;
     private boolean completed;
     private LocalDateTime completedAt;

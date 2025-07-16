@@ -4,6 +4,7 @@ import com.swp08.dpss.dto.requests.survey.AddSurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.requests.survey.UpdateSurveyRequest;
+import com.swp08.dpss.dto.responses.ApiResponse;
 import com.swp08.dpss.dto.responses.survey.SurveyAnswerDto;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
@@ -13,7 +14,6 @@ import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
 import com.swp08.dpss.service.interfaces.survey.SurveyService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,109 +36,80 @@ public class SurveyController {
         this.surveyAnswerService = surveyAnswerService;
     }
 
-    // ✅ Create a new survey
-    // ROLE: MANAGER, ADMIN
     @PostMapping
-    public ResponseEntity<SurveyDetailsDto> createSurvey(
+    public ResponseEntity<ApiResponse<SurveyDetailsDto>> createSurvey(
             @Valid @RequestBody CreateSurveyRequest request) {
         SurveyDetailsDto created = surveyService.createSurvey(request);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(new ApiResponse<>(true, created, "Survey created successfully"));
     }
 
-    // ✅ Get published surveys (default for MEMBER)
-    // ROLE: MEMBER
     @GetMapping
-    public ResponseEntity<List<SurveyDetailsDto>> getPublishedSurveys() {
-        return ResponseEntity.ok(surveyService.getSurveysByStatus(SurveyStatus.PUBLISHED));
+    public ResponseEntity<ApiResponse<List<SurveyDetailsDto>>> getPublishedSurveys() {
+        return ResponseEntity.ok(new ApiResponse<>(true, surveyService.getSurveysByStatus(SurveyStatus.PUBLISHED), "Published surveys retrieved"));
     }
 
-    // ✅ Get all surveys with optional status param
-    // ROLE: ADMIN, MANAGER, STAFF
     @GetMapping("/all")
-    public ResponseEntity<List<SurveyDetailsDto>> getAllSurveys(
+    public ResponseEntity<ApiResponse<List<SurveyDetailsDto>>> getAllSurveys(
             @RequestParam(required = false) SurveyStatus status,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        if (status != null) {
-            return ResponseEntity.ok(surveyService.getSurveysByStatus(status));
-        }
-        return ResponseEntity.ok(surveyService.getAllSurveys());
+        List<SurveyDetailsDto> result = (status != null)
+                ? surveyService.getSurveysByStatus(status)
+                : surveyService.getAllSurveys();
+        return ResponseEntity.ok(new ApiResponse<>(true, result, "Surveys retrieved"));
     }
 
-    // ✅ Get a single survey by ID
-    // ROLE: ALL ROLES, depending on visibility logic
     @GetMapping("/{id}")
-    public ResponseEntity<SurveyDetailsDto> getSurveyById(@PathVariable Long id) {
-        return ResponseEntity.ok(surveyService.getSurveyById(id));
+    public ResponseEntity<ApiResponse<SurveyDetailsDto>> getSurveyById(@PathVariable Long id) {
+        return ResponseEntity.ok(new ApiResponse<>(true, surveyService.getSurveyById(id), "Survey retrieved"));
     }
 
-    // ✅ Get questions for a survey
-    // ROLE: ALL ROLES (visible filtered by role in service logic)
     @GetMapping("/{id}/questions")
-    public ResponseEntity<List<SurveyQuestionDto>> getQuestionsBySurveyId(@PathVariable Long id) {
-        return ResponseEntity.ok(surveyQuestionService.getQuestionsBySurveyId(id));
+    public ResponseEntity<ApiResponse<List<SurveyQuestionDto>>> getQuestionsBySurveyId(@PathVariable Long id) {
+        return ResponseEntity.ok(new ApiResponse<>(true, surveyQuestionService.getQuestionsBySurveyId(id), "Survey questions retrieved"));
     }
 
-    // ✅ Get answers submitted to a survey
-    // ROLE: MEMBER (own answers), STAFF, MANAGER, ADMIN
     @GetMapping("/{id}/answers")
-    public ResponseEntity<List<SurveyAnswerDto>> getAnswersBySurveyId(@PathVariable Long id) {
-        return ResponseEntity.ok(surveyAnswerService.getAnswersBySurveyId(id));
+    public ResponseEntity<ApiResponse<List<SurveyAnswerDto>>> getAnswersBySurveyId(@PathVariable Long id) {
+        return ResponseEntity.ok(new ApiResponse<>(true, surveyAnswerService.getAnswersBySurveyId(id), "Survey answers retrieved"));
     }
 
-    // ✅ Search surveys by name
-    // ROLE: ALL
     @GetMapping("/search")
-    public ResponseEntity<List<SurveyDetailsDto>> searchSurveys(@RequestParam String keyword) {
-        return ResponseEntity.ok(surveyService.searchSurveysByName(keyword));
+    public ResponseEntity<ApiResponse<List<SurveyDetailsDto>>> searchSurveys(@RequestParam String keyword) {
+        return ResponseEntity.ok(new ApiResponse<>(true, surveyService.searchSurveysByName(keyword), "Survey search results"));
     }
 
-    // ✅ Add question to survey
-    // ROLE: MANAGER, ADMIN
     @PostMapping("/{id}/addquestion")
-    public ResponseEntity<SurveyQuestionDto> addQuestionToSurvey(
+    public ResponseEntity<ApiResponse<SurveyQuestionDto>> addQuestionToSurvey(
             @RequestBody AddSurveyQuestionRequest questionDto, @PathVariable Long id) {
         SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(id, questionDto);
-        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(new ApiResponse<>(true, saved, "Question added to survey"));
     }
 
-    // ✅ Submit answer
-    // ROLE: MEMBER
     @PostMapping("/{surveyId}/{questionId}/submitanswer")
-    public ResponseEntity<SurveyAnswerDto> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request, @PathVariable Long surveyId, @PathVariable Long questionId) {
+    public ResponseEntity<ApiResponse<SurveyAnswerDto>> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request, @PathVariable Long surveyId, @PathVariable Long questionId) {
         SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(surveyId, questionId, request);
-        return new ResponseEntity<>(submitted, HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(new ApiResponse<>(true, submitted, "Answer submitted"));
     }
 
-    // ✅ Update survey
-    // ROLE: MANAGER, ADMIN
-    // ✅ Update an existing survey (including status)
-    // ROLE: MANAGER, ADMIN
     @PutMapping("/{id}")
-    public ResponseEntity<SurveyDetailsDto> updateSurvey(
+    public ResponseEntity<ApiResponse<SurveyDetailsDto>> updateSurvey(
             @PathVariable Long id,
-            @Valid@RequestBody UpdateSurveyRequest request // or UpdateSurveyRequest if separate
+            @Valid @RequestBody UpdateSurveyRequest request
     ) {
         SurveyDetailsDto updated = surveyService.updateSurvey(id, request);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(new ApiResponse<>(true, updated, "Survey updated"));
     }
 
-
-
-    // ✅ Soft delete a survey
-    // ROLE: MANAGER, ADMIN
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> softDeleteSurvey(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> softDeleteSurvey(@PathVariable Long id) {
         surveyService.softDeleteSurveyById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ApiResponse<>(true, null, "Survey soft-deleted"));
     }
 
-    // ✅ Hard delete a survey
-    // ROLE: ADMIN
     @DeleteMapping("/admin/{id}")
-    public ResponseEntity<Void> hardDeleteSurvey(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> hardDeleteSurvey(@PathVariable Long id) {
         surveyService.hardDeleteSurveyById(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new ApiResponse<>(true, null, "Survey hard-deleted"));
     }
-
 }

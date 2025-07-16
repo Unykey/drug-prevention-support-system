@@ -1,5 +1,6 @@
 package com.swp08.dpss.entity.course;
 
+import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.CourseStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -46,6 +47,9 @@ public class Course {
     @Column (name = "Enrollments")
     private List<CourseEnrollment> enrollments = new ArrayList<>();
 
+    @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "course")
+    private List<Survey> surveys = new ArrayList<>();
+
     public void addCourseLesson(CourseLesson lesson) {
         lessons.add(lesson);
         lesson.setCourse(this);
@@ -62,6 +66,16 @@ public class Course {
     public void removeEnrollment(CourseEnrollment enrollment) {
         enrollments.remove(enrollment);
         enrollment.setCourse(null);
+    }
+
+    public void addSurvey(Survey survey) {
+        surveys.add(survey);
+        survey.setCourse(this);
+    }
+
+    public void removeSurvey(Survey survey) {
+        surveys.remove(survey);
+        survey.setCourse(null);
     }
 
     public Course(String title, String description, CourseStatus status, List<String> targetGroups, LocalDate startDate, LocalDate endDate) {

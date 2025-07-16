@@ -8,12 +8,10 @@ import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
 import com.swp08.dpss.dto.responses.course.CourseResponse;
 import com.swp08.dpss.dto.responses.course.LessonProgressResponse;
 import com.swp08.dpss.entity.client.User;
-import com.swp08.dpss.entity.course.Course;
-import com.swp08.dpss.entity.course.CourseEnrollment;
-import com.swp08.dpss.entity.course.CourseLesson;
-import com.swp08.dpss.entity.course.LessonProgress;
+import com.swp08.dpss.entity.course.*;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.CourseStatus;
+import com.swp08.dpss.enums.SurveyType;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.repository.course.CourseEnrollmentRepository;
 import com.swp08.dpss.repository.course.CourseLessonRepository;
@@ -59,8 +57,19 @@ public class CourseServiceImpl implements CourseService {
         course.setStartDate(request.getStartDate());
         course.setEndDate(request.getEndDate());
 
+        for (Long s : request.getSurveyId()){
+            Survey survey = surveyRepository.findById(s).orElseThrow(() -> new EntityNotFoundException("Survey Not Found"));
+            course.addSurvey(survey);
+            survey.setType(SurveyType.CourseSurvey);
+        }
+
         courseRepository.save(course);
         return course;
+    }
+
+    @Override
+    public List<Course> searchCoursesByName(String keyword) {
+        return courseRepository.findAllByTitleContainingIgnoreCase(keyword);
     }
 
     @Override
@@ -75,7 +84,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Transactional
     @Override
-    public Course updateCourse(Long id, Course updated) {
+    public Course updateCourse(Long id, CourseRequest updated) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Course Not Found with id " + id));
 
@@ -85,6 +94,8 @@ public class CourseServiceImpl implements CourseService {
         course.setTargetGroups(updated.getTargetGroups());
         course.setStartDate(updated.getStartDate());
         course.setEndDate(updated.getEndDate());
+
+
 
         return courseRepository.save(course);
     }
@@ -165,12 +176,6 @@ public class CourseServiceImpl implements CourseService {
         lesson.setOrderIndex(request.getOrderIndex());
         lesson.setCourse(course);
 
-        if (request.getSurveyId() != null) {
-            Survey survey = surveyRepository.findById(request.getSurveyId())
-                    .orElseThrow(() -> new EntityNotFoundException("Survey Not Found with id " + request.getSurveyId()));
-            lesson.setSurvey(survey);
-        }
-
         course.addCourseLesson(lesson);
         courseRepository.save(course); // or use courseLessonRepository.save(lesson) if available
 
@@ -201,14 +206,6 @@ public class CourseServiceImpl implements CourseService {
         lesson.setContent(updated.getContent());
         lesson.setOrderIndex(updated.getOrderIndex());
 
-        if (updated.getSurveyId() != null) {
-            Survey survey = surveyRepository.findById(updated.getSurveyId())
-                    .orElseThrow(() -> new EntityNotFoundException("Survey Not Found with id " + updated.getSurveyId()));
-            lesson.setSurvey(survey);
-        } else {
-            lesson.setSurvey(null);
-        }
-
         courseLessonRepository.save(lesson);
         return toDto(lesson);
     }
@@ -223,11 +220,6 @@ public class CourseServiceImpl implements CourseService {
         if (lesson.getCourse() != null) {
             lesson.getCourse().getLessons().remove(lesson);
             lesson.setCourse(null);
-        }
-
-        // Detach from survey
-        if (lesson.getSurvey() != null) {
-            lesson.setSurvey(null); // Optional: if Survey is reused, don't delete it
         }
 
         // Detach lesson progress if exists
@@ -246,11 +238,20 @@ public class CourseServiceImpl implements CourseService {
     @Transactional
     @Override
     public CourseEnrollmentResponse enrollUser(Long courseId, Long userId) {
+        if (courseEnrollmentRepository.existsById(new CourseEnrollmentId(userId, courseId))) {
+            throw new IllegalStateException("User is already enrolled in this course");
+        }
         Course course = courseRepository.findById(courseId).orElseThrow(()-> new EntityNotFoundException("Course Not Found with id " + courseId));
         User user = userRepository.findById(userId).orElseThrow(()-> new EntityNotFoundException("User not found with id " + userId));
+
         CourseEnrollment enrollment = new CourseEnrollment();
+        enrollment.setCourse(course);
+        enrollment.setUser(user);
+        enrollment.setId(new CourseEnrollmentId(user.getId(), course.getId()));
         course.addEnrollment(enrollment);
         user.addCourseEnrollment(enrollment);
+
+
         courseEnrollmentRepository.save(enrollment);
         return toDto(enrollment);
     }
@@ -301,7 +302,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public List<LessonProgress> getProgressByEnrollment(Long enrollmentId) {
+    public List<LessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId) {
         CourseEnrollment enrollment = courseEnrollmentRepository.findById(enrollmentId).orElseThrow(()-> new EntityNotFoundException("Enrollment Not Found with id " + enrollmentId));
         return enrollment.getProgress();
     }
@@ -326,15 +327,13 @@ public class CourseServiceImpl implements CourseService {
         dto.setContent(lesson.getContent());
         dto.setOrderIndex(lesson.getOrderIndex());
         dto.setCourseId(lesson.getCourse() != null ? lesson.getCourse().getId() : null);
-        dto.setSurveyId(lesson.getSurvey() != null ? lesson.getSurvey().getId() : null);
         return dto;
     }
 
     public CourseEnrollmentResponse toDto(CourseEnrollment enrollment) {
         CourseEnrollmentResponse dto = new CourseEnrollmentResponse();
-        dto.setId(enrollment.getId());
-        dto.setUserId(enrollment.getUser() != null ? enrollment.getUser().getId() : null);
-        dto.setCourseId(enrollment.getCourse() != null ? enrollment.getCourse().getId() : null);
+        dto.setUserId(enrollment.getUser().getId());
+        dto.setCourseId(enrollment.getCourse().getId());
         dto.setEnrolledAt(enrollment.getEnrolledAt());
         return dto;
     }
@@ -342,7 +341,8 @@ public class CourseServiceImpl implements CourseService {
     public LessonProgressResponse toDto(LessonProgress progress) {
         LessonProgressResponse dto = new LessonProgressResponse();
         dto.setId(progress.getId());
-        dto.setEnrollmentId(progress.getEnrollment().getId());
+        dto.setUserId(progress.getEnrollment().getUser().getId());
+        dto.setSurveyId(progress.getEnrollment().getCourse().getId());
         dto.setLessonId(progress.getLesson().getId());
         dto.setCompleted(progress.isCompleted());
         dto.setCompletedAt(progress.getCompletedAt());

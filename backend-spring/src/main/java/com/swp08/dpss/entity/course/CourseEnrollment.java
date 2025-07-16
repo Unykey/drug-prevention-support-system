@@ -11,33 +11,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table (name = "CourseEnrollment")
+@Table(name = "CourseEnrollment")
 @Getter
 @Setter
 @NoArgsConstructor
 public class CourseEnrollment {
-    @Id
-    @GeneratedValue (strategy = GenerationType.AUTO)
-    private Long id;
+
+    @EmbeddedId
+    private CourseEnrollmentId id;
 
     @ManyToOne
-    @JoinColumn (name = "UserId")
+    @MapsId("user") // FK user -> CourseEnrollmentId.user
+    @JoinColumn(name = "UserId")
     private User user;
 
     @ManyToOne
-    @JoinColumn (name = "CourseId")
+    @MapsId("course") // FK course -> CourseEnrollmentId.course
+    @JoinColumn(name = "CourseId")
     private Course course;
 
-    @Column (name = "EnrollDate")
+    @Column(name = "EnrollDate")
     private LocalDateTime enrolledAt = LocalDateTime.now();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "enrollment", cascade = CascadeType.ALL)
     private List<LessonProgress> progress = new ArrayList<>();
 
+    // ✅ Constructor that sets composite key automatically
+    public CourseEnrollment(User user, Course course) {
+        this.user = user;
+        this.course = course;
+        this.id = new CourseEnrollmentId(user.getId(), course.getId());
+    }
+
     public void addProgress(LessonProgress progress) {
         this.progress.add(progress);
         progress.setEnrollment(this);
     }
+
     public void removeProgress(LessonProgress progress) {
         this.progress.remove(progress);
         progress.setEnrollment(null);

@@ -7,21 +7,20 @@ import com.swp08.dpss.dto.responses.course.CourseEnrollmentResponse;
 import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
 import com.swp08.dpss.dto.responses.course.CourseResponse;
 import com.swp08.dpss.dto.responses.course.LessonProgressResponse;
-import com.swp08.dpss.entity.course.Course;
-import com.swp08.dpss.entity.course.CourseEnrollment;
-import com.swp08.dpss.entity.course.CourseLesson;
-import com.swp08.dpss.entity.course.LessonProgress;
+import com.swp08.dpss.entity.course.*;
 
 import java.util.List;
 
 public interface CourseService {
     Course createCourse(CourseRequest request);
 
+    List<Course> searchCoursesByName(String keyword);
+
     List<Course> getAllCourses();
 
     Course getCourseById(Long id);
 
-    Course updateCourse(Long id, Course updated);
+    Course updateCourse(Long id, CourseRequest updated);
 
     void softDeleteCourse(Long id);
 
@@ -47,5 +46,5 @@ public interface CourseService {
 
     LessonProgressResponse updateLessonProgress(Long progressId, LessonProgressRequest progress);
 
-    List<LessonProgress> getProgressByEnrollment(Long enrollmentId);
+    List<LessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId);
 }

@@ -18,7 +18,10 @@ public class LessonProgress {
     private Long id;
 
     @ManyToOne
-    @JoinColumn (name = "Enrollment")
+    @JoinColumns({
+            @JoinColumn(name = "UserId", referencedColumnName = "UserId"),
+            @JoinColumn(name = "CourseId", referencedColumnName = "CourseId")
+    })
     private CourseEnrollment enrollment;
 
     @OneToOne

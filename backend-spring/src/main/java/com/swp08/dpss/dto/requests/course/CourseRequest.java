@@ -28,4 +28,6 @@ public class CourseRequest {
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    private List<Long> surveyId;
 }

@@ -1,7 +1,8 @@
 package com.swp08.dpss.entity.survey;
 
-import com.swp08.dpss.entity.course.CourseLesson;
+import com.swp08.dpss.entity.course.Course;
 import com.swp08.dpss.enums.SurveyStatus;
+import com.swp08.dpss.enums.SurveyType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,10 @@ public class Survey {
     private String description;
 
     @Enumerated(EnumType.STRING)
+    @Column (name = "Type")
+    private SurveyType type = SurveyType.Survey; //default
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "Status",  nullable = false)
     private SurveyStatus status = SurveyStatus.DRAFT; // default
 
@@ -37,9 +42,9 @@ public class Survey {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
     private List<SurveyAnswer> answers = new ArrayList<SurveyAnswer>();
 
-    @OneToOne
-    @JoinColumn (name = "CourseLessonId")
-    private CourseLesson courseLesson;
+    @ManyToOne
+    @JoinColumn (name = "CourseId")
+    private Course course;
 
     public void addQuestion(SurveyQuestion question) {
         questions.add(question);
