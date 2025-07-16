@@ -46,31 +46,31 @@ public class AuthController {
             );
         } catch (AuthenticationException e) {
             e.printStackTrace();
-            return ResponseEntity.ok(new ApiResponse<>(false, null, "Invalid email or password."));
+            return ResponseEntity.ok(new ApiResponse<>(false, null, "Sai email hoặc mật khẩu. Vui lòng kiểm tra và thử lại."));
         }
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getEmail());
         final String jwt = jwtUtil.generateToken(userDetails);
 
         User user = userService.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found with email: "));
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với email này"));
 
         UserResponse userResponse = userMapper.toResponse(user);
         AuthResponse authResponse = new AuthResponse(jwt, userResponse);
-        return ResponseEntity.ok(new ApiResponse<>(true, authResponse, "Login successfully"));
+        return ResponseEntity.ok(new ApiResponse<>(true, authResponse, "Đăng nhập thành công!"));
     }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserCreationRequest user) {
         if (userRepository.existsUserByEmail(user.getEmail())) {
-            return ResponseEntity.ok(new ApiResponse<>(false, null, "Email already in use"));
+            return ResponseEntity.ok(new ApiResponse<>(false, null, "Email này đã được đăng ký! Vui lòng sử dụng email khác."));
         }
 
         if (userRepository.existsUserByPhone(user.getPhone())) {
-            return ResponseEntity.ok(new ApiResponse<>(false, null, "Phone number already in use"));
+            return ResponseEntity.ok(new ApiResponse<>(false, null, "Số điện thoại này đã được đăng ký! Vui lòng sử dụng số điện thoại khác."));
         }
 
         userService.register(user);
-        return ResponseEntity.ok(new ApiResponse<>(true, user, "User registered successfully"));
+        return ResponseEntity.ok(new ApiResponse<>(true, user, "Đăng ký thành công!"));
     }
 
     @PostMapping("/forgot-password")
@@ -81,21 +81,21 @@ public class AuthController {
             //userService.sendResetRequest(request.getEmail());
         }
 
-        return ResponseEntity.ok(new ApiResponse<>(true, null, "If the email is registered, a reset link has been sent"));
+        return ResponseEntity.ok(new ApiResponse<>(true, null, "Nếu như email của bạn đã được đăng ký, một đường link đặt lại mật khẩu sẽ được gửi."));
     }
 
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
         // Check if password and confirmation match
         if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return ResponseEntity.ok(new ApiResponse<>(false, null, "Password and confirmation do not match!"));
+            return ResponseEntity.ok(new ApiResponse<>(false, null, "Mật khẩu và xác nhận mật khẩu không trùng khớp. Vui lòng thử lại."));
         }
 
         boolean success = tokenService.resetPassword(request.getToken(), request.getPassword());
         if (success) {
-            return ResponseEntity.ok(new ApiResponse<>(true, null, "Password has been reset successfully!"));
+            return ResponseEntity.ok(new ApiResponse<>(true, null, "Mật khẩu đã được đặt lại thành công!"));
         } else {
-            return ResponseEntity.ok(new ApiResponse<>(false, null, "Reset token is invalid or expired!"));
+            return ResponseEntity.ok(new ApiResponse<>(false, null, "Token để đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng thử lại."));
         }
     }
 }
