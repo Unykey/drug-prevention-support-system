@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {SurveyAnswerMapper.class})
 public interface SurveyQuestionMapper {
 
-    @Mapping(source = "id", target = "id")
+    @Mapping(source = "question_id", target = "id")
     @Mapping(source = "question", target = "question")
     @Mapping(source = "type", target = "type")
     @Mapping(source = "solution", target = "solution")
