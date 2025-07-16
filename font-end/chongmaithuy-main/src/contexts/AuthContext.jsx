@@ -2,6 +2,7 @@
 import React, {createContext, useContext, useState, useEffect} from 'react';
 // Import axios để gọi API login
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 
 // Tạo AuthContext để chia sẻ trạng thái authentication trên toàn ứng dụng
 const AuthContext = createContext(null);
@@ -24,6 +25,72 @@ export const AuthProvider = ({children}) => {
     const [user, setUser] = useState(null);
     // State loading khi đang kiểm tra authentication từ localStorage
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
+    const INACTIVITY_TIMEOUT = 1000 * 60 * 15; // 15 phút
+    const TOKEN_REFRESH_INTERVAL = 12 * 60 * 1000; // 12 phút
+
+    useEffect(() => {
+        let timeoutId;
+
+        const resetInactivityTimeout = () => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                logout();
+                navigate('/login', { replace: true });
+            }, INACTIVITY_TIMEOUT);
+        };
+
+        const handleActivity = () => {
+            resetInactivityTimeout();
+        };
+
+        window.addEventListener('mousemove', handleActivity);
+        window.addEventListener('keydown', handleActivity);
+        window.addEventListener('click', handleActivity);
+
+        resetInactivityTimeout();
+
+        return () => {
+            clearTimeout(timeoutId);
+            window.removeEventListener('mousemove', handleActivity);
+            window.removeEventListener('keydown', handleActivity);
+            window.removeEventListener('click', handleActivity);
+        };
+    }, [navigate]); // Add navigate to dependency array
+
+    // Token refresh
+    useEffect(() => {
+        const refreshToken = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (token && token !== 'undefined') {
+                    const response = await axios.post('/api/auth/refresh', {}, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    const { success, data, message } = response.data;
+                    if (success) {
+                        localStorage.setItem('token', data);
+                        console.log('Token refreshed:', message);
+                    } else {
+                        console.error('Token refresh failed:', message);
+                        logout();
+                        navigate('/login', { replace: true });
+                    }
+                }
+            } catch (error) {
+                console.error('Token refresh error:', {
+                    message: error.message,
+                    response: error.response?.data,
+                    status: error.response?.status,
+                });
+                logout();
+                navigate('/login', { replace: true });
+            }
+        };
+
+        const refreshInterval = setInterval(refreshToken, TOKEN_REFRESH_INTERVAL);
+        return () => clearInterval(refreshInterval);
+    }, [navigate]);
 
     useEffect(() => {
         // Thêm interceptor axios để gọi API login khi có token trong localStorage
@@ -42,7 +109,7 @@ export const AuthProvider = ({children}) => {
 
         // Kiểm tra localStorage xem có thông tin user đã lưu không
         const storedUser = localStorage.getItem('user');
-        if (storedUser && storedUser != "undefined") {
+        if (storedUser && storedUser !== "undefined") {
             try {
                 setUser(JSON.parse(storedUser));
             } catch (error) {
@@ -62,9 +129,11 @@ export const AuthProvider = ({children}) => {
     const login = async (email, password) => {
         try {
             const response = await axios.post('http://localhost:8080/api/auth/login', {email, password});
+            console.log('Login response:', response.data);
             const {success, data, message} = response.data;
             if (!success) {
-                throw new Error(message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+                console.error('Login failed with message:', message);
+                throw new Error(message || 'Login failed');
             }
             const {jwt, user} = data;
             // Lưu vào localStorage để persist qua session
@@ -76,9 +145,9 @@ export const AuthProvider = ({children}) => {
             localStorage.setItem('user', JSON.stringify(user));
             // Cập nhật state
             setUser(user);
-            return {success: true, user};
+            return {success: true, user, message};
         } catch (error) {
-            const errorMessage = error.response?.data?.error || 'Đăng nhập thất bại. Vui lòng thử lại.';
+            const errorMessage = error.response?.data?.error || error.message || 'Login failed';
             return {success: false, error: errorMessage};
         }
     };

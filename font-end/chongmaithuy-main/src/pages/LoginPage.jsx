@@ -45,20 +45,24 @@ const LoginPage = () => {
             // login(mockUser);
 
             // Hiển thị toast thông báo đăng nhập thành công
-            if (result) {
+            if (result.success) {
                 toast({
-                    title: "Đăng nhập thành công!",
-                    description: `Chào mừng trở lại, ${name}!`,
+                    title: result.message || 'Đăng nhập thành công!',
+                    description: `Chào mừng trở lại, ${result.user?.name || email}!`,
                     variant: "default", // Style mặc định
                     className: "bg-green-500 text-white", // Custom style màu xanh lá
                 });
-                const redicectTo = state?.from?.pathname || (result.user?.role === ROLES.ADMIN ? '/admin' : '/');
-                // Chuyển hướng về trang chủ sau khi đăng nhập thành công
-                // navigate(result.user?.role === 'Admin' ? '/admin' : '/');
-                navigate(redicectTo, {replace: true});
+                setTimeout(() => {
+                    const redirectTo = state?.from?.pathname || (result.user?.role === ROLES.ADMIN ? '/admin' : '/');
+                    navigate(redirectTo, { replace: true });
+                }, 100);
             } else {
                 console.error('Login failed with error:', result.error);
-                throw new Error(result.error);
+                toast({
+                    title: 'Đăng nhập thất bại',
+                    description: result.error, // Use backend message
+                    variant: 'destructive',
+                });
             }
         } catch (error) {
             console.error('HandleSubmit error:', {
@@ -68,7 +72,7 @@ const LoginPage = () => {
             // Hiển thị toast thông báo lỗi khi đăng nhập thất bại
             toast({
                 title: "Đăng nhập thất bại",
-                description: error.message || "Email hoặc mật khẩu không đúng. Vui lòng thử lại.",
+                description: error.message || "Đã có lỗi xảy ra. Vui lòng thử lại.",
                 variant: "destructive", // Style màu đỏ cho lỗi
             });
         } finally {

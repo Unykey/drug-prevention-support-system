@@ -21,10 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -96,6 +93,37 @@ public class AuthController {
             return ResponseEntity.ok(new ApiResponse<>(true, null, "Mật khẩu đã được đặt lại thành công!"));
         } else {
             return ResponseEntity.ok(new ApiResponse<>(false, null, "Token để đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng thử lại."));
+        }
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<String>> refreshToken(@RequestHeader("Authorization") String authHeader) {
+        try {
+            // Extract JWT from Authorization header
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(401).body(new ApiResponse<>(false, null, "Token không hợp lệ"));
+            }
+            String jwt = authHeader.replace("Bearer ", "");
+
+            // Validate token and extract username
+            String username = jwtUtil.extractUsername(jwt);
+            if (jwtUtil.isTokenExpired(jwt)) {
+                return ResponseEntity.status(401).body(new ApiResponse<>(false, null, "Token đã hết hạn"));
+            }
+
+            // Load user details
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (!jwtUtil.validateToken(jwt, userDetails)) {
+                return ResponseEntity.status(401)
+                        .body(new ApiResponse<>(false, null, "Token không hợp lệ"));
+            }
+
+            // Generate new token
+            String newJwt = jwtUtil.generateToken(userDetails);
+            return ResponseEntity.ok(new ApiResponse<>(true, newJwt, "Token refreshed thành công"));
+        } catch (Exception e) {
+            return ResponseEntity.status(401)
+                    .body(new ApiResponse<>(false, null, "Token refresh thất bại: " + e.getMessage()));
         }
     }
 }

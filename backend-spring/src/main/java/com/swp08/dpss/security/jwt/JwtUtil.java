@@ -32,7 +32,7 @@ public class JwtUtil {
                 .subject(userDetails.getUsername())
                 .claim("role", role)
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15)) // 15 minutes
                 .setHeaderParam("typ", "JWT")
                 .signWith(key, Jwts.SIG.HS256)
                 .compact();

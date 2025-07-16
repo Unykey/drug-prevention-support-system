@@ -24,6 +24,7 @@ import { ROLES } from '@/config/roles'; // Import định nghĩa các vai trò t
 const ProtectedRoute = ({ children, allowedRoles }) => {
   // Lấy thông tin user và trạng thái loading từ AuthContext
   const { user, loading } = useAuth();
+  const token = localStorage.getItem('token');
   // Lấy location hiện tại để có thể redirect về sau khi đăng nhập
   const location = useLocation();
 
@@ -36,8 +37,8 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     );
   }
 
-  // Kiểm tra user đã đăng nhập chưa
-  if (!user) {
+  // Kiểm tra user đã đăng nhập chưa và có token hay không
+  if (!user || !token) {
     // Chưa đăng nhập -> redirect đến trang login
     // Truyền location hiện tại qua state để có thể redirect về sau khi login thành công
     return <Navigate to="/login" state={{ from: location }} replace />;
