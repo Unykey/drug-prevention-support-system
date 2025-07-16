@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "CourseLesson")
 @Getter
@@ -25,10 +28,12 @@ public class CourseLesson {
     @Column(name = "ContentLink")
     private String content; // for reading, text, or video URL
 
-    @OneToOne(mappedBy = "lesson",
-            cascade = CascadeType.ALL
+    @OneToMany(
+            mappedBy = "lesson",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private CourseLessonProgress courseLessonProgress;
+    private List<CourseLessonProgress> courseLessonProgressList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "CourseId")

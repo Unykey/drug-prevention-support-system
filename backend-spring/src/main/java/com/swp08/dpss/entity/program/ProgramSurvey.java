@@ -24,7 +24,7 @@ public class ProgramSurvey {
     private Program program;
 
     @ManyToOne
-    @MapsId("suveyId")
+    @MapsId("surveyId")
     @JoinColumn(name = "survey_id")
     private Survey survey;
 

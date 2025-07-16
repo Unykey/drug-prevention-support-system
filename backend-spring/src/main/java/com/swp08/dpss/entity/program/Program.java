@@ -27,10 +27,10 @@ public class Program {
     @Column(name = "Id")
     private Long id;
 
-    @Column (name = "Title", nullable = false, columnDefinition = "varchar(50)")
+    @Column(name = "Title", nullable = false, columnDefinition = "varchar(50)")
     private String title;
 
-    @Column (name = "Description")
+    @Column(name = "Description")
     private String description;
 
     @Column(name = "Start_Date")
@@ -46,7 +46,7 @@ public class Program {
     private LocalDate created_at;
 
     @OneToOne(fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "created_by")
     private User user;
 
