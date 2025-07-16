@@ -57,6 +57,13 @@ public class SurveyController {
         return ResponseEntity.ok(new ApiResponse<>(true, surveyService.getSurveysByStatus(SurveyStatus.PUBLISHED), "Published surveys retrieved"));
     }
 
+    @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<SurveyDetailsDto>>> getAllSurveys() {
+        List<SurveyDetailsDto> result = surveyService.getAllSurveys();
+        return ResponseEntity.ok(new ApiResponse<>(true, result, "All surveys retrieved"));
+    }
+
     @GetMapping("/filter")
     @PreAuthorize("hasAnyRole('MEMBER', 'STAFF', 'MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<List<SurveyDetailsDto>>> filterSurveys(
@@ -85,7 +92,6 @@ public class SurveyController {
         return ResponseEntity.ok(new ApiResponse<>(true, result, "Filtered surveys retrieved"));
     }
 
-
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<SurveyDetailsDto>> getSurveyById(@PathVariable Long id) {
         return ResponseEntity.ok(new ApiResponse<>(true, surveyService.getSurveyById(id), "Survey retrieved"));
@@ -94,7 +100,7 @@ public class SurveyController {
     @GetMapping("/{id}/questions")
     public ResponseEntity<ApiResponse<List<SurveyQuestionDto>>> getQuestionsBySurveyId(@PathVariable Long id) {
         return ResponseEntity.ok(new ApiResponse<>(true, surveyQuestionService.getQuestionsBySurveyId(id), "Survey questions retrieved"));
-    }
+    }asld;fvjksfvhdbyvgls
 
     @GetMapping("/{id}/answers")
     public ResponseEntity<ApiResponse<List<SurveyAnswerDto>>> getAnswersBySurveyId(@PathVariable Long id) {
