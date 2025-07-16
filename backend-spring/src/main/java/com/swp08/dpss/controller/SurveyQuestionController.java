@@ -25,13 +25,6 @@ public class SurveyQuestionController {
 
     //@PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> softDeleteQuestionFromSurvey(@PathVariable Long id) {
-        surveyQuestionService.softDeleteSurveyQuestionById(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    //@PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/admin/{id}")
     public ResponseEntity<Void> hardDeleteQuestionFromSurvey(@PathVariable Long id) {
         surveyQuestionService.hardDeleteSurveyQuestionById(id);
         return ResponseEntity.noContent().build();

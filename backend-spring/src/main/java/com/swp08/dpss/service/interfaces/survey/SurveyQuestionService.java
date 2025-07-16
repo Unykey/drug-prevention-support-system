@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface SurveyQuestionService {
     List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId);
-    void softDeleteSurveyQuestionById(Long surveyQuestionId);
-
     void hardDeleteSurveyQuestionById(Long surveyQuestionId);
 
     SurveyQuestionDto addQuestionToSurvey(Long id, SurveyQuestionRequest questionDto);
