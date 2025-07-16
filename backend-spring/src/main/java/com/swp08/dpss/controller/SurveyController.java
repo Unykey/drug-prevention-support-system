@@ -100,7 +100,7 @@ public class SurveyController {
     @GetMapping("/{id}/questions")
     public ResponseEntity<ApiResponse<List<SurveyQuestionDto>>> getQuestionsBySurveyId(@PathVariable Long id) {
         return ResponseEntity.ok(new ApiResponse<>(true, surveyQuestionService.getQuestionsBySurveyId(id), "Survey questions retrieved"));
-    }asld;fvjksfvhdbyvgls
+    }//ngon rooi
 
     @GetMapping("/{id}/answers")
     public ResponseEntity<ApiResponse<List<SurveyAnswerDto>>> getAnswersBySurveyId(@PathVariable Long id) {
