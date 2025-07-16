@@ -48,18 +48,16 @@ public class Course {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    @Column(name = "Lessons")
     private List<CourseLesson> lessons = new ArrayList<>();
 
     @OneToMany(mappedBy = "course",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    @Column(name = "Enrollments")
     private List<CourseEnrollment> enrollments = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "program",
+            mappedBy = "course",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)

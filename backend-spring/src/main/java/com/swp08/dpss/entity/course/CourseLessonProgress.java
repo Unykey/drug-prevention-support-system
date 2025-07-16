@@ -24,8 +24,8 @@ public class CourseLessonProgress {
     })
     private CourseEnrollment enrollment;
 
-    @OneToOne
-    @JoinColumn (name = "Lesson")
+    @ManyToOne
+    @JoinColumn(name = "lesson_id")
     private CourseLesson lesson;
 
     @Column (name = "IsCompleted")

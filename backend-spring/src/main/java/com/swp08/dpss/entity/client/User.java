@@ -2,6 +2,7 @@ package com.swp08.dpss.entity.client;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.swp08.dpss.entity.course.CourseEnrollment;
+import com.swp08.dpss.entity.program.ProgramParticipation;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.enums.Genders;
 import com.swp08.dpss.enums.Roles;
@@ -68,6 +69,10 @@ public class User {
     // Course Enrollments
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private List<CourseEnrollment> courseEnrollments = new ArrayList<>();
+
+    // Program Participations
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private List<ProgramParticipation> participations = new ArrayList<>();
 
     // Methods for managing the relationship
     public void addGuardian(Guardian guardian){

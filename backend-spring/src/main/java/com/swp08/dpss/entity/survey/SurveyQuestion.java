@@ -13,9 +13,6 @@ import java.util.List;
 @Table
 @Getter
 @Setter
-//@ToString
-//@RequiredArgsConstructor
-//@AllArgsConstructor
 @NoArgsConstructor
 public class SurveyQuestion {
     @Id
@@ -31,7 +28,6 @@ public class SurveyQuestion {
     private String question;
 
     @Column (name = "Type", nullable = false)
-//    private String type;
     private QuestionTypes type;
 
     @Column (name = "Value", nullable = false, columnDefinition = "varchar(50)")
@@ -40,30 +36,6 @@ public class SurveyQuestion {
     @Column (name = "Solution")
     private String solution; //	Correct answer (only used in quiz/test for courses)
 
-//    @ManyToOne
-//    @JoinColumn(name = "Survey")
-//    private Survey survey;
-
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question_id")
     private List<SurveyAnswer> answers = new ArrayList<>();
-
-//    public void addAnswer(SurveyAnswer answer) {
-//        answers.add(answer);
-//        answer.setQuestion(this);
-//    }
-//
-//    public void removeAnswer(SurveyAnswer answer) {
-//        answers.remove(answer);
-//        answer.setQuestion(null);
-//    }
-//
-//    public SurveyQuestion() {
-//    }
-//
-//    public SurveyQuestion(String question, String type, String solution) {
-//        this.question = question;
-//        this.type = type;
-//        this.solution = solution;
-//    }
-
 }

@@ -24,7 +24,7 @@ public class CourseSurvey {
     private Course course;
 
     @ManyToOne
-    @MapsId("suveyId")
+    @MapsId("surveyId")
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
