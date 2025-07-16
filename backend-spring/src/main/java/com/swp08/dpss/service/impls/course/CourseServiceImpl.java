@@ -11,7 +11,7 @@ import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.entity.course.*;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.CourseStatus;
-import com.swp08.dpss.enums.SurveyType;
+import com.swp08.dpss.enums.ProgramSurveyRoles;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.repository.course.CourseEnrollmentRepository;
 import com.swp08.dpss.repository.course.CourseLessonRepository;
@@ -60,7 +60,7 @@ public class CourseServiceImpl implements CourseService {
         for (Long s : request.getSurveyId()){
             Survey survey = surveyRepository.findById(s).orElseThrow(() -> new EntityNotFoundException("Survey Not Found"));
             course.addSurvey(survey);
-            survey.setType(SurveyType.CourseSurvey);
+            survey.setType(ProgramSurveyRoles.CourseSurvey);
         }
 
         courseRepository.save(course);
@@ -147,7 +147,7 @@ public class CourseServiceImpl implements CourseService {
                 .findByCourse_IdAndUser_Id(courseId, userId);
 
         // Delete lesson progress
-        for (LessonProgress progress : enrollment.getProgress()) {
+        for (CourseLessonProgress progress : enrollment.getProgress()) {
             enrollment.removeProgress(progress);
             lessonProgressRepository.delete(progress);
         }
@@ -223,11 +223,11 @@ public class CourseServiceImpl implements CourseService {
         }
 
         // Detach lesson progress if exists
-        if (lesson.getLessonProgress() != null) {
-            LessonProgress progress = lesson.getLessonProgress();
+        if (lesson.getCourseLessonProgress() != null) {
+            CourseLessonProgress progress = lesson.getCourseLessonProgress();
             progress.setLesson(null);
             progress.setEnrollment(null); // unlink both sides if needed
-            lesson.setLessonProgress(null);
+            lesson.setCourseLessonProgress(null);
             lessonProgressRepository.delete(progress);
         }
 
@@ -271,9 +271,9 @@ public class CourseServiceImpl implements CourseService {
         CourseLesson lesson = courseLessonRepository.findById(request.getLessonId())
                 .orElseThrow(() -> new EntityNotFoundException("Lesson not found"));
 
-        LessonProgress progress = new LessonProgress();
+        CourseLessonProgress progress = new CourseLessonProgress();
         enrollment.addProgress(progress);
-        lesson.setLessonProgress(progress);
+        lesson.setCourseLessonProgress(progress);
         progress.setLesson(lesson);
         progress.setCompleted(request.isCompleted());
         progress.setCompletedAt(request.isCompleted() ? LocalDateTime.now() : null);
@@ -288,12 +288,12 @@ public class CourseServiceImpl implements CourseService {
     public LessonProgressResponse updateLessonProgress(Long progressId, LessonProgressRequest request) {
         CourseLesson lesson = courseLessonRepository.findById(request.getLessonId()).orElseThrow(()-> new EntityNotFoundException("Lesson not found with id " + request.getLessonId()));
         CourseEnrollment enrollment = courseEnrollmentRepository.findById(request.getEnrollmentId()).orElseThrow(()-> new EntityNotFoundException("Enrollment not found with id " + request.getEnrollmentId()));
-        LessonProgress progress = lessonProgressRepository.findById(progressId)
+        CourseLessonProgress progress = lessonProgressRepository.findById(progressId)
                 .orElseThrow(() -> new EntityNotFoundException("Progress not found with id " + progressId));
         progress.setCompleted(request.isCompleted());
         progress.setCompletedAt(request.isCompleted() ? LocalDateTime.now() : null);
         progress.setLesson(lesson);
-        lesson.setLessonProgress(progress);
+        lesson.setCourseLessonProgress(progress);
         enrollment.addProgress(progress);
         lessonProgressRepository.save(progress);
 
@@ -302,7 +302,7 @@ public class CourseServiceImpl implements CourseService {
 
 
     @Override
-    public List<LessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId) {
+    public List<CourseLessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId) {
         CourseEnrollment enrollment = courseEnrollmentRepository.findById(enrollmentId).orElseThrow(()-> new EntityNotFoundException("Enrollment Not Found with id " + enrollmentId));
         return enrollment.getProgress();
     }
@@ -338,7 +338,7 @@ public class CourseServiceImpl implements CourseService {
         return dto;
     }
 
-    public LessonProgressResponse toDto(LessonProgress progress) {
+    public LessonProgressResponse toDto(CourseLessonProgress progress) {
         LessonProgressResponse dto = new LessonProgressResponse();
         dto.setId(progress.getId());
         dto.setUserId(progress.getEnrollment().getUser().getId());

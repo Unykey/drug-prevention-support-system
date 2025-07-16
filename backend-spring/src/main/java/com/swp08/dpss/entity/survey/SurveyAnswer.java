@@ -1,9 +1,9 @@
 package com.swp08.dpss.entity.survey;
 
 import com.swp08.dpss.entity.client.User;
-import com.swp08.dpss.enums.SurveyAnswerStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -12,45 +12,32 @@ import java.time.LocalDateTime;
 @Table
 @Getter
 @Setter
+@NoArgsConstructor
 public class SurveyAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id")
     private Long id;
 
-    @Column (name = "SubmittedAt")
-    private LocalDateTime submittedAt = LocalDateTime.now();
+    @ManyToOne
+    @JoinColumn(name = "survey_id")
+    private Survey survey_id;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private SurveyQuestion question_id;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @Column (name = "Content", nullable = false)
+    private String content;
 
     @Column (name = "ResultScore")
     private int resultScore;
 
-    @Column (name = "Content")
-    private String content;
-
-    @Enumerated(EnumType.STRING)
-    @Column (name = "Status",  nullable = false)
-    private SurveyAnswerStatus status = SurveyAnswerStatus.VISIBLE;
-
-    @ManyToOne
-    @JoinColumn (name = "Survey")
-    private Survey survey;
-
-    @ManyToOne
-    @JoinColumn (name = "Question")
-    private SurveyQuestion question;
-
-    @ManyToOne
-    @JoinColumn (name = "\"User\"")
-    private User user;
-
-    public SurveyAnswer() {
-    }
-
-    public SurveyAnswer(String content, Survey survey, SurveyQuestion question, User user) {
-        this.content = content;
-        survey.addAnswer(this);
-        question.addAnswer(this);
-        this.user = user;
-    }
+    @Column (name = "SubmittedAt", nullable = false)
+    private LocalDateTime submittedAt = LocalDateTime.now();
 }
 

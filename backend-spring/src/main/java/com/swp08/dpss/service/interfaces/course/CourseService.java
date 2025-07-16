@@ -5,7 +5,6 @@ import com.swp08.dpss.dto.requests.course.CourseRequest;
 import com.swp08.dpss.dto.requests.course.LessonProgressRequest;
 import com.swp08.dpss.dto.responses.course.CourseEnrollmentResponse;
 import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
-import com.swp08.dpss.dto.responses.course.CourseResponse;
 import com.swp08.dpss.dto.responses.course.LessonProgressResponse;
 import com.swp08.dpss.entity.course.*;
 
@@ -46,5 +45,5 @@ public interface CourseService {
 
     LessonProgressResponse updateLessonProgress(Long progressId, LessonProgressRequest progress);
 
-    List<LessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId);
+    List<CourseLessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId);
 }

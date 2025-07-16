@@ -1,7 +1,7 @@
 package com.swp08.dpss.dto.responses.survey;
 
 import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyType;
+import com.swp08.dpss.enums.SurveyTypes;
 import lombok.Data;
 
 import java.util.List;
@@ -12,6 +12,6 @@ public class SurveyDetailsDto {
     private String name;
     private String description;
     private List<SurveyQuestionDto> questions;
-    private SurveyType surveyType;
+    private SurveyTypes surveyType;
     private SurveyStatus surveyStatus;
 }

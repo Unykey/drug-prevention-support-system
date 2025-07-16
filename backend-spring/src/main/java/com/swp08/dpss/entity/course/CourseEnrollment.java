@@ -34,7 +34,7 @@ public class CourseEnrollment {
     private LocalDateTime enrolledAt = LocalDateTime.now();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "enrollment", cascade = CascadeType.ALL)
-    private List<LessonProgress> progress = new ArrayList<>();
+    private List<CourseLessonProgress> progress = new ArrayList<>();
 
     // ✅ Constructor that sets composite key automatically
     public CourseEnrollment(User user, Course course) {
@@ -43,12 +43,12 @@ public class CourseEnrollment {
         this.id = new CourseEnrollmentId(user.getId(), course.getId());
     }
 
-    public void addProgress(LessonProgress progress) {
+    public void addProgress(CourseLessonProgress progress) {
         this.progress.add(progress);
         progress.setEnrollment(this);
     }
 
-    public void removeProgress(LessonProgress progress) {
+    public void removeProgress(CourseLessonProgress progress) {
         this.progress.remove(progress);
         progress.setEnrollment(null);
     }

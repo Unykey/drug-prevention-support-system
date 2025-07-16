@@ -8,11 +8,11 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table (name = "LessonProgress")
+@Table (name = "CourseLessonProgress")
 @Getter
 @Setter
 @NoArgsConstructor
-public class LessonProgress {
+public class CourseLessonProgress {
     @Id
     @GeneratedValue (strategy = GenerationType.AUTO)
     private Long id;
@@ -33,11 +33,4 @@ public class LessonProgress {
 
     @Column (name = "CompleteDate")
     private LocalDateTime completedAt;
-
-    public LessonProgress(CourseEnrollment enrollment, CourseLesson lesson, boolean completed, LocalDateTime completedAt) {
-        this.enrollment = enrollment;
-        this.lesson = lesson;
-        this.completed = completed;
-        this.completedAt = completedAt;
-    }
 }
