@@ -5,9 +5,8 @@ import com.swp08.dpss.dto.requests.survey.UpdateSurveyRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.entity.survey.Survey;
-import com.swp08.dpss.enums.SurveyAnswerStatus;
-import com.swp08.dpss.enums.SurveyQuestionStatus;
 import com.swp08.dpss.enums.SurveyStatus;
+import com.swp08.dpss.enums.SurveyType;
 import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.service.interfaces.survey.SurveyService;
 import jakarta.persistence.EntityNotFoundException;
@@ -100,8 +99,6 @@ public class SurveyServiceImpl implements SurveyService {
     public void softDeleteSurveyById(Long id) {
         Survey survey = surveyRepository.findById(id).orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
         survey.setStatus(SurveyStatus.DELETED);
-        survey.getQuestions().forEach(q -> q.setStatus(SurveyQuestionStatus.DELETED));
-        survey.getAnswers().forEach(a -> a.setStatus(SurveyAnswerStatus.DELETED));
     }
 
     @Transactional
@@ -132,4 +129,18 @@ public class SurveyServiceImpl implements SurveyService {
 
         return toDto(surveyRepository.save(survey));
     }
+
+    @Override
+    public List<SurveyDetailsDto> getSurveysByTypeAndStatus(SurveyType type, SurveyStatus status) {
+        List<Survey> surveys = surveyRepository.findAllByStatusAndType(status, type);
+        return surveys.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<SurveyDetailsDto> getSurveysByType(SurveyType type) {
+        List<Survey> surveys = surveyRepository.findByType(type);
+        return surveys.stream().map(this::toDto).collect(Collectors.toList());
+    }
+
 }

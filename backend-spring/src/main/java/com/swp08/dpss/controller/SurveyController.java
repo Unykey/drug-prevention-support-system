@@ -8,13 +8,20 @@ import com.swp08.dpss.dto.responses.ApiResponse;
 import com.swp08.dpss.dto.responses.survey.SurveyAnswerDto;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
+import com.swp08.dpss.entity.client.User;
+import com.swp08.dpss.enums.Roles;
 import com.swp08.dpss.enums.SurveyStatus;
+import com.swp08.dpss.enums.SurveyType;
+import com.swp08.dpss.service.interfaces.UserService;
 import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
 import com.swp08.dpss.service.interfaces.survey.SurveyService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -28,19 +35,21 @@ public class SurveyController {
     private final SurveyService surveyService;
     private final SurveyQuestionService surveyQuestionService;
     private final SurveyAnswerService surveyAnswerService;
+    private final UserService userService;
 
     @Autowired
-    public SurveyController(SurveyService surveyService, SurveyQuestionService surveyQuestionService, SurveyAnswerService surveyAnswerService) {
+    public SurveyController(SurveyService surveyService, SurveyQuestionService surveyQuestionService, SurveyAnswerService surveyAnswerService, UserService userService) {
         this.surveyService = surveyService;
         this.surveyQuestionService = surveyQuestionService;
         this.surveyAnswerService = surveyAnswerService;
+        this.userService = userService;
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<SurveyDetailsDto>> createSurvey(
             @Valid @RequestBody CreateSurveyRequest request) {
         SurveyDetailsDto created = surveyService.createSurvey(request);
-        return ResponseEntity.status(201).body(new ApiResponse<>(true, created, "Survey created successfully"));
+        return ResponseEntity.ok(new ApiResponse<>(true, created, "Survey created successfully"));
     }
 
     @GetMapping
@@ -48,16 +57,34 @@ public class SurveyController {
         return ResponseEntity.ok(new ApiResponse<>(true, surveyService.getSurveysByStatus(SurveyStatus.PUBLISHED), "Published surveys retrieved"));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<SurveyDetailsDto>>> getAllSurveys(
+    @GetMapping("/filter")
+    @PreAuthorize("hasAnyRole('MEMBER', 'STAFF', 'MANAGER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<SurveyDetailsDto>>> filterSurveys(
+            @RequestParam SurveyType type,
             @RequestParam(required = false) SurveyStatus status,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
-        List<SurveyDetailsDto> result = (status != null)
-                ? surveyService.getSurveysByStatus(status)
-                : surveyService.getAllSurveys();
-        return ResponseEntity.ok(new ApiResponse<>(true, result, "Surveys retrieved"));
+        User user = userService.findByEmail(userDetails.getUsername()).orElseThrow(()-> new EntityNotFoundException("User not found with email: " + userDetails.getUsername()));
+        Roles userRole = user.getRole();
+        List<SurveyDetailsDto> result;
+
+        if (userRole == Roles.MEMBER) {
+            // Members can only view PUBLISHED surveys
+            if (status != null && status != SurveyStatus.PUBLISHED) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(new ApiResponse<>(false, null, "You are not allowed to view this status"));
+            }
+            result = surveyService.getSurveysByTypeAndStatus(type, SurveyStatus.PUBLISHED);
+        } else {
+            // Staff, Manager, Admin can filter freely
+            result = (status != null)
+                    ? surveyService.getSurveysByTypeAndStatus(type, status)
+                    : surveyService.getSurveysByType(type);
+        }
+
+        return ResponseEntity.ok(new ApiResponse<>(true, result, "Filtered surveys retrieved"));
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<SurveyDetailsDto>> getSurveyById(@PathVariable Long id) {
