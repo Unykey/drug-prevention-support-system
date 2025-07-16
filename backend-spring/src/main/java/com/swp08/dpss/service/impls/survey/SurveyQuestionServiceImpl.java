@@ -7,6 +7,7 @@ import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.entity.survey.SurveyQuestion;
 import com.swp08.dpss.enums.SurveyAnswerStatus;
 import com.swp08.dpss.enums.SurveyQuestionStatus;
+import com.swp08.dpss.mapper.interfaces.SurveyQuestionMapper;
 import com.swp08.dpss.repository.survey.SurveyQuestionRepository;
 import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
@@ -23,36 +24,54 @@ import java.util.stream.Collectors;
 @Service
 public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
-    @Autowired
     private final SurveyQuestionRepository questionRepository;
-    @Autowired
     private final SurveyRepository surveyRepository;
+    private final SurveyQuestionMapper surveyQuestionMapper;
 
     @Override
     public SurveyQuestionDto getQuestionById(Long id) {
-        SurveyQuestion surveyQuestion = questionRepository.findById(id).get();
-        SurveyQuestionDto dto = new SurveyQuestionDto();
-        dto.setQuestion(surveyQuestion.getQuestion());
-        dto.setType(surveyQuestion.getType());
-        dto.setSolution(surveyQuestion.getSolution());
-        return dto;
+        SurveyQuestion surveyQuestion = questionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found"));
+        return surveyQuestionMapper.toDto(surveyQuestion);
     }
 
     @Override
     public List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId) {
-        Survey survey = surveyRepository.findById(surveyId).orElseThrow(()-> new EntityNotFoundException("Survey Not Found"));
-        List<SurveyQuestion> questions = survey.getQuestions();
-
-        return questions.stream().map(q -> {
-            SurveyQuestionDto dto = new SurveyQuestionDto();
-            dto.setId(q.getId());
-            dto.setQuestion(q.getQuestion());
-            dto.setType(q.getType());
-            dto.setSolution(q.getSolution());
-            dto.setSurveyId(surveyId);
-            return dto;
-        }).collect(Collectors.toList());
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new EntityNotFoundException("Survey Not Found"));
+        return survey.getQuestions().stream()
+                .map(surveyQuestionMapper::toDto)
+                .collect(Collectors.toList());
     }
+
+    // ... unchanged delete methods ...
+
+    @Transactional
+    @Override
+    public SurveyQuestionDto addQuestionToSurvey(Long id, SurveyQuestionRequest dto) {
+        Survey survey = surveyRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
+
+        SurveyQuestion question = new SurveyQuestion();
+        question.setQuestion(dto.getQuestion());
+        question.setType(dto.getType());
+        question.setSolution(dto.getSolution());
+        survey.addQuestion(question);
+
+        return surveyQuestionMapper.toDto(questionRepository.save(question));
+    }
+
+    @Transactional
+    @Override
+    public SurveyQuestionDto updateQuestion(Long id, SurveyQuestionRequest request) {
+        SurveyQuestion question = questionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Survey Question Not Found"));
+        question.setQuestion(request.getQuestion());
+        question.setType(request.getType());
+        question.setSolution(request.getSolution());
+        return surveyQuestionMapper.toDto(questionRepository.save(question));
+    }
+
 
     @Transactional
     @Override
@@ -81,41 +100,5 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         for (SurveyAnswer answer : question.getAnswers()) {
             answer.setStatus(SurveyAnswerStatus.DELETED);
         }
-    }
-
-    @Transactional
-    @Override
-    public SurveyQuestionDto addQuestionToSurvey(Long id, SurveyQuestionRequest dto) {
-        Survey survey = surveyRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
-
-        SurveyQuestion question = new SurveyQuestion();
-        question.setQuestion(dto.getQuestion());
-        question.setType(dto.getType());
-        question.setSolution(dto.getSolution());
-        survey.addQuestion(question);
-
-        return toDto(question);
-    }
-
-    @Transactional
-    @Override
-    public SurveyQuestionDto updateQuestion(Long id, SurveyQuestionRequest request) {
-        SurveyQuestion question = questionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Survey Question Not Found"));
-        question.setQuestion(request.getQuestion());
-        question.setType(request.getType());
-        question.setSolution(request.getSolution());
-        return toDto(question);
-    }
-
-    private SurveyQuestionDto toDto(SurveyQuestion question) {
-        SurveyQuestion saved = questionRepository.save(question);
-        SurveyQuestionDto result = new SurveyQuestionDto();
-        result.setId(saved.getId());
-        result.setQuestion(saved.getQuestion());
-        result.setType(saved.getType());
-        result.setSolution(saved.getSolution());
-        result.setSurveyId(saved.getSurvey().getId());
-        return result;
     }
 }

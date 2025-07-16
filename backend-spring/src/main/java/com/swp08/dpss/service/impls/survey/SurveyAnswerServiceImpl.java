@@ -8,6 +8,7 @@ import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.entity.survey.SurveyQuestion;
 import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.enums.SurveyAnswerStatus;
+import com.swp08.dpss.mapper.interfaces.SurveyAnswerMapper;
 import com.swp08.dpss.repository.survey.SurveyAnswerRepository;
 import com.swp08.dpss.repository.survey.SurveyQuestionRepository;
 import com.swp08.dpss.repository.survey.SurveyRepository;
@@ -28,24 +29,78 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     private final SurveyQuestionRepository surveyQuestionRepository;
     private final UserRepository userRepository;
     private final SurveyAnswerRepository surveyAnswerRepository;
+    private final SurveyAnswerMapper surveyAnswerMapper;
 
     @Autowired
-    public SurveyAnswerServiceImpl(SurveyRepository surveyRepository, SurveyQuestionRepository surveyQuestionRepository, UserRepository userRepository, SurveyAnswerRepository surveyAnswerRepository) {
+    public SurveyAnswerServiceImpl(SurveyRepository surveyRepository,
+        SurveyQuestionRepository surveyQuestionRepository,
+        UserRepository userRepository,
+        SurveyAnswerRepository surveyAnswerRepository,
+        SurveyAnswerMapper surveyAnswerMapper) {
         this.surveyRepository = surveyRepository;
         this.surveyQuestionRepository = surveyQuestionRepository;
         this.userRepository = userRepository;
         this.surveyAnswerRepository = surveyAnswerRepository;
+        this.surveyAnswerMapper = surveyAnswerMapper;
     }
 
     @Override
     public List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId) {
-        List<SurveyAnswer> answers = surveyAnswerRepository.findAll() // repository returns Iterable
-                .stream()
+        return surveyAnswerRepository.findAll().stream()
                 .filter(a -> a.getSurvey().getId().equals(surveyId))
-                .toList();
-
-        return answers.stream().map(a -> toDto(a)).collect(Collectors.toList());
+                .map(surveyAnswerMapper::toDto)
+                .collect(Collectors.toList());
     }
+
+    @Transactional
+    @Override
+    public SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request) {
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
+        SurveyQuestion question = surveyQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new EntityNotFoundException("Question not found"));
+        User user = userRepository.findById(request.getUserId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        boolean isCorrect = question.getSolution().trim().equalsIgnoreCase(request.getContent().trim());
+
+        SurveyAnswer answer = question.getAnswers().stream()
+                .filter(a -> a.getUser().getId().equals(user.getId()))
+                .findFirst()
+                .orElseGet(() -> {
+                    SurveyAnswer newAnswer = new SurveyAnswer();
+                    survey.addAnswer(newAnswer);
+                    question.addAnswer(newAnswer);
+                    user.addAnswer(newAnswer);
+                    return newAnswer;
+                });
+
+        answer.setContent(request.getContent());
+        answer.setResultScore(isCorrect ? 10 : 0);
+
+        return surveyAnswerMapper.toDto(surveyAnswerRepository.save(answer));
+    }
+
+    @Transactional
+    @Override
+    public void submitAllAnswers(BulkSubmitSurveyAnswerRequest request) {
+        Survey survey = surveyRepository.findById(request.getSurveyId()).orElseThrow();
+        User user = userRepository.findById(request.getUserId()).orElseThrow();
+
+        for (BulkSubmitSurveyAnswerRequest.AnswerSubmission answer : request.getAnswers()) {
+            SurveyQuestion question = surveyQuestionRepository.findById(answer.getQuestionId()).orElseThrow();
+            SurveyAnswer surveyAnswer = new SurveyAnswer();
+            surveyAnswer.setContent(answer.getContent());
+            survey.addAnswer(surveyAnswer);
+            question.addAnswer(surveyAnswer);
+            user.addAnswer(surveyAnswer);
+            surveyAnswerRepository.save(surveyAnswer);
+        }
+    }
+
+    // ... unchanged delete methods ...
+
+
 
     @Transactional
     @Override
@@ -70,70 +125,5 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
             answer.getUser().removeAnswer(answer);
         }
         surveyAnswerRepository.deleteById(id);
-    }
-
-
-    @Transactional
-    @Override
-    public SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request) {
-        Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
-        SurveyQuestion question = surveyQuestionRepository.findById(questionId)
-                .orElseThrow(() -> new EntityNotFoundException("Question not found"));
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-        boolean isCorrect = question.getSolution().trim().equalsIgnoreCase(request.getContent().trim());
-
-        SurveyAnswer answer = null;
-        for (SurveyAnswer answers : question.getAnswers()) {
-            if (answers.getUser().getId().equals(user.getId())) {
-                answer = answers;
-                break;
-            }
-        }
-        if (answer == null) {
-            answer = new SurveyAnswer();
-            survey.addAnswer(answer);
-            question.addAnswer(answer);
-            user.addAnswer(answer);
-        }
-        answer.setContent(request.getContent());
-        answer.setResultScore(isCorrect ? 10 : 0);
-        SurveyAnswer saved = surveyAnswerRepository.save(answer);
-
-        SurveyAnswerDto dto = toDto(saved);
-
-        return dto;
-    }
-
-    private static SurveyAnswerDto toDto(SurveyAnswer saved) {
-        SurveyAnswerDto dto = new SurveyAnswerDto();
-        dto.setId(saved.getId());
-        dto.setContent(saved.getContent());
-        dto.setResultScore(saved.getResultScore());
-        dto.setSubmittedAt(saved.getSubmittedAt());
-        dto.setQuestionId(saved.getQuestion().getId());
-        dto.setQuestionText(saved.getQuestion().getQuestion());
-        dto.setUserId(saved.getUser().getId());
-        dto.setUserId(saved.getUser().getId());
-        return dto;
-    }
-
-    @Transactional
-    @Override
-    public void submitAllAnswers(BulkSubmitSurveyAnswerRequest request) {
-        Survey survey = surveyRepository.findById(request.getSurveyId()).orElseThrow(()-> new EntityNotFoundException("Survey not found"));
-        SurveyQuestion question;
-        User user =  userRepository.findById(request.getUserId()).orElseThrow(()-> new EntityNotFoundException("User not found"));
-        for (BulkSubmitSurveyAnswerRequest.AnswerSubmission answer : request.getAnswers()) {
-            question = surveyQuestionRepository.findById(answer.getQuestionId()).orElseThrow(() -> new EntityNotFoundException("Question not found"));
-            SurveyAnswer surveyAnswer = new SurveyAnswer();
-            surveyAnswer.setContent(answer.getContent());
-            survey.addAnswer(surveyAnswer);
-            question.addAnswer(surveyAnswer);
-            user.addAnswer(surveyAnswer);
-            surveyAnswerRepository.save(surveyAnswer);
-        }
     }
 }

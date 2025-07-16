@@ -6,7 +6,8 @@ import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyType;
+import com.swp08.dpss.enums.SurveyTypes;
+import com.swp08.dpss.mapper.interfaces.SurveyMapper;
 import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.service.interfaces.survey.SurveyService;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class SurveyServiceImpl implements SurveyService {
 
     private final SurveyRepository surveyRepository;
+    private final SurveyMapper surveyMapper;
 
     @Transactional
     @Override
@@ -29,22 +31,16 @@ public class SurveyServiceImpl implements SurveyService {
         Survey survey = new Survey();
         survey.setName(request.getName());
         survey.setDescription(request.getDescription());
-
-        if (request.getSurveyType() != null) {
-            survey.setType(request.getSurveyType());
-        }
-        if (request.getSurveyStatus() != null) {
-            survey.setStatus(request.getSurveyStatus());
-        }
-
-        return toDto(surveyRepository.save(survey));
+        if (request.getSurveyType() != null) survey.setType(request.getSurveyType());
+        if (request.getSurveyStatus() != null) survey.setStatus(request.getSurveyStatus());
+        return surveyMapper.toDto(surveyRepository.save(survey));
     }
 
     @Override
     public List<SurveyDetailsDto> getAllSurveys() {
         return surveyRepository.findAll()
                 .stream()
-                .map(this::toDto)
+                .map(surveyMapper::toDto)
                 .collect(Collectors.toList());
     }
 
@@ -52,46 +48,55 @@ public class SurveyServiceImpl implements SurveyService {
     public SurveyDetailsDto getSurveyById(Long id) {
         Survey survey = surveyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
-        return toDto(survey);
+        return surveyMapper.toDto(survey);
     }
 
     @Override
     public List<SurveyDetailsDto> getSurveysByStatus(SurveyStatus surveyStatus) {
-        List<Survey> surveys = surveyRepository.findAllByStatus(surveyStatus);
-        return surveys.stream().map(this::toDto).collect(Collectors.toList());
+        return surveyRepository.findAllByStatus(surveyStatus)
+                .stream()
+                .map(surveyMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<SurveyDetailsDto> searchSurveysByName(String name) {
-        List<Survey> surveys = surveyRepository.findByNameContainingIgnoreCase(name);
-        return surveys.stream()
-                .map(this::toDto)
+        return surveyRepository.findByNameContainingIgnoreCase(name)
+                .stream()
+                .map(surveyMapper::toDto)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    @Override
+    public SurveyDetailsDto updateSurvey(Long id, UpdateSurveyRequest request) {
+        Survey survey = surveyRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
+        if (survey.getStatus() == SurveyStatus.DELETED)
+            throw new IllegalStateException("Cannot edit a deleted survey.");
+        survey.setName(request.getName());
+        survey.setDescription(request.getDescription());
+        survey.setType(request.getType());
+        survey.setStatus(request.getStatus());
+        return surveyMapper.toDto(surveyRepository.save(survey));
+    }
 
-    private SurveyDetailsDto toDto(Survey survey) {
-        SurveyDetailsDto dto = new SurveyDetailsDto();
-        dto.setId(survey.getId());
-        dto.setName(survey.getName());
-        dto.setDescription(survey.getDescription());
-        dto.setSurveyType(survey.getType());
-        dto.setSurveyStatus(survey.getStatus());
-        dto.setQuestions(
-                survey.getQuestions()
-                        .stream()
-                        .map(q -> {
-                            SurveyQuestionDto qDto = new SurveyQuestionDto();
-                            qDto.setId(q.getId());
-                            qDto.setQuestion(q.getQuestion());
-                            qDto.setType(q.getType());
-                            qDto.setSolution(q.getSolution());
-                            qDto.setSurveyId(survey.getId());
-                            return qDto;
-                        }).collect(Collectors.toList())
-        );
+    // ... unchanged delete methods ...
 
-        return dto;
+    @Override
+    public List<SurveyDetailsDto> getSurveysByTypeAndStatus(SurveyTypes type, SurveyStatus status) {
+        return surveyRepository.findAllByStatusAndType(status, type)
+                .stream()
+                .map(surveyMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<SurveyDetailsDto> getSurveysByType(SurveyTypes type) {
+        return surveyRepository.findByType(type)
+                .stream()
+                .map(surveyMapper::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -108,39 +113,6 @@ public class SurveyServiceImpl implements SurveyService {
             throw new EntityNotFoundException("Survey Not Found with id " + id);
         }
         surveyRepository.deleteById(id);
-    }
-
-    @Transactional
-    @Override
-    public SurveyDetailsDto updateSurvey(Long id, UpdateSurveyRequest request) {
-        Survey survey = surveyRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Survey not found with id " + id));
-
-        // Only allow updates if status is DRAFT or PUBLISHED
-        if (survey.getStatus() == SurveyStatus.DELETED) {
-            throw new IllegalStateException("Cannot edit a deleted survey.");
-        }
-
-        survey.setName(request.getName());
-        survey.setDescription(request.getDescription());
-        survey.setStatus(request.getStatus());
-        survey.setType(request.getType());
-        survey.setStatus(request.getStatus());
-
-        return toDto(surveyRepository.save(survey));
-    }
-
-    @Override
-    public List<SurveyDetailsDto> getSurveysByTypeAndStatus(SurveyType type, SurveyStatus status) {
-        List<Survey> surveys = surveyRepository.findAllByStatusAndType(status, type);
-        return surveys.stream().map(this::toDto).collect(Collectors.toList());
-    }
-
-
-    @Override
-    public List<SurveyDetailsDto> getSurveysByType(SurveyType type) {
-        List<Survey> surveys = surveyRepository.findByType(type);
-        return surveys.stream().map(this::toDto).collect(Collectors.toList());
     }
 
 }
