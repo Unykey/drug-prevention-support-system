@@ -72,4 +72,35 @@ public class Survey {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<CourseSurvey> courseSurveyList = new ArrayList<>();
+
+    public void addAnswer(SurveyAnswer answer) {
+        answers.add(answer);
+        answer.setSurvey_id(this);
+    }
+
+    public void removeAnswer(SurveyAnswer answer) {
+        answers.remove(answer);
+        answer.setSurvey_id(null);
+    }
+
+    public void addQuestion(SurveyQuestion question) {
+        questions.add(question);
+        question.setSurvey_id(this);
+    }
+    public void removeQuestion(SurveyQuestion question) {
+        questions.remove(question);
+        question.setSurvey_id(null);
+    }
+    public void addProgramSurvey(ProgramSurvey programSurvey) {
+        programSurveyList.add(programSurvey);
+        programSurvey.setSurvey(this);
+    }
+    public void removeProgramSurvey(ProgramSurvey programSurvey) {
+        programSurveyList.remove(programSurvey);
+        programSurvey.setSurvey(null);
+    }
+    public void addCourseSurvey(CourseSurvey courseSurvey) {
+        courseSurveyList.add(courseSurvey);
+        courseSurvey.setSurvey(this);
+    }
 }

@@ -39,5 +39,6 @@ public class SurveyAnswer {
 
     @Column (name = "SubmittedAt", nullable = false)
     private LocalDateTime submittedAt = LocalDateTime.now();
+
 }
 

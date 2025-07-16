@@ -29,10 +29,10 @@ public class Course {
     private String description;
 
     @Column(name = "StartDate")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
     @Column(name = "EndDate")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status")
@@ -62,5 +62,30 @@ public class Course {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<CourseSurvey> courseSurveyList = new ArrayList<>();
+
+    public void addEnrollment(CourseEnrollment enrollment) {
+        enrollments.add(enrollment);
+        enrollment.setCourse(this);
+    }
+    public void removeEnrollment(CourseEnrollment enrollment) {
+        enrollments.remove(enrollment);
+        enrollment.setCourse(null);
+    }
+    public void addLesson(CourseLesson lesson) {
+        lessons.add(lesson);
+        lesson.setCourse(this);
+    }
+    public void removeLesson(CourseLesson lesson) {
+        lessons.remove(lesson);
+        lesson.setCourse(null);
+    }
+    public void addCourseSurvey(CourseSurvey courseSurvey) {
+        courseSurveyList.add(courseSurvey);
+        courseSurvey.setCourse(this);
+    }
+    public void removeCourseSurvey(CourseSurvey courseSurvey) {
+        courseSurveyList.remove(courseSurvey);
+        courseSurvey.setCourse(null);
+    }
 }
 
