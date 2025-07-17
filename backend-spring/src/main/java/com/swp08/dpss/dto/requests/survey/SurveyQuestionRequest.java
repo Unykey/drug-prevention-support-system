@@ -17,5 +17,5 @@ public class SurveyQuestionRequest {
     private QuestionTypes type;
 
     private String solution;
-
+    private String value;
 }

@@ -30,7 +30,7 @@ public class SurveyQuestion {
     @Column (name = "Type", nullable = false)
     private QuestionTypes type;
 
-    @Column (name = "Value", nullable = false, columnDefinition = "varchar(50)")
+    @Column (name = "Value", columnDefinition = "varchar(50)")
     private String value;
 
     @Column (name = "Solution")

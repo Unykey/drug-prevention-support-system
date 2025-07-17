@@ -193,27 +193,42 @@ public class DataInitializer implements CommandLineRunner {
                 )
         );
 
-        surveyQuestionService.addQuestionToSurvey(assist.getId(), new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", QuestionTypes.YN, "Có"));
-        surveyQuestionService.addQuestionToSurvey(assist.getId(), new SurveyQuestionRequest("Bạn có hút thuốc lá không?", QuestionTypes.YN, "Không"));
+        // ASSIST
+        surveyQuestionService.addQuestionToSurvey(assist.getId(),
+                new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", QuestionTypes.YN, "Có", null));
+        surveyQuestionService.addQuestionToSurvey(assist.getId(),
+                new SurveyQuestionRequest("Bạn có hút thuốc lá không?", QuestionTypes.YN, "Không", null));
 
-        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", QuestionTypes.YN, "Có"));
-        surveyQuestionService.addQuestionToSurvey(crafft.getId(), new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", QuestionTypes.YN, "Có"));
+        // CRAFFT
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(),
+                new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", QuestionTypes.YN, "Có", null));
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(),
+                new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", QuestionTypes.YN, "Có", null));
 
-        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", QuestionTypes.YN, "Không"));
-        surveyQuestionService.addQuestionToSurvey(dast10.getId(), new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", QuestionTypes.YN, "Có"));
+        // DAST-10
+        surveyQuestionService.addQuestionToSurvey(dast10.getId(),
+                new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", QuestionTypes.YN, "Không", null));
+        surveyQuestionService.addQuestionToSurvey(dast10.getId(),
+                new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", QuestionTypes.YN, "Có", null));
     }
-
 
     private void answerInit() {
         // Create survey
-        SurveyDetailsDto survey = surveyService.createSurvey(new CreateSurveyRequest("DEMO_SURVEY",SurveyTypes.QUIZ,SurveyStatus.PUBLISHED, "Demo survey for testing answers"));
+        SurveyDetailsDto survey = surveyService.createSurvey(
+                new CreateSurveyRequest(
+                        "DEMO_SURVEY",
+                        SurveyTypes.QUIZ,
+                        SurveyStatus.PUBLISHED,
+                        "Demo survey for testing answers"
+                )
+        );
         Long surveyId = survey.getId();
 
-        // Create questions and get IDs
+        // Create questions with expected value
         SurveyQuestionDto q1 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new SurveyQuestionRequest("Bạn có uống rượu không?", QuestionTypes.YN, "Có"));
+                new SurveyQuestionRequest("Bạn có uống rượu không?", QuestionTypes.YN, "Có", null));
         SurveyQuestionDto q2 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new SurveyQuestionRequest("Bạn có hút thuốc không?", QuestionTypes.YN, "Không"));
+                new SurveyQuestionRequest("Bạn có hút thuốc không?", QuestionTypes.YN, "Không", null));
 
         Long q1Id = q1.getId();
         Long q2Id = q2.getId();
@@ -230,6 +245,7 @@ public class DataInitializer implements CommandLineRunner {
         surveyAnswerService.submitAnswer(surveyId, q1Id, answer1);
         surveyAnswerService.submitAnswer(surveyId, q2Id, answer2);
     }
+
 
 
 }

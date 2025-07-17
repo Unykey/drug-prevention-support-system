@@ -52,6 +52,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         SurveyQuestion question = new SurveyQuestion();
         question.setQuestion(dto.getQuestion());
         question.setType(dto.getType());
+        question.setValue(dto.getValue());
         question.setSolution(dto.getSolution());
         survey.addQuestion(question);
 
@@ -66,6 +67,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
         question.setQuestion(request.getQuestion());
         question.setType(request.getType());
         question.setSolution(request.getSolution());
+        question.setValue(request.getValue());
         return surveyQuestionMapper.toDto(questionRepository.save(question));
     }
 
