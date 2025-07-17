@@ -46,8 +46,8 @@ public class Survey {
     @JoinColumn(name = "created_by")
     private User user;
 
-    @Column(nullable = false)
-    private LocalDate created_at;
+    @Column()
+    private LocalDate created_at = LocalDate.now();
 
     @OneToMany(
             mappedBy = "survey_id",
