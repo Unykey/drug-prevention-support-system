@@ -1,67 +1,110 @@
-# Drug Use Prevention Support System
+# Drug Use Prevention Support System (DPSS)
 
 ---
 
-## Project Overview
+## 🌟 Project Overview
 
-This project is a web-based application designed to support a volunteer organization in its efforts to prevent drug use
-within the community. The system provides educational resources, risk assessment tools, access to professional
-consultation, and management of community outreach programs.
+The **Drug Use Prevention Support System (DPSS)** is a full-stack web application designed to assist a volunteer organization in its mission to prevent drug abuse within the community. The system provides:
 
----
-
-## Key Features
-
-* **Public Information:**
-    * Homepage introducing the volunteer organization.
-    * Blog for sharing experiences, articles, and prevention tips.
-* **Educational Resources:**
-    * Search and registration for online training courses on drug awareness, prevention skills, refusal skills, etc.
-    * Course content tailored for different age groups (students, parents, teachers).
-* **Risk Assessment:**
-    * Self-assessment surveys (e.g., ASSIST, CRAFFT) to identify potential drug use risks.
-    * Personalized recommendations based on assessment results (e.g., suggest courses, consult a specialist).
-* **Consultation Services:**
-    * Online appointment booking with qualified consultants.
-    * Management of consultant profiles, schedules, and expertise.
-* **Community Programs:**
-    * Management of community outreach and education programs.
-    * Pre/post program surveys for participants to provide feedback and measure impact.
-* **User Management:**
-    * User registration and profile management.
-    * Tracking of user history (appointments, courses, program participation).
-* **Reporting & Analytics:**
-    * Dashboard for an overview of system activity and key metrics.
-    * Report generation for program effectiveness, user engagement, etc.
+- Educational content
+- Risk self-assessment tools
+- Online consultation services
+- Course and program management
+- Survey analytics and reporting
 
 ---
 
-## Tech Stack
+## 🚀 Key Features
 
-*(This assumes the previously discussed tech stack. Adjust if it has changed for this new topic.)*
+### 🏠 Public Information
+- Homepage introducing the organization
+- Blog to share success stories, prevention tips, and community updates
 
-* **Backend (Core System):**
-    * Language: Java
-    * Framework: Spring Boot
-* **Backend (Real-time Features - Optional, e.g., for notifications/chat):**
-    * Runtime: Node.js
-    * Framework: Express.js (or similar)
-    * Real-time: WebSockets (e.g., Socket.IO) or STOMP (if using Spring for WebSockets)
-* **Frontend:**
-    * Library/Framework: React (with HTML, CSS, JavaScript/TypeScript)
-* **Database:**
-    * Cloud: Supabase (PostgreSQL)
-    * Local Development: Local PostgreSQL instance
-* **Version Control:** Git & GitHub
+### 🎓 Educational Resources
+- Online training courses by age group (students, parents, teachers)
+- Support for videos, readings, quizzes, and interactive content
+- Certificate issuance and progress tracking
+
+### 🧪 Risk Assessment
+- Self-assessment surveys (ASSIST, CRAFFT, etc.)
+- Personalized recommendations (courses, consultation, prevention material)
+
+### 👩‍⚕️ Consultation Services
+- Appointment booking with professional consultants
+- Consultant profiles with expertise and schedules
+- Session history and feedback collection
+
+### 🌐 Community Outreach Programs
+- Program creation and participant management
+- Pre/post surveys to evaluate program effectiveness
+
+### 👥 User Management
+- Secure registration and login
+- Role-based access (member, manager, consultant, admin)
+- Tracking history of surveys, consultations, and course progress
+
+### 📊 Reporting & Analytics
+- Dashboard with KPIs and visual analytics
+- Exportable reports on course engagement, survey scores, and program impact
 
 ---
 
-## Getting Started
+## 🛠️ Tech Stack
 
-wip
+### 🎯 Backend
+- **Language:** Java
+- **Framework:** Spring Boot
+- **APIs:** RESTful, secured with Spring Security
+
+### 💬 Real-time / Companion Backend
+- **Language:** JavaScript / TypeScript
+- **Runtime:** Node.js
+- **Framework:** Express.js (for auxiliary features like notifications or chat)
+
+### 💻 Frontend
+- **Framework:** React
+- **Tech:** HTML5, CSS3, JavaScript/TypeScript, Axios, React Router
+
+### 🗄️ Database
+- **Primary DB:** PostgreSQL
+- **Platform:** Supabase (managed cloud Postgres with Auth/Storage APIs)
+
+### 🧪 Testing & Validation
+- JUnit / Mockito (backend)
+- React Testing Library / Jest (frontend)
+
+### 📦 DevOps & Tooling
+- **Version Control:** Git & GitHub
+- **Build Tools:** Maven (Spring Boot), npm/yarn (React)
+- **Deployment:** Supabase + Vercel/Render 
 
 ---
 
-## Contributing
+## 🧭 Getting Started
 
-If you want to contribute, please choose the version you want to work on and follow the respective README guidelines.
+> 🔧 Instructions under development. Will include:
+- Backend setup (Spring Boot with PostgreSQL)
+- Frontend setup (React)
+- Supabase configuration (Auth, DB, Storage)
+- Environment variable setup and running locally
+
+---
+
+## 🤝 Contributing
+
+We welcome all contributors!
+
+Please choose the layer you want to work on:
+
+- `backend/springboot/README.md` (Core business logic & APIs)
+- `frontend/react/README.md` (UI/UX)
+- `realtime/node/README.md` (Auxiliary features)
+- `db/schemas/README.md` (ERDs, sample data, migrations)
+
+Create a branch, submit a pull request, and follow our [contribution guidelines](CONTRIBUTING.md).
+
+---
+
+## 📄 License
+
+MIT License – see `LICENSE.md` for more information.
