@@ -10,6 +10,7 @@ import {useAuth} from '@/contexts/AuthContext'; // Hook authentication để qu�
 import {useToast} from '@/components/ui/use-toast';
 import {ROLES} from "@/config/roles.js";
 import {AxiosHeaders as state} from "axios"; // Hook hiển thị thông báo toast
+import { useEffect } from 'react'; // Added for loading Google script
 
 // Component chính của trang đăng nhập
 const LoginPage = () => {
@@ -22,6 +23,62 @@ const LoginPage = () => {
     const navigate = useNavigate(); // Hook để chuyển hướng sau khi đăng nhập thành công
     const {login} = useAuth(); // Lấy function login từ AuthContext để cập nhật trạng thái auth
     const {toast} = useToast(); // Hook để hiển thị thông báo toast success/error
+
+    const [googleLoaded, setGoogleLoaded] = useState(false); // Track if Google script is loaded
+
+    useEffect(() => {
+        // Dynamically load Google Identity Services script
+        const script = document.createElement('script');
+        script.src = 'https://accounts.google.com/gsi/client';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => setGoogleLoaded(true); // Set flag when script loads
+        document.body.appendChild(script);
+
+        // Cleanup script on component unmount
+        return () => {
+            document.body.removeChild(script);
+        };
+    }, []);
+
+    const handleGoogleSignIn = async (response) => {
+        setIsLoading(true);
+        try {
+            // Send Google ID token to your backend for validation
+            const res = await fetch('https://yourdomain.com/auth/google', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id_token: response.credential }),
+            });
+            const result = await res.json();
+
+            if (result.success) {
+                // Call login from AuthContext with user data
+                await login(result.user.email, null, result.user); // Pass Google user data
+                toast({
+                    title: result.message || 'Đăng nhập thành công với Google!',
+                    description: `Chào mừng trở lại, ${result.user?.name || result.user.email}!`,
+                    variant: 'default',
+                    className: 'bg-green-500 text-white',
+                });
+                setTimeout(() => {
+                    const redirectTo = state?.from?.pathname || (result.user?.role === ROLES.ADMIN ? '/admin' : '/');
+                    navigate(redirectTo, { replace: true });
+                }, 100);
+            } else {
+                throw new Error(result.error || 'Google Sign-In failed');
+            }
+        } catch (error) {
+            console.error('Google Sign-In error:', error);
+            toast({
+                title: 'Đăng nhập thất bại',
+                description: error.message || 'Đã có lỗi khi đăng nhập với Google.',
+                variant: 'destructive',
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     // Hàm xử lý submit form đăng nhập
     const handleSubmit = async (e) => {
@@ -156,6 +213,33 @@ const LoginPage = () => {
 
                 {/* Footer của card - chứa các link phụ */}
                 <CardFooter className="flex flex-col items-center space-y-3">
+                    <div className="text-center">
+                        <div className="relative flex items-center">
+                            <div className="flex-grow border-t border-gray-300"></div>
+                            <span className="flex-shrink mx-4 text-gray-600 text-sm">Hoặc đăng nhập bằng</span>
+                            <div className="flex-grow border-t border-gray-300"></div>
+                        </div>
+                    </div>
+
+                    {googleLoaded && (
+                        <div className="mt-4 w-full">
+                            <div
+                                id="g_id_onload"
+                                data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                                data-callback="handleGoogleSignIn"
+                                data-auto_prompt="false"
+                            ></div>
+                            <div
+                                className="g_id_signin w-full"
+                                data-type="standard"
+                                data-size="large"
+                                data-theme="outline"
+                                data-text="signin_with"
+                                data-shape="rectangular"
+                            ></div>
+                        </div>
+                    )}
+
                     {/* Link quên mật khẩu */}
                     <Link to="/forgot-password"
                           className="text-sm text-primary hover:underline">
