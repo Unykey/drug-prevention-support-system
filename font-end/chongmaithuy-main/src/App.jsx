@@ -14,6 +14,8 @@ import CourseDetailPage from '@/pages/CourseDetailPage'; // Chi tiết khóa h�
 import SurveyPage from '@/pages/SurveyPage'; // Danh sách các khảo sát
 import SurveyDetailPage from '@/pages/SurveyDetailPage'; // Chi tiết khảo sát và form làm bài
 import AppointmentsPage from '@/pages/AppointmentsPage'; // Danh sách các buổi hẹn tư vấn
+import FindDoctorPage from "@/pages/FindDoctorPage"; // Trang tìm kiếm bác sĩ
+
 import ProgramsPage from '@/pages/ProgramsPage'; // Danh sách chương trình phòng chống ma túy
 import ProgramDetailPage from '@/pages/ProgramDetailPage'; // Chi tiết chương trình
 import BlogPage from '@/pages/BlogPage'; // Danh sách bài viết blog
@@ -27,6 +29,7 @@ import LoginPage from '@/pages/LoginPage'; // Trang đăng nhập
 import RegisterPage from '@/pages/RegisterPage'; // Trang đăng ký tài khoản
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage'; // Trang quên mật khẩu
 import AdminPage from '@/pages/AdminPage'; // Dashboard admin tổng quan
+// import AdminDashboard from '@/pages/admin/AdminDashboard'
 
 // Import UI components
 import {Toaster} from '@/components/ui/toaster'; // Component hiển thị thông báo toast
@@ -91,6 +94,9 @@ function App() {
                 {/* Nhóm route cuộc hẹn - Xem danh sách cuộc hẹn tư vấn */}
                 <Route path="/appointments" element={<AppointmentsPage/>}/>
 
+                {/* Nhóm route tìm bác sĩ - Tìm bác sĩ theo tên, số điện thoại, địa chỉ*/}
+                <Route path="/find-doctor" element={<FindDoctorPage/>}/>
+
                 {/* Nhóm route chương trình - Xem các chương trình phòng chống ma túy */}
                 <Route path="/programs" element={<ProgramsPage/>}/>
                 <Route path="/programs/:id" element={<ProgramDetailPage/>}/>
@@ -98,7 +104,6 @@ function App() {
                 {/* Nhóm route blog - Đọc bài viết, tin tức về phòng chống ma túy */}
                 <Route path="/blog" element={<BlogPage/>}/>
                 <Route path="/blog/:id" element={<BlogDetailPage/>}/>
-
                 {/* =========================== ROUTE BẢO VỆ =========================== */}
                 {/* Các route này yêu cầu đăng nhập và có phân quyền theo vai trò */}
 

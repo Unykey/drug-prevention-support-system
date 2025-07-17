@@ -13,7 +13,7 @@ const programs = [
     title: "Chiến dịch 'Nói không với Ma túy'", // Tên chương trình
     type: "Truyền thông cộng đồng", // Phân loại chương trình để filtering và styling
     date: "15/06/2025 - 30/06/2025", // Thời gian diễn ra
-    image: "https://images.unsplash.com/photo-1573167507997-41830a3f7575?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1169&q=80" // Hình ảnh thumbnail
+      image: "https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
   },
   { 
     id: 2, 

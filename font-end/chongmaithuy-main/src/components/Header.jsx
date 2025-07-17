@@ -103,7 +103,7 @@ const Header = () => {
             </Link>
           )}
           {/* Show admin dashboard link if user has Admin or Manager role */}
-          {user && (user.role === 'Admin' || user.role === 'Manager') && (
+          {user && (user.role === 'ADMIN' || user.role === 'MANAGER') && (
              <Link to="/admin">
                <Button className="bg-slate-700 text-white hover:bg-slate-800">
                 Quản Trị
