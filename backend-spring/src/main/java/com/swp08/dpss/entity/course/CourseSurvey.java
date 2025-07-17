@@ -30,4 +30,18 @@ public class CourseSurvey {
 
     @Column(name = "Type", nullable = false)
     private CourseSurveyRoles role;
+
+    public void setCourse(Course course) {
+        this.course = course;
+        if (this.course !=  null && !this.course.getCourseSurveyList().contains(this)) {
+            this.course.getCourseSurveyList().add(this);
+        }
+    }
+
+    public void setSurvey(Survey survey) {
+        this.survey = survey;
+        if (this.survey !=  null && !this.survey.getCourseSurveyList().contains(this)) {
+            this.survey.getCourseSurveyList().add(this);
+        }
+    }
 }

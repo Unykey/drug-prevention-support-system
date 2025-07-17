@@ -31,8 +31,8 @@ public class SurveyServiceImpl implements SurveyService {
         Survey survey = new Survey();
         survey.setName(request.getName());
         survey.setDescription(request.getDescription());
-        //TODO: Patch the type
-//        if (request.getSurveyType() != null) survey.setType(request.getSurveyType());
+
+        if (request.getSurveyType() != null) survey.setType(request.getSurveyType());
         if (request.getSurveyStatus() != null) survey.setStatus(request.getSurveyStatus());
         return surveyMapper.toDto(surveyRepository.save(survey));
     }

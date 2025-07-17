@@ -2,6 +2,7 @@ package com.swp08.dpss.service.impls.course;
 
 import com.swp08.dpss.dto.requests.course.CourseLessonRequest;
 import com.swp08.dpss.dto.requests.course.CourseRequest;
+import com.swp08.dpss.dto.requests.course.CourseSurveyRequest;
 import com.swp08.dpss.dto.requests.course.LessonProgressRequest;
 import com.swp08.dpss.dto.responses.course.CourseEnrollmentResponse;
 import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
@@ -56,15 +57,19 @@ public class CourseServiceImpl implements CourseService {
         course.setStartDate(request.getStartDate());
         course.setEndDate(request.getEndDate());
 
-        CourseSurvey courseSurvey = new CourseSurvey();
-        courseSurvey.setCourseSurveyId(new CourseSurveyId());
-        course.addCourseSurvey(courseSurvey);
+        for (CourseSurveyRequest csReq : request.getCourseSurveys()) {
+            Survey survey = surveyRepository.findById(csReq.getSurveyId())
+                    .orElseThrow(() -> new EntityNotFoundException("Survey Not Found with id " + csReq.getSurveyId()));
 
-        for (Long s : request.getSurveyId()){
-            Survey survey = surveyRepository.findById(s).orElseThrow(() -> new EntityNotFoundException("Survey Not Found"));
-            survey.addCourseSurvey(courseSurvey);
-            //TODO: Set type
-            //survey.setType(request.getSurveyRole());
+            CourseSurvey courseSurvey = new CourseSurvey();
+            courseSurvey.setCourseSurveyId(new CourseSurveyId()); // you may want to use constructor for clarity
+            courseSurvey.setSurvey(survey);
+            courseSurvey.setRole(csReq.getRole());
+
+//            course.addCourseSurvey(courseSurvey);
+//            survey.addCourseSurvey(courseSurvey);
+            //^Not needed
+            survey.setType(csReq.getSurveyType()); // optional if this is meant to override
         }
 
         courseRepository.save(course);
@@ -99,10 +104,28 @@ public class CourseServiceImpl implements CourseService {
         course.setStartDate(updated.getStartDate());
         course.setEndDate(updated.getEndDate());
 
+        // Clear existing associations (optional: soft-delete or check if update required)
+        course.getCourseSurveyList().clear();
 
+        for (CourseSurveyRequest surveyRequest : updated.getCourseSurveys()) {
+            Survey survey = surveyRepository.findById(surveyRequest.getSurveyId())
+                    .orElseThrow(() -> new EntityNotFoundException("Survey Not Found with id " + surveyRequest.getSurveyId()));
+
+            CourseSurvey courseSurvey = new CourseSurvey();
+            courseSurvey.setCourseSurveyId(new CourseSurveyId());
+            courseSurvey.setRole(surveyRequest.getRole());
+            courseSurvey.setCourse(course);
+            courseSurvey.setSurvey(survey);
+
+//            course.addCourseSurvey(courseSurvey);
+//            survey.addCourseSurvey(courseSurvey);
+            //^Not needed
+            survey.setType(surveyRequest.getSurveyType());
+        }
 
         return courseRepository.save(course);
     }
+
 
     @Transactional
     @Override
@@ -181,7 +204,7 @@ public class CourseServiceImpl implements CourseService {
         lesson.setCourse(course);
 
         course.addLesson(lesson);
-        courseRepository.save(course); // or use courseLessonRepository.save(lesson) if available
+        courseLessonRepository.save(lesson);
 
         return toDto(lesson);
     }
