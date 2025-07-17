@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 @Slf4j //Log stuffs :D
@@ -167,73 +168,49 @@ public class DataInitializer implements CommandLineRunner {
 
     private void surveyInit() {
         SurveyDetailsDto assist = surveyService.createSurvey(
-                new CreateSurveyRequest(
-                        "ASSIST",
-                        SurveyTypes.QUIZ,
-                        SurveyStatus.PUBLISHED,
-                        "Đánh giá mức độ sử dụng chất gây nghiện"
-                )
-        );
+                new CreateSurveyRequest("ASSIST", SurveyTypes.QUIZ, SurveyStatus.PUBLISHED, "Đánh giá mức độ sử dụng chất gây nghiện"));
 
         SurveyDetailsDto crafft = surveyService.createSurvey(
-                new CreateSurveyRequest(
-                        "CRAFFT",
-                        SurveyTypes.QUIZ,
-                        SurveyStatus.PUBLISHED,
-                        "Sàng lọc nguy cơ sử dụng chất gây nghiện"
-                )
-        );
+                new CreateSurveyRequest("CRAFFT", SurveyTypes.QUIZ, SurveyStatus.PUBLISHED, "Sàng lọc nguy cơ sử dụng chất gây nghiện"));
 
         SurveyDetailsDto dast10 = surveyService.createSurvey(
-                new CreateSurveyRequest(
-                        "DAST-10",
-                        SurveyTypes.QUIZ,
-                        SurveyStatus.PUBLISHED,
-                        "Khảo sát mức độ nghiện các loại ma túy"
-                )
-        );
+                new CreateSurveyRequest("DAST-10", SurveyTypes.QUIZ, SurveyStatus.PUBLISHED, "Khảo sát mức độ nghiện các loại ma túy"));
 
-        // ASSIST
+        List<String> options = List.of("Có", "Không");
+
         surveyQuestionService.addQuestionToSurvey(assist.getId(),
-                new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", QuestionTypes.YN, "Có", null));
+                new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", QuestionTypes.YN, "Có", options));
+
         surveyQuestionService.addQuestionToSurvey(assist.getId(),
-                new SurveyQuestionRequest("Bạn có hút thuốc lá không?", QuestionTypes.YN, "Không", null));
+                new SurveyQuestionRequest("Bạn có hút thuốc lá không?", QuestionTypes.YN, "Không", options));
 
-        // CRAFFT
         surveyQuestionService.addQuestionToSurvey(crafft.getId(),
-                new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", QuestionTypes.YN, "Có", null));
-        surveyQuestionService.addQuestionToSurvey(crafft.getId(),
-                new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", QuestionTypes.YN, "Có", null));
+                new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", QuestionTypes.YN, "Có", options));
 
-        // DAST-10
+        surveyQuestionService.addQuestionToSurvey(crafft.getId(),
+                new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", QuestionTypes.YN, "Có", options));
+
         surveyQuestionService.addQuestionToSurvey(dast10.getId(),
-                new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", QuestionTypes.YN, "Không", null));
+                new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", QuestionTypes.YN, "Không", options));
+
         surveyQuestionService.addQuestionToSurvey(dast10.getId(),
-                new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", QuestionTypes.YN, "Có", null));
+                new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", QuestionTypes.YN, "Có", options));
     }
 
+
     private void answerInit() {
-        // Create survey
         SurveyDetailsDto survey = surveyService.createSurvey(
-                new CreateSurveyRequest(
-                        "DEMO_SURVEY",
-                        SurveyTypes.QUIZ,
-                        SurveyStatus.PUBLISHED,
-                        "Demo survey for testing answers"
-                )
-        );
+                new CreateSurveyRequest("DEMO_SURVEY", SurveyTypes.QUIZ, SurveyStatus.PUBLISHED, "Demo survey for testing answers"));
         Long surveyId = survey.getId();
 
-        // Create questions with expected value
+        List<String> options = List.of("Có", "Không");
+
         SurveyQuestionDto q1 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new SurveyQuestionRequest("Bạn có uống rượu không?", QuestionTypes.YN, "Có", null));
+                new SurveyQuestionRequest("Bạn có uống rượu không?", QuestionTypes.YN, "Có", options));
+
         SurveyQuestionDto q2 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new SurveyQuestionRequest("Bạn có hút thuốc không?", QuestionTypes.YN, "Không", null));
+                new SurveyQuestionRequest("Bạn có hút thuốc không?", QuestionTypes.YN, "Không", options));
 
-        Long q1Id = q1.getId();
-        Long q2Id = q2.getId();
-
-        // Submit answers from user 1
         SubmitSurveyAnswerRequest answer1 = new SubmitSurveyAnswerRequest();
         answer1.setUserId(1L);
         answer1.setContent("Có");
@@ -242,9 +219,10 @@ public class DataInitializer implements CommandLineRunner {
         answer2.setUserId(1L);
         answer2.setContent("Không");
 
-        surveyAnswerService.submitAnswer(surveyId, q1Id, answer1);
-        surveyAnswerService.submitAnswer(surveyId, q2Id, answer2);
+        surveyAnswerService.submitAnswer(surveyId, q1.getId(), answer1);
+        surveyAnswerService.submitAnswer(surveyId, q2.getId(), answer2);
     }
+
 
 
 

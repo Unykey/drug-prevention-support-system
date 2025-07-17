@@ -14,6 +14,7 @@ public interface SurveyQuestionMapper {
     @Mapping(source = "question", target = "question")
     @Mapping(source = "type", target = "type")
     @Mapping(source = "solution", target = "solution")
+    @Mapping(source = "value", target = "value")
     @Mapping(source = "survey_id.id", target = "surveyId")
     SurveyQuestionDto toDto(SurveyQuestion entity);
 

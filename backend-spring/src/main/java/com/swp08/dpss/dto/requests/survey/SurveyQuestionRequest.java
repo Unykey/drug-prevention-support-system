@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,5 +19,5 @@ public class SurveyQuestionRequest {
     private QuestionTypes type;
 
     private String solution;
-    private String value;
+    private List<String> value;
 }

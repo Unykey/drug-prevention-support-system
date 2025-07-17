@@ -30,10 +30,12 @@ public class SurveyQuestion {
     @Column (name = "Type", nullable = false)
     private QuestionTypes type;
 
-    @Column (name = "Value", columnDefinition = "varchar(50)")
-    private String value;
+    @ElementCollection
+    @CollectionTable(name = "question_options", joinColumns = @JoinColumn(name = "question_id"))
+    @Column (name = "Option_value", nullable = false)
+    private List<String> value;
 
-    @Column (name = "Solution")
+    @Column (name = "Solution", nullable = false)
     private String solution; //	Correct answer (only used in quiz/test for courses)
 
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question_id")
