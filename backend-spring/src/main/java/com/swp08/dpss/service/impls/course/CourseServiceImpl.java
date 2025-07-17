@@ -28,12 +28,12 @@ import java.util.List;
 @Service
 public class CourseServiceImpl implements CourseService {
     private final CourseLessonProgressRepository courseLessonProgressRepository;
-    CourseRepository courseRepository;
-    CourseEnrollmentRepository courseEnrollmentRepository;
-    CourseLessonRepository courseLessonRepository;
-    LessonProgressRepository  lessonProgressRepository;
-    SurveyRepository surveyRepository;
-    UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final CourseEnrollmentRepository courseEnrollmentRepository;
+    private final CourseLessonRepository courseLessonRepository;
+    private final LessonProgressRepository  lessonProgressRepository;
+    private final SurveyRepository surveyRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public CourseServiceImpl(CourseRepository courseRepository, CourseEnrollmentRepository courseEnrollmentRepository, CourseLessonRepository courseLessonRepository, LessonProgressRepository lessonProgressRepository, SurveyRepository surveyRepository, UserRepository userRepository, CourseLessonProgressRepository courseLessonProgressRepository) {
@@ -97,6 +97,7 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Course Not Found with id " + id));
 
+        // Update basic fields
         course.setTitle(updated.getTitle());
         course.setDescription(updated.getDescription());
         course.setStatus(updated.getStatus());
@@ -104,27 +105,36 @@ public class CourseServiceImpl implements CourseService {
         course.setStartDate(updated.getStartDate());
         course.setEndDate(updated.getEndDate());
 
-        // Clear existing associations (optional: soft-delete or check if update required)
+        // Clear existing CourseSurvey links from both sides
+        course.getCourseSurveyList().forEach(cs -> {
+            cs.getSurvey().removeCourseSurvey(cs);
+        });
         course.getCourseSurveyList().clear();
 
-        for (CourseSurveyRequest surveyRequest : updated.getCourseSurveys()) {
-            Survey survey = surveyRepository.findById(surveyRequest.getSurveyId())
-                    .orElseThrow(() -> new EntityNotFoundException("Survey Not Found with id " + surveyRequest.getSurveyId()));
+        // Save course to ensure ID is not null for CourseSurveyId
+        course = courseRepository.save(course);
 
-            CourseSurvey courseSurvey = new CourseSurvey();
-            courseSurvey.setCourseSurveyId(new CourseSurveyId());
-            courseSurvey.setRole(surveyRequest.getRole());
-            courseSurvey.setCourse(course);
-            courseSurvey.setSurvey(survey);
+        // Add updated CourseSurvey links
+        if (updated.getCourseSurveys() != null) {
+            for (CourseSurveyRequest csr : updated.getCourseSurveys()) {
+                Survey survey = surveyRepository.findById(csr.getSurveyId())
+                        .orElseThrow(() -> new EntityNotFoundException("Survey Not Found with id " + csr.getSurveyId()));
 
-//            course.addCourseSurvey(courseSurvey);
-//            survey.addCourseSurvey(courseSurvey);
-            //^Not needed
-            survey.setType(surveyRequest.getSurveyType());
+                CourseSurvey courseSurvey = new CourseSurvey();
+                courseSurvey.setCourse(course);
+                courseSurvey.setSurvey(survey);
+                courseSurvey.setRole(csr.getRole());
+                courseSurvey.setCourseSurveyId(new CourseSurveyId(course.getId(), survey.getId()));
+
+                // Optional: update type on the Survey entity if needed
+                survey.setType(csr.getSurveyType());
+            }
         }
 
-        return courseRepository.save(course);
+        return course;
     }
+
+
 
 
     @Transactional

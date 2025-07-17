@@ -105,4 +105,8 @@ public class Survey {
         courseSurveyList.add(courseSurvey);
         courseSurvey.setSurvey(this);
     }
+    public void removeCourseSurvey(CourseSurvey courseSurvey) {
+        courseSurveyList.remove(courseSurvey);
+        courseSurvey.setSurvey(null);
+    }
 }
