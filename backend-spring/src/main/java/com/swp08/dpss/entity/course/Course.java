@@ -51,16 +51,12 @@ public class Course {
     private List<CourseLesson> lessons = new ArrayList<>();
 
     @OneToMany(mappedBy = "course",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            fetch = FetchType.LAZY)
     private List<CourseEnrollment> enrollments = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "course",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            fetch = FetchType.LAZY)
     private List<CourseSurvey> courseSurveyList = new ArrayList<>();
 
     public void addEnrollment(CourseEnrollment enrollment) {

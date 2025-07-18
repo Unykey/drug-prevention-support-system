@@ -1,9 +1,6 @@
 package com.swp08.dpss.service.impls.course;
 
-import com.swp08.dpss.dto.requests.course.CourseLessonRequest;
-import com.swp08.dpss.dto.requests.course.CourseRequest;
-import com.swp08.dpss.dto.requests.course.CourseSurveyRequest;
-import com.swp08.dpss.dto.requests.course.LessonProgressRequest;
+import com.swp08.dpss.dto.requests.course.*;
 import com.swp08.dpss.dto.responses.course.CourseEnrollmentResponse;
 import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
 import com.swp08.dpss.dto.responses.course.CourseResponse;
@@ -57,19 +54,21 @@ public class CourseServiceImpl implements CourseService {
         course.setStartDate(request.getStartDate());
         course.setEndDate(request.getEndDate());
 
-        for (CourseSurveyRequest csReq : request.getCourseSurveys()) {
-            Survey survey = surveyRepository.findById(csReq.getSurveyId())
-                    .orElseThrow(() -> new EntityNotFoundException("Survey Not Found with id " + csReq.getSurveyId()));
+        if (request.getCourseSurveys() != null) {
+            for (CourseSurveyRequest csReq : request.getCourseSurveys()) {
+                Survey survey = surveyRepository.findById(csReq.getSurveyId())
+                        .orElseThrow(() -> new EntityNotFoundException("Survey Not Found with id " + csReq.getSurveyId()));
 
-            CourseSurvey courseSurvey = new CourseSurvey();
-            courseSurvey.setCourseSurveyId(new CourseSurveyId()); // you may want to use constructor for clarity
-            courseSurvey.setSurvey(survey);
-            courseSurvey.setRole(csReq.getRole());
+                CourseSurvey courseSurvey = new CourseSurvey();
+                courseSurvey.setCourseSurveyId(new CourseSurveyId()); // you may want to use constructor for clarity
+                courseSurvey.setSurvey(survey);
+                courseSurvey.setRole(csReq.getRole());
 
-//            course.addCourseSurvey(courseSurvey);
-//            survey.addCourseSurvey(courseSurvey);
-            //^Not needed
-            survey.setType(csReq.getSurveyType()); // optional if this is meant to override
+    //            course.addCourseSurvey(courseSurvey);
+    //            survey.addCourseSurvey(courseSurvey);
+                //^Not needed
+                survey.setType(csReq.getSurveyType()); // optional if this is meant to override
+            }
         }
 
         courseRepository.save(course);
@@ -286,6 +285,27 @@ public class CourseServiceImpl implements CourseService {
         course.addEnrollment(enrollment);
         user.addCourseEnrollment(enrollment);
 
+        courseEnrollmentRepository.save(enrollment);
+        return toDto(enrollment);
+    }
+
+    @Transactional
+    @Override
+    public CourseEnrollmentResponse enroll(CourseEnrollmentRequest request) {
+        Long courseId = request.getCourseId();
+        Long userId = request.getUserId();
+        if (courseEnrollmentRepository.existsById(new CourseEnrollmentId(userId, courseId))) {
+            throw new IllegalStateException("User is already enrolled in this course");
+        }
+        Course course = courseRepository.findById(courseId).orElseThrow(()-> new EntityNotFoundException("Course Not Found with id " + courseId));
+        User user = userRepository.findById(userId).orElseThrow(()-> new EntityNotFoundException("User not found with id " + userId));
+
+        CourseEnrollment enrollment = new CourseEnrollment();
+        enrollment.setCourse(course);
+        enrollment.setUser(user);
+        enrollment.setId(new CourseEnrollmentId(user.getId(), course.getId()));
+        course.addEnrollment(enrollment);
+        user.addCourseEnrollment(enrollment);
 
         courseEnrollmentRepository.save(enrollment);
         return toDto(enrollment);
@@ -337,6 +357,28 @@ public class CourseServiceImpl implements CourseService {
         CourseEnrollment enrollment = courseEnrollmentRepository.findById(enrollmentId).orElseThrow(()-> new EntityNotFoundException("Enrollment Not Found with id " + enrollmentId));
         return enrollment.getProgress();
     }
+
+    @Transactional
+    @Override
+    public void addSurveyToCourse(long courseId, CourseSurveyRequest request) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found with ID: " + courseId));
+
+        Survey survey = surveyRepository.findById(request.getSurveyId())
+                .orElseThrow(() -> new RuntimeException("Survey not found with ID: " + request.getSurveyId()));
+
+        CourseSurvey courseSurvey = new CourseSurvey();
+        courseSurvey.setCourse(course);
+        courseSurvey.setSurvey(survey);
+        courseSurvey.setRole(request.getRole());
+        survey.setType(request.getSurveyType());
+
+        // Maintain bidirectional relationship
+
+        surveyRepository.save(survey);
+        courseRepository.save(course);
+    }
+
 
     public CourseResponse toDto(Course course) {
         CourseResponse dto = new CourseResponse();

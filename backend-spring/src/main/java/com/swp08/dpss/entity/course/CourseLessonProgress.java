@@ -19,8 +19,8 @@ public class CourseLessonProgress {
 
     @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "UserId", referencedColumnName = "UserId"),
-            @JoinColumn(name = "CourseId", referencedColumnName = "CourseId")
+            @JoinColumn(name = "user_id", referencedColumnName = "user_id"), // FK column in CourseLessonProgress, referencing user_id in CourseEnrollment
+            @JoinColumn(name = "course_id", referencedColumnName = "course_id")// FK column in CourseLessonProgress, referencing course_id in CourseEnrollment
     })
     private CourseEnrollment enrollment;
 

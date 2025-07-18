@@ -70,9 +70,7 @@ public class Survey {
 
     @OneToMany(
             mappedBy = "survey",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            fetch = FetchType.LAZY)
     private List<CourseSurvey> courseSurveyList = new ArrayList<>();
 
     public void addAnswer(SurveyAnswer answer) {

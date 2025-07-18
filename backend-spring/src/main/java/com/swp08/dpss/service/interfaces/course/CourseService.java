@@ -1,8 +1,6 @@
 package com.swp08.dpss.service.interfaces.course;
 
-import com.swp08.dpss.dto.requests.course.CourseLessonRequest;
-import com.swp08.dpss.dto.requests.course.CourseRequest;
-import com.swp08.dpss.dto.requests.course.LessonProgressRequest;
+import com.swp08.dpss.dto.requests.course.*;
 import com.swp08.dpss.dto.responses.course.CourseEnrollmentResponse;
 import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
 import com.swp08.dpss.dto.responses.course.LessonProgressResponse;
@@ -39,6 +37,8 @@ public interface CourseService {
 
     CourseEnrollmentResponse enrollUser(Long courseId, Long userId);
 
+    CourseEnrollmentResponse enroll(CourseEnrollmentRequest request);
+
     List<CourseEnrollment> getEnrollmentsByCourse(Long courseId);
 
     LessonProgressResponse addLessonProgress(LessonProgressRequest progress);
@@ -46,4 +46,6 @@ public interface CourseService {
     LessonProgressResponse updateLessonProgress(Long progressId, LessonProgressRequest progress);
 
     List<CourseLessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId);
+
+    void addSurveyToCourse(long id, CourseSurveyRequest request);
 }

@@ -3,14 +3,19 @@ package com.swp08.dpss.config;
 import com.swp08.dpss.dto.requests.client.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.client.GuardianCreationRequest;
 import com.swp08.dpss.dto.requests.client.UserCreationRequest;
+import com.swp08.dpss.dto.requests.course.*;
 import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
+import com.swp08.dpss.entity.course.CourseEnrollmentId;
 import com.swp08.dpss.enums.*;
 import com.swp08.dpss.service.interfaces.UserService;
 
+import com.swp08.dpss.service.interfaces.course.CourseEnrollmentService;
+import com.swp08.dpss.service.interfaces.course.CourseLessonService;
+import com.swp08.dpss.service.interfaces.course.CourseService;
 import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
 import com.swp08.dpss.service.interfaces.survey.SurveyService;
@@ -21,6 +26,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -33,6 +39,7 @@ public class DataInitializer implements CommandLineRunner {
     private final SurveyService surveyService;
     private final SurveyQuestionService surveyQuestionService;
     private final SurveyAnswerService surveyAnswerService;
+    private final CourseService courseService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -152,7 +159,7 @@ public class DataInitializer implements CommandLineRunner {
             log.info("Survey initialization complete.");
         } catch (Exception e) {
             e.printStackTrace(); // good for pinpointing which line failed
-            log.info("Survey initialization failed:" + e.getMessage());
+            log.error("Survey initialization failed:" + e.getMessage());
         }
 
         try {
@@ -160,8 +167,41 @@ public class DataInitializer implements CommandLineRunner {
             log.info("Survey Answer initialization complete.");
         } catch (Exception e) {
             e.printStackTrace();
-            log.info("Survey Answer initialization failed: " + e.getMessage());
+            log.error("Survey Answer initialization failed: " + e.getMessage());
         }
+
+        try {
+            courseInit();
+            log.info("Course initialization complete.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Course initialization failed: " + e.getMessage());
+        }
+
+        try{
+            courseEnrollmentInit();
+            log.info("CourseEnrollment initialization complete.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("CourseEnrollment initialization failed: " + e.getMessage());
+        }
+
+        try {
+            courseLessonInit();
+            log.info("CourseLesson initialization complete.");
+        } catch(Exception e){
+            e.printStackTrace();
+            log.error("CourseLesson initialization failed: " + e.getMessage());
+        }
+
+        try {
+            lessonProgressInit();
+            log.info("Lesson Progress initialization complete.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Lesson Progress initialization failed: " + e.getMessage());
+        }
+
 
         log.info("DataInitializer finished.");
     }
@@ -223,7 +263,81 @@ public class DataInitializer implements CommandLineRunner {
         surveyAnswerService.submitAnswer(surveyId, q2.getId(), answer2);
     }
 
+    private void courseInit() {
+        CourseRequest course1 = new CourseRequest();
+        course1.setTitle("Introduction to Mental Health");
+        course1.setDescription("A course about understanding mental well-being");
+        course1.setStatus(CourseStatus.PUBLISHED);
+        course1.setTargetGroups(List.of("Teens", "Young Adults"));
+        course1.setStartDate(LocalDate.now());
+        course1.setEndDate(LocalDate.now().plusWeeks(4));
 
+        CourseRequest course2 = new CourseRequest();
+        course2.setTitle("Coping with Stress");
+        course2.setDescription("Recognizing and managing everyday stress");
+        course2.setStatus(CourseStatus.PUBLISHED);
+        course2.setTargetGroups(List.of("Adults"));
+        course2.setStartDate(LocalDate.now());
+        course2.setEndDate(LocalDate.now().plusWeeks(6));
+
+        courseService.createCourse(course1);
+        courseService.createCourse(course2);
+
+        System.out.println("Initialized Courses");
+    }
+
+    private void courseLessonInit() {
+        CourseLessonRequest lesson1 = new CourseLessonRequest();
+        lesson1.setTitle("What is Mental Health?");
+        lesson1.setType("READING");
+        lesson1.setContent("Mental health includes our emotional, psychological, and social well-being.");
+        lesson1.setOrderIndex(1);
+
+        CourseLessonRequest lesson2 = new CourseLessonRequest();
+        lesson2.setTitle("Stress and Its Impact");
+        lesson2.setType("VIDEO");
+        lesson2.setContent("https://video-url.com/stress-impact");
+        lesson2.setOrderIndex(2);
+
+        // Assuming course ID = 1 exists
+        courseService.addLessonToCourse(1L, lesson1);
+        courseService.addLessonToCourse(1L, lesson2);
+
+        System.out.println("Initialized Course Lessons");
+    }
+
+    private void courseEnrollmentInit() {
+        CourseEnrollmentRequest enroll1 = new CourseEnrollmentRequest();
+        enroll1.setCourseId(1L);
+        enroll1.setUserId(1L);
+
+        CourseEnrollmentRequest enroll2 = new CourseEnrollmentRequest();
+        enroll2.setCourseId(2L);
+        enroll2.setUserId(2L);
+
+        courseService.enroll(enroll1);
+        courseService.enroll(enroll2);
+
+        System.out.println("Initialized Course Enrollments");
+    }
+
+    private void lessonProgressInit() {
+        LessonProgressRequest progress1 = new LessonProgressRequest();
+
+        progress1.setEnrollmentId(new CourseEnrollmentId(1L,1L));
+        progress1.setLessonId(1L);
+        progress1.setCompleted(true);
+
+        LessonProgressRequest progress2 = new LessonProgressRequest();
+        progress2.setEnrollmentId(new CourseEnrollmentId(1L,1L));
+        progress2.setLessonId(2L);
+        progress2.setCompleted(false);
+
+        courseService.addLessonProgress(progress1);
+        courseService.addLessonProgress(progress2);
+
+        System.out.println("Initialized Lesson Progress");
+    }
 
 
 }

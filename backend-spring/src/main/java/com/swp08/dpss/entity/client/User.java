@@ -67,7 +67,7 @@ public class User {
     private List<SurveyAnswer> answers = new ArrayList<>();
 
     // Course Enrollments
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<CourseEnrollment> courseEnrollments = new ArrayList<>();
 
     // Program Participations

@@ -22,12 +22,12 @@ public class CourseEnrollment {
 
     @ManyToOne
     @MapsId("user") // FK user -> CourseEnrollmentId.user
-    @JoinColumn(name = "UserId")
+    @JoinColumn(name = "user_Id")
     private User user;
 
     @ManyToOne
     @MapsId("course") // FK course -> CourseEnrollmentId.course
-    @JoinColumn(name = "CourseId")
+    @JoinColumn(name = "course_Id")
     private Course course;
 
     @Column(name = "EnrollDate")
