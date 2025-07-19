@@ -5,6 +5,7 @@ import com.swp08.dpss.enums.Roles;
 import com.swp08.dpss.enums.User_Status;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class AdminUserCreationRequest {
     @NotBlank(message = "Name cannot be blank")
     private String name;
@@ -38,9 +40,6 @@ public class AdminUserCreationRequest {
     @Pattern(regexp = "^\\+?\\d{10,15}$", message = "Invalid phone number, phone number must be between 10 and 15 digits")
     @NotBlank(message = "Phone cannot be blank")
     private String phone;
-
-    @NotNull(message = "Status cannot be blank")
-    private User_Status status;
 
     //  Require 1 Guardian if user_age < 18
     @Valid
