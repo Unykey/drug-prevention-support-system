@@ -1,6 +1,7 @@
 package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.client.GuardianCreationRequest;
+import com.swp08.dpss.dto.responses.ApiResponse;
 import com.swp08.dpss.dto.responses.GuardianResponse;
 import com.swp08.dpss.entity.client.Guardian;
 import com.swp08.dpss.service.interfaces.GuardianService;
@@ -19,9 +20,9 @@ public class GuardianController {
     private final GuardianService guardianService;
 
     @GetMapping
-    public ResponseEntity getGuardian() {
-        List<Guardian> guardianList = guardianService.findAll();
-        return ResponseEntity.ok().body(guardianList);
+    public ResponseEntity<ApiResponse<List<GuardianResponse>>> getGuardian() {
+        List<GuardianResponse> guardianList = guardianService.findAll();
+        return ResponseEntity.ok().body(new ApiResponse<>(true, guardianList, "Get all guardians successfully"));
     }
 
     @PostMapping

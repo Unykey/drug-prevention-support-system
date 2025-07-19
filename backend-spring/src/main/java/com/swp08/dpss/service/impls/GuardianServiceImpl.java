@@ -4,6 +4,7 @@ import com.swp08.dpss.dto.requests.client.GuardianCreationRequest;
 import com.swp08.dpss.dto.responses.GuardianResponse;
 import com.swp08.dpss.entity.client.Guardian;
 import com.swp08.dpss.entity.client.User;
+import com.swp08.dpss.mapper.interfaces.GuardianMapper;
 import com.swp08.dpss.repository.GuardianRepository;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.service.interfaces.GuardianService;
@@ -18,10 +19,14 @@ import java.util.Optional;
 public class GuardianServiceImpl implements GuardianService {
     private final GuardianRepository guardianRepository;
     private final UserRepository userRepository;
+    private final GuardianMapper guardianMapper;
 
     @Override
-    public List<Guardian> findAll() {
-        return guardianRepository.findAll();
+    public List<GuardianResponse> findAll() {
+        List<Guardian> guardianList = guardianRepository.findAll();
+
+        List<GuardianResponse> guardianResponseList = guardianMapper.toGuardianResponseList(guardianList);
+        return guardianResponseList;
     }
 
     //Add Guardian for existing User

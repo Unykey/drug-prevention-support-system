@@ -3,6 +3,7 @@ package com.swp08.dpss.dto.requests.client;
 import com.swp08.dpss.enums.Genders;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserCreationRequest {
     @NotBlank(message = "Name cannot be blank")
     private String name;

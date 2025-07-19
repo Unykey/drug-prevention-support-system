@@ -94,6 +94,9 @@ public class UserServiceImpl implements UserService {
         // Create a New User and map the request to the new User's fields'
         User newUser = userMapper.toEntity(request, passwordEncoder);
 
+        if (request.getGuardian() != null) {
+            guardianService.createNewGuardian(newUser, request.getGuardian());
+        }
         // Save the new user to the database
         return userRepository.save(newUser);
     }

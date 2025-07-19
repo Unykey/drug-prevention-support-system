@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface GuardianService {
-    List<Guardian> findAll();
+    List<GuardianResponse> findAll();
 
     GuardianResponse addNewGuardian(GuardianCreationRequest guardianCreationRequest, String userEmail);
 
