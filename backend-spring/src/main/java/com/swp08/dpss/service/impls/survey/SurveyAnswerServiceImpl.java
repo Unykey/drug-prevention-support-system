@@ -18,8 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.StreamSupport.stream;
 
 @Service
 public class SurveyAnswerServiceImpl implements SurveyAnswerService {
@@ -45,27 +48,54 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
 
     @Override
     public List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId) {
-        return surveyAnswerRepository.findAll().stream()
-                .filter(a -> a.getSurvey_id().getId().equals(surveyId))
+        return surveyAnswerRepository.findAllBySurvey_id(surveyId) // Use the direct query
+                .stream()
                 .map(surveyAnswerMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+//    @Transactional
+//    @Override
+//    public SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request) {
+//        Survey survey = surveyRepository.findById(surveyId)
+//                .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
+//        SurveyQuestion question = surveyQuestionRepository.findById(questionId)
+//                .orElseThrow(() -> new EntityNotFoundException("Question not found"));
+//        User user = userRepository.findById(request.getUserId())
+//                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+//
+//        boolean isCorrect = question.getSolution() != null && question.getSolution().trim().equalsIgnoreCase(request.getContent().trim());
+//
+//        SurveyAnswer answer = question.getAnswers().stream()
+//                .filter(a -> a.getUser().getId().equals(user.getId()))
+//                .findFirst()
+//                .orElseGet(() -> {
+//                    SurveyAnswer newAnswer = new SurveyAnswer();
+//                    survey.addAnswer(newAnswer);
+//                    question.addAnswer(newAnswer);
+//                    user.addAnswer(newAnswer);
+//                    return newAnswer;
+//                });
+//
+//        answer.setContent(request.getContent());
+//        answer.setResultScore(isCorrect ? 10 : 0);
+//
+//        return surveyAnswerMapper.toDto(surveyAnswerRepository.save(answer));
+//    }
+
     @Override
-    public SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request) {
+    @Transactional
+    public SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request, String userEmail) {
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new EntityNotFoundException("Survey not found"));
         SurveyQuestion question = surveyQuestionRepository.findById(questionId)
                 .orElseThrow(() -> new EntityNotFoundException("Question not found"));
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+        User user = userRepository.findByEmail(userEmail) // Fetch user by email from principal
+                .orElseThrow(() -> new EntityNotFoundException("Authenticated user not found"));
 
-        boolean isCorrect = question.getSolution().trim().equalsIgnoreCase(request.getContent().trim());
+        boolean isCorrect = question.getSolution() != null && question.getSolution().trim().equalsIgnoreCase(request.getContent().trim());
 
-        SurveyAnswer answer = question.getAnswers().stream()
-                .filter(a -> a.getUser().getId().equals(user.getId()))
-                .findFirst()
+        SurveyAnswer answer = surveyAnswerRepository.findByQuestionAndUser(question, user)
                 .orElseGet(() -> {
                     SurveyAnswer newAnswer = new SurveyAnswer();
                     survey.addAnswer(newAnswer);
@@ -86,15 +116,21 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
         Survey survey = surveyRepository.findById(request.getSurveyId()).orElseThrow();
         User user = userRepository.findById(request.getUserId()).orElseThrow();
 
-        for (BulkSubmitSurveyAnswerRequest.AnswerSubmission answer : request.getAnswers()) {
-            SurveyQuestion question = surveyQuestionRepository.findById(answer.getQuestionId()).orElseThrow();
+        List<SurveyAnswer> newAnswers = new ArrayList<>();
+        for (BulkSubmitSurveyAnswerRequest.AnswerSubmission answerSubmission  : request.getAnswers()) {
+            SurveyQuestion question = surveyQuestionRepository.findById(answerSubmission .getQuestionId()).orElseThrow();
             SurveyAnswer surveyAnswer = new SurveyAnswer();
-            surveyAnswer.setContent(answer.getContent());
+            surveyAnswer.setContent(answerSubmission .getContent());
             survey.addAnswer(surveyAnswer);
             question.addAnswer(surveyAnswer);
             user.addAnswer(surveyAnswer);
-            surveyAnswerRepository.save(surveyAnswer);
+            boolean isCorrect = question.getSolution() != null && question.getSolution().trim().equalsIgnoreCase(answerSubmission.getContent().trim());
+            surveyAnswer.setResultScore(isCorrect ? 10 : 0); // Apply scoring logic
+
+            newAnswers.add(surveyAnswer);
         }
+
+        surveyAnswerRepository.saveAll(newAnswers);
     }
 
     // ... unchanged delete methods ...

@@ -120,8 +120,12 @@ public class SurveyController {
     }
 
     @PostMapping("/{surveyId}/{questionId}/submitanswer")
-    public ResponseEntity<ApiResponse<SurveyAnswerDto>> submitAnswer(@RequestBody SubmitSurveyAnswerRequest request, @PathVariable Long surveyId, @PathVariable Long questionId) {
-        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(surveyId, questionId, request);
+    public ResponseEntity<ApiResponse<SurveyAnswerDto>> submitAnswer(
+            @RequestBody SubmitSurveyAnswerRequest request,
+            @PathVariable Long surveyId,
+            @PathVariable Long questionId,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(surveyId, questionId, request, userDetails.getUsername());
         return ResponseEntity.status(201).body(new ApiResponse<>(true, submitted, "Answer submitted"));
     }
 

@@ -35,7 +35,7 @@ public class SurveyAnswer {
     private String content;
 
     @Column (name = "ResultScore")
-    private int resultScore;
+    private Integer resultScore;
 
     @Column (name = "SubmittedAt", nullable = false)
     private LocalDateTime submittedAt = LocalDateTime.now();

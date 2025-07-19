@@ -9,7 +9,9 @@ import java.util.List;
 public interface SurveyAnswerService {
     List<SurveyAnswerDto> getAnswersBySurveyId(Long surveyId);
 //    void softDeleteSurveyAnswer(Long surveyAnswerId);
-    SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request);
+    //SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request);
+
+    SurveyAnswerDto submitAnswer(Long surveyId, Long questionId, SubmitSurveyAnswerRequest request, String userEmail);
 
     void submitAllAnswers(BulkSubmitSurveyAnswerRequest request);
 

@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.stream.StreamSupport.stream;
+
 @RequiredArgsConstructor
 @Service
 public class SurveyQuestionServiceImpl implements SurveyQuestionService {
@@ -34,9 +36,8 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     @Override
     public List<SurveyQuestionDto> getQuestionsBySurveyId(Long surveyId) {
-        Survey survey = surveyRepository.findById(surveyId)
-                .orElseThrow(() -> new EntityNotFoundException("Survey Not Found"));
-        return survey.getQuestions().stream()
+        return questionRepository.findAllBySurvey_id(surveyId)
+                .stream()
                 .map(surveyQuestionMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -83,7 +84,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
                 answer.getSurvey_id().removeAnswer(answer);
             }
             if (answer.getUser() != null) {
-                //answer.getUser().removeAnswer(answer);
+                answer.getUser().removeAnswer(answer);
             }
         }
         question.getAnswers().clear();

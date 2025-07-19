@@ -12,10 +12,8 @@ import java.time.LocalDateTime;
 public class SurveyAnswerDto {
     private Long id;
     private String content;
-    private int resultScore;
+    private Integer resultScore;
     private LocalDateTime submittedAt;
-
-    private String questionText;
 
     private Long surveyId;
     private Long questionId;
