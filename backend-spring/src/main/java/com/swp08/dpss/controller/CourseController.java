@@ -34,10 +34,11 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Course>>> getAllCourses(@RequestParam(name = "keyword", required = false) String keyword) {
-        List<Course> result = (keyword != null && !keyword.isEmpty())
-                ? courseService.searchCoursesByName(keyword)
-                : courseService.getAllCourses();
+    public ResponseEntity<ApiResponse<List<Course>>> getAllCourses(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "targetGroups", required = false) List<String> targetGroups // Add this
+    ) {
+        List<Course> result = courseService.searchCourses(keyword, targetGroups); // New service method
         return ResponseEntity.ok(new ApiResponse<>(true, result, "Courses retrieved"));
     }
 

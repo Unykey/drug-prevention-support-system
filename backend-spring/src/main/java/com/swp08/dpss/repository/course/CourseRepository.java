@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course,Long> {
     List<Course> findAllByTitleContainingIgnoreCase(String title);
+
+    List<Course> findAllByTitleContainingIgnoreCaseAndTargetGroupsIn(String keyword, List<String> targetGroups);
+
+    List<Course> findAllByTargetGroupsIn(List<String> targetGroups);
 }

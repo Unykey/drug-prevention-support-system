@@ -76,6 +76,24 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    public List<Course> searchCourses(String keyword, List<String> targetGroups) {
+        // Implement logic to filter by keyword OR targetGroups, or both
+        // If both are present, perhaps find courses that match keyword AND have AT LEAST ONE of the targetGroups
+        // This logic can get complex depending on exact requirements (AND vs OR for targetGroups)
+        if (keyword != null && !keyword.isEmpty() && targetGroups != null && !targetGroups.isEmpty()) {
+            // Example using custom repository method or Specification
+            return courseRepository.findAllByTitleContainingIgnoreCaseAndTargetGroupsIn(keyword, targetGroups);
+        } else if (keyword != null && !keyword.isEmpty()) {
+            return courseRepository.findAllByTitleContainingIgnoreCase(keyword);
+        } else if (targetGroups != null && !targetGroups.isEmpty()) {
+            return courseRepository.findAllByTargetGroupsIn(targetGroups); // Needs a custom query/method in repo
+        } else {
+            return courseRepository.findAll();
+        }
+    }
+
+    //Not needed
+    @Override
     public List<Course> searchCoursesByName(String keyword) {
         return courseRepository.findAllByTitleContainingIgnoreCase(keyword);
     }

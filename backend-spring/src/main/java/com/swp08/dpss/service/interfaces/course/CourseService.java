@@ -11,6 +11,8 @@ import java.util.List;
 public interface CourseService {
     Course createCourse(CourseRequest request);
 
+    List<Course> searchCourses(String keyword, List<String> targetGroups)
+
     List<Course> searchCoursesByName(String keyword);
 
     List<Course> getAllCourses();
@@ -48,4 +50,6 @@ public interface CourseService {
     List<CourseLessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId);
 
     void addSurveyToCourse(long id, CourseSurveyRequest request);
+
+    ;
 }
