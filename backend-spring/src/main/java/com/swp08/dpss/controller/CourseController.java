@@ -118,8 +118,13 @@ public class CourseController {
         return ResponseEntity.ok(new ApiResponse<>(true, courseService.updateLessonProgress(progressId, request), "Progress updated"));
     }
 
-    @GetMapping("/progress/{enrollmentId}")
-    public ResponseEntity<ApiResponse<List<CourseLessonProgress>>> getProgressByEnrollment(@PathVariable CourseEnrollmentId enrollmentId) {
+    // Option A: Use both user_id and course_id as path variables
+    @GetMapping("/progress/user/{userId}/course/{courseId}")
+    public ResponseEntity<ApiResponse<List<CourseLessonProgress>>> getProgressByEnrollment(
+            @PathVariable Long userId,
+            @PathVariable Long courseId) {
+
+        CourseEnrollmentId enrollmentId = new CourseEnrollmentId(userId, courseId);
         return ResponseEntity.ok(new ApiResponse<>(true, courseService.getProgressByEnrollment(enrollmentId), "Progress retrieved"));
     }
 }
