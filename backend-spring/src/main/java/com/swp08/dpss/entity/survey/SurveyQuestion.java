@@ -30,13 +30,8 @@ public class SurveyQuestion {
     @Column (name = "Type", nullable = false)
     private QuestionTypes type;
 
-    @ElementCollection
-    @CollectionTable(name = "question_options", joinColumns = @JoinColumn(name = "question_id"))
-    @Column (name = "Option_value", nullable = false)
-    private List<String> value;
-
-    @Column (name = "Solution", nullable = false)
-    private String solution; //	Correct answer (only used in quiz/test for courses)
+    @OneToMany(mappedBy = "question_id", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QuestionOption> options = new ArrayList<>();
 
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question_id")
     private List<SurveyAnswer> answers = new ArrayList<>();

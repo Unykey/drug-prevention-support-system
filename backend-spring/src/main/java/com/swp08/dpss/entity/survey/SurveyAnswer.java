@@ -31,14 +31,17 @@ public class SurveyAnswer {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne
+    @JoinColumn(name = "option_id")
+    private QuestionOption option; // Contain selected answer
+
     @Column (name = "Content", nullable = false)
-    private String content;
+    private String content; // Contain free-text answer
 
     @Column (name = "ResultScore")
     private int resultScore;
 
     @Column (name = "SubmittedAt", nullable = false)
     private LocalDateTime submittedAt = LocalDateTime.now();
-
 }
 
