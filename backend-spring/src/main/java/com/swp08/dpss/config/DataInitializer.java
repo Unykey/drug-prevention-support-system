@@ -13,8 +13,6 @@ import com.swp08.dpss.entity.course.CourseEnrollmentId;
 import com.swp08.dpss.enums.*;
 import com.swp08.dpss.service.interfaces.UserService;
 
-import com.swp08.dpss.service.interfaces.course.CourseEnrollmentService;
-import com.swp08.dpss.service.interfaces.course.CourseLessonService;
 import com.swp08.dpss.service.interfaces.course.CourseService;
 import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
@@ -26,9 +24,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 
 @Slf4j //Log stuffs :D
@@ -49,16 +45,14 @@ public class DataInitializer implements CommandLineRunner {
             userInit();
             log.info("Survey initialization complete.");
         } catch (Exception e) {
-            e.printStackTrace(); // good for pinpointing which line failed
-            log.error("User initialization failed:" + e.getMessage());
+            log.error("User initialization failed:" + e);
         }
         // Add Survey
         try {
             surveyInit();
             log.info("Survey initialization complete.");
         } catch (Exception e) {
-            e.printStackTrace(); // good for pinpointing which line failed
-            log.error("Survey initialization failed:" + e.getMessage());
+            log.error("Survey initialization failed:" + e);
         }
 
         // Add Survey Answer
@@ -66,8 +60,7 @@ public class DataInitializer implements CommandLineRunner {
             answerInit();
             log.info("Survey Answer initialization complete.");
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Survey Answer initialization failed: " + e.getMessage());
+            log.error("Survey Answer initialization failed: " + e);
         }
 
         // Add Course
@@ -75,8 +68,7 @@ public class DataInitializer implements CommandLineRunner {
             courseInit();
             log.info("Course initialization complete.");
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Course initialization failed: " + e.getMessage());
+            log.error("Course initialization failed: " + e);
         }
 
         // Add Course Enrollment
@@ -84,16 +76,14 @@ public class DataInitializer implements CommandLineRunner {
             courseEnrollmentInit();
             log.info("CourseEnrollment initialization complete.");
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("CourseEnrollment initialization failed: " + e.getMessage());
+            log.error("CourseEnrollment initialization failed: " + e);
         }
 
         try {
             courseLessonInit();
             log.info("CourseLesson initialization complete.");
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("CourseLesson initialization failed: " + e.getMessage());
+            log.error("CourseLesson initialization failed: " + e);
         }
 
         // Add Lesson Progress
@@ -101,8 +91,7 @@ public class DataInitializer implements CommandLineRunner {
             lessonProgressInit();
             log.info("Lesson Progress initialization complete.");
         } catch (Exception e) {
-            e.printStackTrace();
-            log.error("Lesson Progress initialization failed: " + e.getMessage());
+            log.error("Lesson Progress initialization failed: " + e);
         }
         log.info("DataInitializer finished.");
     }
