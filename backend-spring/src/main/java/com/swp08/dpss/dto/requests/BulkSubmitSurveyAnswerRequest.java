@@ -1,9 +1,11 @@
-package com.swp08.dpss.dto.requests;
+package com.swp08.dpss.dto.requests.survey;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class BulkSubmitSurveyAnswerRequest {
@@ -17,6 +19,7 @@ public class BulkSubmitSurveyAnswerRequest {
     @NotNull
     private List<AnswerSubmission> answers;
 
+    @AllArgsConstructor
     @Data
     public static class AnswerSubmission {
         @NotNull

@@ -1,12 +1,15 @@
 package com.swp08.dpss.config;
 
+import com.swp08.dpss.dto.requests.survey.BulkSubmitSurveyAnswerRequest; // Ensure this is correctly imported
+import com.swp08.dpss.dto.requests.survey.BulkSubmitSurveyAnswerRequest.AnswerSubmission; // Import inner class
 import com.swp08.dpss.dto.requests.client.AdminUserCreationRequest;
 import com.swp08.dpss.dto.requests.client.GuardianCreationRequest;
 import com.swp08.dpss.dto.requests.client.UserCreationRequest;
 import com.swp08.dpss.dto.requests.course.*;
-import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
+import com.swp08.dpss.dto.requests.survey.QuestionOptionRequest; // New import
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
+import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.entity.course.CourseEnrollmentId;
@@ -25,7 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
-// Assuming QuestionTypes is an enum now, remove import for String if it was there
+import java.util.ArrayList; // Added for creating lists
 
 @Slf4j //Log stuffs :D
 @Component
@@ -43,9 +46,9 @@ public class DataInitializer implements CommandLineRunner {
         // Add User
         try {
             userInit();
-            log.info("User initialization complete."); // Changed to log.info
+            log.info("User initialization complete.");
         } catch (Exception e) {
-            log.error("User initialization failed:", e); // Use logger for exceptions
+            log.error("User initialization failed:", e);
         }
         // Add Survey
         try {
@@ -116,7 +119,7 @@ public class DataInitializer implements CommandLineRunner {
         userService.register(member2);
         userService.register(member3);
         userService.register(member4);
-        log.info("Created User"); // Changed to log.info
+        log.info("Created User");
 
         // ===== Admin-Created Accounts =====
         // Consultant role
@@ -144,11 +147,10 @@ public class DataInitializer implements CommandLineRunner {
         userService.createNewUser(staff2);
         userService.createNewUser(man1);
         userService.createNewUser(ad1);
-        log.info("Admin Created User with Roles"); // Changed to log.info
+        log.info("Admin Created User with Roles");
     }
 
     private void surveyInit() {
-        // CreateSurveyRequest now expects SurveyTypes and SurveyStatus (enums)
         SurveyDetailsDto assist = surveyService.createSurvey(
                 new CreateSurveyRequest("ASSIST", SurveyTypes.QUIZ, SurveyStatus.PUBLISHED, "Đánh giá mức độ sử dụng chất gây nghiện"));
 
@@ -158,27 +160,35 @@ public class DataInitializer implements CommandLineRunner {
         SurveyDetailsDto dast10 = surveyService.createSurvey(
                 new CreateSurveyRequest("DAST-10", SurveyTypes.QUIZ, SurveyStatus.PUBLISHED, "Khảo sát mức độ nghiện các loại ma túy"));
 
-        List<String> options = List.of("Có", "Không");
+        // Define options as List<QuestionOptionRequest>
+        List<QuestionOptionRequest> yesNoOptions = List.of(
+                new QuestionOptionRequest("Có", true), // "Có" is correct for some questions
+                new QuestionOptionRequest("Không", false) // "Không" is correct for others
+        );
+        List<QuestionOptionRequest> noYesOptions = List.of(
+                new QuestionOptionRequest("Có", false),
+                new QuestionOptionRequest("Không", true)
+        );
 
-        // SurveyQuestionRequest now expects QuestionTypes (enum)
-        // Ensure you provide QuestionTypes.YN, not just a string
+
+        // SurveyQuestionRequest now expects List<QuestionOptionRequest>
         surveyQuestionService.addQuestionToSurvey(assist.getId(),
-                new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", QuestionTypes.YN, "Có", options));
+                new SurveyQuestionRequest("Bạn đã từng sử dụng rượu chưa?", QuestionTypes.YN, yesNoOptions)); // Use the list of options
 
         surveyQuestionService.addQuestionToSurvey(assist.getId(),
-                new SurveyQuestionRequest("Bạn có hút thuốc lá không?", QuestionTypes.YN, "Không", options));
+                new SurveyQuestionRequest("Bạn có hút thuốc lá không?", QuestionTypes.YN, noYesOptions)); // Use the list of options
 
         surveyQuestionService.addQuestionToSurvey(crafft.getId(),
-                new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", QuestionTypes.YN, "Có", options));
+                new SurveyQuestionRequest("Bạn từng đi xe có người dùng chất?", QuestionTypes.YN, yesNoOptions)); // Use the list of options
 
         surveyQuestionService.addQuestionToSurvey(crafft.getId(),
-                new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", QuestionTypes.YN, "Có", options));
+                new SurveyQuestionRequest("Bạn có muốn giảm sử dụng chất đó không?", QuestionTypes.YN, yesNoOptions)); // Use the list of options
 
         surveyQuestionService.addQuestionToSurvey(dast10.getId(),
-                new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", QuestionTypes.YN, "Không", options));
+                new SurveyQuestionRequest("Bạn dùng heroin 30 ngày qua?", QuestionTypes.YN, noYesOptions)); // Use the list of options
 
         surveyQuestionService.addQuestionToSurvey(dast10.getId(),
-                new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", QuestionTypes.YN, "Có", options));
+                new SurveyQuestionRequest("Bạn thấy khó chịu nếu không dùng chất?", QuestionTypes.YN, yesNoOptions)); // Use the list of options
     }
 
 
@@ -187,38 +197,54 @@ public class DataInitializer implements CommandLineRunner {
                 new CreateSurveyRequest("DEMO_SURVEY", SurveyTypes.QUIZ, SurveyStatus.PUBLISHED, "Demo survey for testing answers"));
         Long surveyId = survey.getId();
 
-        List<String> options = List.of("Có", "Không");
+        // Define options as List<QuestionOptionRequest>
+        List<QuestionOptionRequest> yesNoOptionsForQ1 = List.of(
+                new QuestionOptionRequest("Có", true), // Assuming "Có" is the correct answer
+                new QuestionOptionRequest("Không", false)
+        );
+        List<QuestionOptionRequest> noYesOptionsForQ2 = List.of(
+                new QuestionOptionRequest("Có", false),
+                new QuestionOptionRequest("Không", true) // Assuming "Không" is the correct answer
+        );
+
 
         // Ensure SurveyQuestionRequest uses QuestionTypes enum
         SurveyQuestionDto q1 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new SurveyQuestionRequest("Bạn có uống rượu không?", QuestionTypes.YN, "Có", options));
+                new SurveyQuestionRequest("Bạn có uống rượu không?", QuestionTypes.YN, yesNoOptionsForQ1));
 
         SurveyQuestionDto q2 = surveyQuestionService.addQuestionToSurvey(surveyId,
-                new SurveyQuestionRequest("Bạn có hút thuốc không?", QuestionTypes.YN, "Không", options));
+                new SurveyQuestionRequest("Bạn có hút thuốc không?", QuestionTypes.YN, noYesOptionsForQ2));
 
-        // IMPORTANT: The submitAnswer method in SurveyAnswerService was updated
-        // to receive the user's email/ID from the authenticated principal
-        // for security reasons. For DataInitializer, we need to simulate this.
-        // Option 1: Pass a hardcoded email/username for testing.
-        // Option 2: Modify service.submitAnswer to accept userId *only for testing profiles*
-        //           (NOT recommended for production code).
-        // Option 3 (Best for initializer): Create dummy authentication for the user.
-        // For simplicity in this initializer, I'll use the user's email directly
-        // assuming your service method signature has been adjusted for `userEmail`.
-
-        // Assuming user with email "sieghard@eventbrite.com" (member1) has ID 1L
         String user1Email = "sieghard@eventbrite.com"; // Get email from your userInit()
 
-        // SubmitSurveyAnswerRequest only has content, userId is passed separately or derived.
-        SubmitSurveyAnswerRequest answer1 = new SubmitSurveyAnswerRequest(null, "Có"); // userId is null in DTO now
-        SubmitSurveyAnswerRequest answer2 = new SubmitSurveyAnswerRequest(null, "Không");
+        // Submit individual answers for testing the single submitAnswer method
+        SubmitSurveyAnswerRequest answer1 = new SubmitSurveyAnswerRequest(null, "Có"); // content for q1
+        SubmitSurveyAnswerRequest answer2 = new SubmitSurveyAnswerRequest(null, "Không"); // content for q2
 
-        // Assuming submitAnswer service method now takes (surveyId, questionId, request, userEmail)
-        // If your service method only takes (surveyId, questionId, request) and internally fetches user ID,
-        // then the original DTO would work, but it's a security risk.
-        // I am using the recommended service signature for the initializer.
         surveyAnswerService.submitAnswer(surveyId, q1.getId(), answer1, user1Email);
         surveyAnswerService.submitAnswer(surveyId, q2.getId(), answer2, user1Email);
+
+        // --- Demonstrate Bulk Answer Submission ---
+        String user2Email = "samdde@acquirethisname.com"; // Another user
+
+        // Create a BulkSubmitSurveyAnswerRequest
+        BulkSubmitSurveyAnswerRequest bulkRequest = new BulkSubmitSurveyAnswerRequest();
+        bulkRequest.setSurveyId(surveyId);
+        // Assuming userId will be determined from userEmail in service for security
+        // bulkRequest.setUserId(2L); // This field might be redundant if user is derived from principal
+
+        List<AnswerSubmission> bulkAnswers = new ArrayList<>();
+        // Answer for q1 (user2 answers "Không")
+        bulkAnswers.add(new AnswerSubmission(q1.getId(), "Không"));
+        // Answer for q2 (user2 answers "Có")
+        bulkAnswers.add(new AnswerSubmission(q2.getId(), "Có"));
+
+        bulkRequest.setAnswers(bulkAnswers);
+
+        // Submit all answers in bulk
+        log.info("Submitting bulk answers for user: {}", user2Email);
+        surveyAnswerService.submitAllAnswers(surveyId, bulkRequest, user2Email);
+        log.info("Bulk answers submission complete for user: {}", user2Email);
     }
 
     private void courseInit() {
@@ -226,8 +252,6 @@ public class DataInitializer implements CommandLineRunner {
         course1.setTitle("Introduction to Mental Health");
         course1.setDescription("A course about understanding mental well-being");
         course1.setStatus(CourseStatus.PUBLISHED);
-        // course1.setTargetGroups(List.of("Teens", "Young Adults")); // Uncomment if TargetGroups is re-added
-        // course1.setTargetGroups(Set.of()); // Uncomment if TargetGroups is re-added
         course1.setStartDate(LocalDate.now());
         course1.setEndDate(LocalDate.now().plusWeeks(4));
 
@@ -235,26 +259,25 @@ public class DataInitializer implements CommandLineRunner {
         course2.setTitle("Coping with Stress");
         course2.setDescription("Recognizing and managing everyday stress");
         course2.setStatus(CourseStatus.PUBLISHED);
-        // course2.setTargetGroups(List.of("Adults")); // Uncomment if TargetGroups is re-added
         course2.setStartDate(LocalDate.now());
         course2.setEndDate(LocalDate.now().plusWeeks(6));
 
         courseService.createCourse(course1);
         courseService.createCourse(course2);
 
-        log.info("Initialized Courses"); // Changed to log.info
+        log.info("Initialized Courses");
     }
 
     private void courseLessonInit() {
         CourseLessonRequest lesson1 = new CourseLessonRequest();
         lesson1.setTitle("What is Mental Health?");
-        lesson1.setType("Reading"); // Assuming CourseLessonType enum
+        lesson1.setType("Reading"); // Assuming CourseLessonType enum, or a String field
         lesson1.setContent("Mental health includes our emotional, psychological, and social well-being.");
         lesson1.setOrderIndex(1);
 
         CourseLessonRequest lesson2 = new CourseLessonRequest();
         lesson2.setTitle("Stress and Its Impact");
-        lesson2.setType("Video"); // Assuming CourseLessonType enum
+        lesson2.setType("Video"); // Assuming CourseLessonType enum, or a String field
         lesson2.setContent("https://video-url.com/stress-impact");
         lesson2.setOrderIndex(2);
 
@@ -262,7 +285,7 @@ public class DataInitializer implements CommandLineRunner {
         courseService.addLessonToCourse(1L, lesson1);
         courseService.addLessonToCourse(1L, lesson2);
 
-        log.info("Initialized Course Lessons"); // Changed to log.info
+        log.info("Initialized Course Lessons");
     }
 
     private void courseEnrollmentInit() {
@@ -277,7 +300,7 @@ public class DataInitializer implements CommandLineRunner {
         courseService.enroll(enroll1);
         courseService.enroll(enroll2);
 
-        log.info("Initialized Course Enrollments"); // Changed to log.info
+        log.info("Initialized Course Enrollments");
     }
 
     private void lessonProgressInit() {
@@ -295,6 +318,6 @@ public class DataInitializer implements CommandLineRunner {
         courseService.addLessonProgress(progress1);
         courseService.addLessonProgress(progress2);
 
-        log.info("Initialized Lesson Progress"); // Changed to log.info
+        log.info("Initialized Lesson Progress");
     }
 }

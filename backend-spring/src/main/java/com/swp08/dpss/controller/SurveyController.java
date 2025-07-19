@@ -2,10 +2,9 @@ package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
-import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.requests.survey.UpdateSurveyRequest;
 import com.swp08.dpss.dto.responses.ApiResponse;
-import com.swp08.dpss.dto.responses.survey.SurveyAnswerDto;
+import com.swp08.dpss.dto.responses.survey.SurveyAnswerDto; // Keep for getAnswersBySurveyId
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
 import com.swp08.dpss.entity.client.User;
@@ -34,7 +33,7 @@ public class SurveyController {
 
     private final SurveyService surveyService;
     private final SurveyQuestionService surveyQuestionService;
-    private final SurveyAnswerService surveyAnswerService;
+    private final SurveyAnswerService surveyAnswerService; // Still needed for getAnswersBySurveyId
     private final UserService userService;
 
     @Autowired
@@ -46,6 +45,7 @@ public class SurveyController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')") // Only authorized roles can create surveys
     public ResponseEntity<ApiResponse<SurveyDetailsDto>> createSurvey(
             @Valid @RequestBody CreateSurveyRequest request) {
         SurveyDetailsDto created = surveyService.createSurvey(request);
@@ -100,9 +100,10 @@ public class SurveyController {
     @GetMapping("/{id}/questions")
     public ResponseEntity<ApiResponse<List<SurveyQuestionDto>>> getQuestionsBySurveyId(@PathVariable Long id) {
         return ResponseEntity.ok(new ApiResponse<>(true, surveyQuestionService.getQuestionsBySurveyId(id), "Survey questions retrieved"));
-    }//ngon rooi
+    }
 
     @GetMapping("/{id}/answers")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')") // Typically, only authorized roles should view all answers for a survey
     public ResponseEntity<ApiResponse<List<SurveyAnswerDto>>> getAnswersBySurveyId(@PathVariable Long id) {
         return ResponseEntity.ok(new ApiResponse<>(true, surveyAnswerService.getAnswersBySurveyId(id), "Survey answers retrieved"));
     }
@@ -112,24 +113,19 @@ public class SurveyController {
         return ResponseEntity.ok(new ApiResponse<>(true, surveyService.searchSurveysByName(keyword), "Survey search results"));
     }
 
-    @PostMapping("/{id}/addquestion")
+    @PostMapping("/{id}/questions") // Changed endpoint name for clarity
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')") // Only authorized roles can add questions
     public ResponseEntity<ApiResponse<SurveyQuestionDto>> addQuestionToSurvey(
-            @RequestBody SurveyQuestionRequest questionDto, @PathVariable Long id) {
-        SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(id, questionDto);
-        return ResponseEntity.status(201).body(new ApiResponse<>(true, saved, "Question added to survey"));
+            @PathVariable("id") Long surveyId, // Use @PathVariable("id") for clarity
+            @Valid @RequestBody SurveyQuestionRequest questionRequest) { // Added @Valid and renamed from questionDto
+        SurveyQuestionDto saved = surveyQuestionService.addQuestionToSurvey(surveyId, questionRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, saved, "Question added to survey successfully"));
     }
 
-    @PostMapping("/{surveyId}/{questionId}/submitanswer")
-    public ResponseEntity<ApiResponse<SurveyAnswerDto>> submitAnswer(
-            @RequestBody SubmitSurveyAnswerRequest request,
-            @PathVariable Long surveyId,
-            @PathVariable Long questionId,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        SurveyAnswerDto submitted = surveyAnswerService.submitAnswer(surveyId, questionId, request, userDetails.getUsername());
-        return ResponseEntity.status(201).body(new ApiResponse<>(true, submitted, "Answer submitted"));
-    }
+    // Removed the submitAnswer endpoint as it's now in SurveyAnswerController
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')") // Only authorized roles can update surveys
     public ResponseEntity<ApiResponse<SurveyDetailsDto>> updateSurvey(
             @PathVariable Long id,
             @Valid @RequestBody UpdateSurveyRequest request
@@ -139,12 +135,14 @@ public class SurveyController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')") // Only authorized roles can soft delete
     public ResponseEntity<ApiResponse<Void>> softDeleteSurvey(@PathVariable Long id) {
         surveyService.softDeleteSurveyById(id);
         return ResponseEntity.ok(new ApiResponse<>(true, null, "Survey soft-deleted"));
     }
 
     @DeleteMapping("/admin/{id}")
+    @PreAuthorize("hasRole('ADMIN')") // Only Admin can hard delete
     public ResponseEntity<ApiResponse<Void>> hardDeleteSurvey(@PathVariable Long id) {
         surveyService.hardDeleteSurveyById(id);
         return ResponseEntity.ok(new ApiResponse<>(true, null, "Survey hard-deleted"));

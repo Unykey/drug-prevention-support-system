@@ -1,4 +1,4 @@
-package com.swp08.dpss.mapper.interfaces;
+package com.swp08.dpss.mapper.interfaces.survey;
 
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.entity.survey.Survey;

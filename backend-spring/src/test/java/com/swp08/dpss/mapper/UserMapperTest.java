@@ -73,7 +73,7 @@ public class UserMapperTest {
         request.setGender(Genders.MALE);
         request.setDateOfBirth(LocalDate.of(2000, 1, 1));
         request.setRole(Roles.ADMIN);
-        request.setStatus(User_Status.VERIFIED);
+//        request.setStatus(User_Status.VERIFIED);
 
         // Act
         User user = userMapper.toEntity(request, passwordEncoder);

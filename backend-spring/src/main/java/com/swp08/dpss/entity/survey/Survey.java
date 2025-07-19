@@ -50,13 +50,13 @@ public class Survey {
     private LocalDate created_at = LocalDate.now();
 
     @OneToMany(
-            mappedBy = "survey_id",
+            mappedBy = "survey",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<SurveyAnswer> answers = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "survey_id",
+            mappedBy = "survey",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<SurveyQuestion> questions = new ArrayList<>();
@@ -75,21 +75,21 @@ public class Survey {
 
     public void addAnswer(SurveyAnswer answer) {
         answers.add(answer);
-        answer.setSurvey_id(this);
+        answer.setSurvey(this);
     }
 
     public void removeAnswer(SurveyAnswer answer) {
         answers.remove(answer);
-        answer.setSurvey_id(null);
+        answer.setSurvey(null);
     }
 
     public void addQuestion(SurveyQuestion question) {
         questions.add(question);
-        question.setSurvey_id(this);
+        question.setSurvey(this);
     }
     public void removeQuestion(SurveyQuestion question) {
         questions.remove(question);
-        question.setSurvey_id(null);
+        question.setSurvey(null);
     }
     public void addProgramSurvey(ProgramSurvey programSurvey) {
         programSurveyList.add(programSurvey);

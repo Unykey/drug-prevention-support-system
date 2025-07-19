@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class SurveyQuestionRequest {
-    @NotBlank
+    @NotBlank(message = "Question content cannot be blank")
     private String question;
-    @NotNull
+
+    @NotNull(message = "Question type must be specified")
     private QuestionTypes type;
-    @NotBlank
-    private String solution;
-    private List<String> value;
+
+    private List<QuestionOptionRequest> options;
 }

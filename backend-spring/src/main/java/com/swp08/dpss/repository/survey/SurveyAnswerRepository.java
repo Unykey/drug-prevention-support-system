@@ -17,4 +17,5 @@ public interface SurveyAnswerRepository extends JpaRepository<SurveyAnswer, Long
 
     Optional<SurveyAnswer> findByQuestionAndUser(SurveyQuestion question, User user);
 
+    List<SurveyAnswer> findAllByUser(User user);
 }

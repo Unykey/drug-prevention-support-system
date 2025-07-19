@@ -21,11 +21,11 @@ public class SurveyAnswer {
 
     @ManyToOne
     @JoinColumn(name = "survey_id")
-    private Survey survey_id;
+    private Survey survey;
 
     @ManyToOne
     @JoinColumn(name = "question_id")
-    private SurveyQuestion question_id;
+    private SurveyQuestion question;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

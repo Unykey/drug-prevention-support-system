@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface SurveyQuestionRepository extends JpaRepository<SurveyQuestion, Long> {
 
-    List<SurveyQuestion> findAllBySurvey_id(Long surveyId);
+    List<SurveyQuestion> findAllBySurveyId(Long surveyId);
 }
