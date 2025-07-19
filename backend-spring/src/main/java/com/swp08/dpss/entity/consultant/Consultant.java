@@ -33,7 +33,12 @@ public class Consultant {
     )
     private Set<Specialization> specializationSet;
 
-    @OneToMany(mappedBy = "consultant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
+    @JoinTable(
+            name = "consultant_availability",
+            joinColumns = @JoinColumn(name = "consultant_id"),
+            inverseJoinColumns = @JoinColumn(name = "availability_id")
+    )
     private Set<Availability> timeSlots;
 
     @Column(length = 255)

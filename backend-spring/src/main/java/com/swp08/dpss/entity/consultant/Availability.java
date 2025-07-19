@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Set;
 
 @Entity
 @Table(name = "availability")
@@ -16,9 +17,8 @@ public class Availability {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long availabilityId;
 
-    @ManyToOne
-    @JoinColumn(name = "consultant_id")
-    private Consultant consultant;
+    @ManyToMany(mappedBy = "timeSlots")
+    private Set<Consultant> consultant;
 
     private LocalDate date; //e.g. 2021-09-01, etc.
     private LocalTime startTime; //e.g. 10:00, etc.
