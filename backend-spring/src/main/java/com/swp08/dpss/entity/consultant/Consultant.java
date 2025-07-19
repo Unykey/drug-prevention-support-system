@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -23,7 +24,7 @@ public class Consultant {
     private User user;
 
     @OneToMany(mappedBy = "consultant", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Qualification> qualificationSet;
+    private Set<Qualification> qualificationSet = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -31,7 +32,7 @@ public class Consultant {
             joinColumns = @JoinColumn(name = "consultant_id"),
             inverseJoinColumns = @JoinColumn(name = "specialization_id")
     )
-    private Set<Specialization> specializationSet;
+    private Set<Specialization> specializationSet = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -39,7 +40,7 @@ public class Consultant {
             joinColumns = @JoinColumn(name = "consultant_id"),
             inverseJoinColumns = @JoinColumn(name = "availability_id")
     )
-    private Set<Availability> timeSlots;
+    private Set<Availability> timeSlots = new HashSet<>();
 
     @Column(length = 255)
     private String bio;
