@@ -11,7 +11,7 @@ import java.util.List;
 public interface CourseService {
     Course createCourse(CourseRequest request);
 
-    List<Course> searchCourses(String keyword, List<String> targetGroups)
+    List<Course> searchCourses(String keyword, List<String> targetGroups);
 
     List<Course> searchCoursesByName(String keyword);
 
