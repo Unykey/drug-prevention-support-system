@@ -1,5 +1,6 @@
 package com.swp08.dpss.entity.course;
 
+import com.swp08.dpss.entity.consultant.Availability;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.CourseStatus;
 import jakarta.persistence.*;
@@ -10,7 +11,9 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Course")
@@ -37,9 +40,14 @@ public class Course {
     @Enumerated(EnumType.STRING)
     @Column(name = "Status")
     private CourseStatus status = CourseStatus.DRAFT; // DRAFT, PUBLISHED, ARCHIVED
-
-    @ElementCollection
-    private List<String> targetGroups; // ["student", "teacher", "parent"]
+    
+    @ManyToMany
+    @JoinTable(
+            name = "course_target_group",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "target_group_id")
+    )
+    private Set<TargetGroup> targetGroups = new HashSet<>();
 
     @Column
     private boolean isPublished; // default is false

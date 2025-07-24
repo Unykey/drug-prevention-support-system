@@ -1,5 +1,6 @@
 package com.swp08.dpss.dto.requests.course;
 
+import com.swp08.dpss.entity.course.TargetGroup;
 import com.swp08.dpss.enums.CourseStatus;
 import com.swp08.dpss.enums.CourseSurveyRoles;
 import com.swp08.dpss.enums.SurveyStatus;
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -27,7 +29,7 @@ public class CourseRequest {
 
     private CourseStatus status = CourseStatus.DRAFT;
 
-    private List<String> targetGroups;
+    private Set<TargetGroup> targetGroups;
 
     @NotNull
     private LocalDate startDate;
