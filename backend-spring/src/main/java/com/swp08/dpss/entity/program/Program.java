@@ -62,4 +62,21 @@ public class Program {
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     private List<ProgramSurvey> programSurveyList = new ArrayList<>();
+
+    public void addProgramParticipation(ProgramParticipation programParticipation) {
+        programParticipations.add(programParticipation);
+        programParticipation.setProgram(this);
+    }
+    public void removeProgramParticipation(ProgramParticipation programParticipation) {
+        programParticipations.remove(programParticipation);
+        programParticipation.setProgram(null);
+    }
+    public void addProgramSurvey(ProgramSurvey programSurvey) {
+        programSurveyList.add(programSurvey);
+        programSurvey.setProgram(this);
+    }
+    public void removeProgramSurvey(ProgramSurvey programSurvey) {
+        programSurveyList.remove(programSurvey);
+        programSurvey.setProgram(null);
+    }
 }
