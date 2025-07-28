@@ -7,9 +7,10 @@ import com.swp08.dpss.dto.responses.course.CourseResponse;
 import com.swp08.dpss.dto.responses.course.LessonProgressResponse;
 import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.entity.course.*;
+import com.swp08.dpss.entity.course.TargetGroup;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.CourseStatus;
-import com.swp08.dpss.enums.ProgramSurveyRoles;
+import com.swp08.dpss.enums.TargetGroupName;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.repository.course.*;
 import com.swp08.dpss.repository.survey.SurveyRepository;
@@ -20,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -31,9 +34,10 @@ public class CourseServiceImpl implements CourseService {
     private final LessonProgressRepository  lessonProgressRepository;
     private final SurveyRepository surveyRepository;
     private final UserRepository userRepository;
+    private final TargetGroupRepository targetGroupRepository;
 
     @Autowired
-    public CourseServiceImpl(CourseRepository courseRepository, CourseEnrollmentRepository courseEnrollmentRepository, CourseLessonRepository courseLessonRepository, LessonProgressRepository lessonProgressRepository, SurveyRepository surveyRepository, UserRepository userRepository, CourseLessonProgressRepository courseLessonProgressRepository) {
+    public CourseServiceImpl(CourseRepository courseRepository, CourseEnrollmentRepository courseEnrollmentRepository, CourseLessonRepository courseLessonRepository, LessonProgressRepository lessonProgressRepository, SurveyRepository surveyRepository, UserRepository userRepository, CourseLessonProgressRepository courseLessonProgressRepository, TargetGroupRepository targetGroupRepository) {
         this.courseRepository = courseRepository;
         this.courseEnrollmentRepository = courseEnrollmentRepository;
         this.courseLessonRepository = courseLessonRepository;
@@ -41,6 +45,7 @@ public class CourseServiceImpl implements CourseService {
         this.surveyRepository = surveyRepository;
         this.userRepository = userRepository;
         this.courseLessonProgressRepository = courseLessonProgressRepository;
+        this.targetGroupRepository = targetGroupRepository;
     }
 
     @Transactional
@@ -70,6 +75,23 @@ public class CourseServiceImpl implements CourseService {
                 survey.setType(csReq.getSurveyType()); // optional if this is meant to override
             }
         }
+
+        // --- Crucial change for targetGroups ---
+        Set<TargetGroup> actualTargetGroups = new HashSet<>();
+        for (TargetGroup enumName : request.getTargetGroups()) {
+            TargetGroup targetGroupEntity = targetGroupRepository.findByTargetGroupName(enumName.getTargetGroupName())
+                    .orElseGet(() -> {
+                        // If not found, create a new TargetGroup entity and save it
+                        TargetGroup newTargetGroup = new TargetGroup();
+                        newTargetGroup.setTargetGroupName(enumName.getTargetGroupName());
+                        // You might set a default description or derive it
+                        newTargetGroup.setDescription(enumName.getTargetGroupName() + " group");
+                        return targetGroupRepository.save(newTargetGroup); // Save the new entity
+                    });
+            actualTargetGroups.add(targetGroupEntity);
+        }
+        course.setTargetGroups(actualTargetGroups);
+        // --- End crucial change ---
 
         courseRepository.save(course);
         return course;
