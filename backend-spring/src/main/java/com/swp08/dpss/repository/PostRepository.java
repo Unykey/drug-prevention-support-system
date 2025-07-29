@@ -13,4 +13,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByStatusIsNot(PostStatus status);
 
     List<Post> findByStatus(PostStatus status);
+
+    List<Post> findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseAndStatusIsNot(String keyword, String keyword1, PostStatus postStatus);
 }

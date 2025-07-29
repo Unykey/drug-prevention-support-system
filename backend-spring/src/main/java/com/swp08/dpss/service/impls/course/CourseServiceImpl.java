@@ -1,10 +1,7 @@
 package com.swp08.dpss.service.impls.course;
 
 import com.swp08.dpss.dto.requests.course.*;
-import com.swp08.dpss.dto.responses.course.CourseEnrollmentResponse;
-import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
-import com.swp08.dpss.dto.responses.course.CourseResponse;
-import com.swp08.dpss.dto.responses.course.LessonProgressResponse;
+import com.swp08.dpss.dto.responses.course.*;
 import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.entity.course.*;
 import com.swp08.dpss.entity.course.TargetGroup;
@@ -19,11 +16,11 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseServiceImpl implements CourseService {
@@ -50,12 +47,11 @@ public class CourseServiceImpl implements CourseService {
 
     @Transactional
     @Override
-    public Course createCourse(CourseRequest request) {
+    public CourseResponse createCourse(CourseRequest request) {
         Course course = new Course();
         course.setTitle(request.getTitle());
         course.setDescription(request.getDescription());
         course.setStatus(request.getStatus());
-        course.setTargetGroups(request.getTargetGroups());
         course.setStartDate(request.getStartDate());
         course.setEndDate(request.getEndDate());
 
@@ -93,46 +89,77 @@ public class CourseServiceImpl implements CourseService {
         course.setTargetGroups(actualTargetGroups);
         // --- End crucial change ---
 
-        courseRepository.save(course);
-        return course;
-    }
-
-    @Override
-    public List<Course> searchCourses(String keyword, List<String> targetGroups) {
-        // Implement logic to filter by keyword OR targetGroups, or both
-        // If both are present, perhaps find courses that match keyword AND have AT LEAST ONE of the targetGroups
-        // This logic can get complex depending on exact requirements (AND vs OR for targetGroups)
-        if (keyword != null && !keyword.isEmpty() && targetGroups != null && !targetGroups.isEmpty()) {
-            // Example using custom repository method or Specification
-            return courseRepository.findAllByTitleContainingIgnoreCaseAndTargetGroupsIn(keyword, targetGroups);
-        } else if (keyword != null && !keyword.isEmpty()) {
-            return courseRepository.findAllByTitleContainingIgnoreCase(keyword);
-        } else if (targetGroups != null && !targetGroups.isEmpty()) {
-            return courseRepository.findAllByTargetGroupsIn(targetGroups); // Needs a custom query/method in repo
-        } else {
-            return courseRepository.findAll();
-        }
-    }
-
-    //Not needed
-    @Override
-    public List<Course> searchCoursesByName(String keyword) {
-        return courseRepository.findAllByTitleContainingIgnoreCase(keyword);
-    }
-
-    @Override
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
-    }
-
-    @Override
-    public Course getCourseById(Long id) {
-        return courseRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+        return toDto(courseRepository.save(course));
     }
 
     @Transactional
     @Override
-    public Course updateCourse(Long id, CourseRequest updated) {
+    public List<CourseResponse> searchCourses(String keyword, List<String> targetGroups) {
+        List<Course> courses;
+        Set<TargetGroupName> targetGroupEnums = null;
+
+        if (targetGroups != null && !targetGroups.isEmpty()) {
+            targetGroupEnums = targetGroups.stream()
+                    .map(s -> {
+                        try {
+                            return TargetGroupName.valueOf(s.toUpperCase());
+                        } catch (IllegalArgumentException e) {
+                            // Use a proper logger (e.g., SLF4J) instead of System.err.println
+                            // log.warn("Invalid TargetGroupName provided: {}", s);
+                            System.err.println("Invalid TargetGroupName provided: " + s); // Keep for now as per your original
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull) // Filter out nulls from invalid enum names
+                    .collect(Collectors.toSet());
+        }
+
+        // --- Updated Search Logic ---
+        if ((keyword == null || keyword.isEmpty()) && (targetGroupEnums == null || targetGroupEnums.isEmpty())) {
+            courses = courseRepository.findAllCoursesWithAllDetails(); // Use eager fetch for no filters
+        } else if (keyword != null && !keyword.isEmpty() && targetGroupEnums != null && !targetGroupEnums.isEmpty()) {
+            // This method needs to be defined in CourseRepository
+            // Assumes it fetches entities and filters by title and TargetGroupName enum
+            courses = courseRepository.findAllByTitleContainingIgnoreCaseAndTargetGroups_TargetGroupNameIn(keyword, targetGroupEnums);
+        } else if (keyword != null && !keyword.isEmpty()) {
+            courses = courseRepository.findAllByTitleContainingIgnoreCase(keyword); // Assuming this returns entities
+        } else if (targetGroupEnums != null && !targetGroupEnums.isEmpty()) {
+            // This method needs to be defined in CourseRepository
+            // Assumes it fetches entities and filters by TargetGroupName enum
+            courses = courseRepository.findAllByTargetGroups_TargetGroupNameIn(targetGroupEnums);
+        } else {
+            // Fallback: If somehow none of the above, fetch all with details
+            courses = courseRepository.findAllCoursesWithAllDetails();
+        }
+        // --- End Updated Search Logic ---
+
+        return courses.stream()
+                .map(this::toDto) // Line 118: Use the toDto mapper
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CourseResponse> getAllCourses() {
+        List<Course> courses = courseRepository.findAllCoursesWithAllDetails(); // Use eager fetch
+        return courses.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public CourseResponse getCourseById(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Course not found with id: " + id));
+
+        System.out.println("Is actual transaction active? " + TransactionSynchronizationManager.isActualTransactionActive());
+
+        return toDto(course); // Convert to DTO
+    }
+
+    @Transactional
+    @Override
+    public CourseResponse updateCourse(Long id, CourseRequest updated) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Course Not Found with id " + id));
 
@@ -140,15 +167,39 @@ public class CourseServiceImpl implements CourseService {
         course.setTitle(updated.getTitle());
         course.setDescription(updated.getDescription());
         course.setStatus(updated.getStatus());
-        course.setTargetGroups(updated.getTargetGroups());
         course.setStartDate(updated.getStartDate());
         course.setEndDate(updated.getEndDate());
 
+        // --- Handle TargetGroups for Update ---
+        Set<TargetGroup> managedTargetGroups = new HashSet<>();
+        if (updated.getTargetGroups() != null) {
+            for (TargetGroup incomingTargetGroup : updated.getTargetGroups()) {
+                // Find existing TargetGroup by its unique name (enum)
+                TargetGroup targetGroupEntity = targetGroupRepository.findByTargetGroupName(incomingTargetGroup.getTargetGroupName())
+                        .orElseGet(() -> {
+                            // If not found, create and persist a new one.
+                            TargetGroup newTargetGroup = new TargetGroup();
+                            newTargetGroup.setTargetGroupName(incomingTargetGroup.getTargetGroupName());
+                            newTargetGroup.setDescription(incomingTargetGroup.getDescription() != null ? incomingTargetGroup.getDescription() : incomingTargetGroup.getTargetGroupName().name() + " group");
+                            return targetGroupRepository.save(newTargetGroup);
+                        });
+                managedTargetGroups.add(targetGroupEntity);
+            }
+        }
+        course.setTargetGroups(managedTargetGroups);
+
         // Clear existing CourseSurvey links from both sides
-        course.getCourseSurveyList().forEach(cs -> {
-            cs.getSurvey().removeCourseSurvey(cs);
-        });
-        course.getCourseSurveyList().clear();
+        if (course.getCourseSurveyList() != null) {
+            // Create a copy to avoid ConcurrentModificationException if modifying the collection during iteration
+            new ArrayList<>(course.getCourseSurveyList()).forEach(cs -> {
+                if (cs.getSurvey() != null) {
+                    cs.getSurvey().removeCourseSurvey(cs); // Disconnect from Survey side
+                }
+                // If you have a CourseSurveyRepository, you might need to delete the entity explicitly
+                // courseSurveyRepository.delete(cs);
+            });
+            course.getCourseSurveyList().clear(); // Clear from Course side
+        }
 
         // Save course to ensure ID is not null for CourseSurveyId
         course = courseRepository.save(course);
@@ -170,11 +221,8 @@ public class CourseServiceImpl implements CourseService {
             }
         }
 
-        return course;
+        return toDto(courseRepository.save(course));
     }
-
-
-
 
     @Transactional
     @Override
@@ -184,9 +232,10 @@ public class CourseServiceImpl implements CourseService {
 
         course.setStatus(CourseStatus.ARCHIVED);
 
-        // Optionally mark lessons as archived too, if you plan soft-deletion per lesson later
-        for (CourseLesson lesson : course.getLessons()) {
-            lesson.setCourse(null); // to prevent cascade issues later
+        if (course.getLessons() != null) {
+            for (CourseLesson lesson : new ArrayList<>(course.getLessons())) { // Iterate over copy
+                lesson.setCourse(null); // Detach lesson from course
+            }
         }
 
         courseRepository.save(course);
@@ -198,21 +247,42 @@ public class CourseServiceImpl implements CourseService {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Course Not Found with id " + id));
 
-        // Detach lessons
-        for (CourseLesson lesson : course.getLessons()) {
-            lesson.setCourse(null);
-            courseLessonRepository.delete(lesson);
+        // Detach and delete lessons
+        if (course.getLessons() != null) {
+            new HashSet<>(course.getLessons()).forEach(lesson -> { // Iterate over a copy
+                lesson.setCourse(null); // Detach
+                courseLessonRepository.delete(lesson);
+            });
+            course.getLessons().clear(); // Clear the collection
         }
-        course.getLessons().clear();
 
-        // Detach enrollments
-        for (CourseEnrollment enrollment : course.getEnrollments()) {
-            enrollment.setCourse(null);
-            courseEnrollmentRepository.delete(enrollment);
-            enrollment.getUser().removeCourseEnrollment(enrollment);
+        // Detach and delete enrollments and their progress
+        if (course.getEnrollments() != null) {
+            new HashSet<>(course.getEnrollments()).forEach(enrollment -> { // Iterate over a copy
+                if (enrollment.getProgress() != null) {
+                    new HashSet<>(enrollment.getProgress()).forEach(progress -> courseLessonProgressRepository.delete(progress));
+                    enrollment.getProgress().clear();
+                }
+                enrollment.setCourse(null);
+                if (enrollment.getUser() != null) {
+                    enrollment.getUser().removeCourseEnrollment(enrollment);
+                }
+                courseEnrollmentRepository.delete(enrollment);
+            });
+            course.getEnrollments().clear();
         }
-        course.getEnrollments().clear();
 
+        // Detach and delete CourseSurveys
+        if (course.getCourseSurveyList() != null) {
+            new HashSet<>(course.getCourseSurveyList()).forEach(cs -> { // Iterate over a copy
+                if (cs.getSurvey() != null) {
+                    cs.getSurvey().removeCourseSurvey(cs);
+                }
+                // You might need to delete the CourseSurvey entity directly if not handled by orphanRemoval
+                // courseSurveyRepository.delete(cs); // Uncomment if you have a CourseSurveyRepository
+            });
+            course.getCourseSurveyList().clear();
+        }
         courseRepository.delete(course);
     }
 
@@ -223,16 +293,22 @@ public class CourseServiceImpl implements CourseService {
                 .findByCourse_IdAndUser_Id(courseId, userId);
 
         // Delete lesson progress
-        for (CourseLessonProgress progress : enrollment.getProgress()) {
-            enrollment.removeProgress(progress);
-            lessonProgressRepository.delete(progress);
+        if (enrollment.getProgress() != null) {
+            new HashSet<>(enrollment.getProgress()).forEach(progress -> { // Iterate over a copy
+                enrollment.removeProgress(progress);
+                lessonProgressRepository.delete(progress);
+            });
         }
 
         // Remove from course
-        enrollment.getCourse().removeEnrollment(enrollment);
+        if (enrollment.getCourse() != null) { // Added null check
+            enrollment.getCourse().removeEnrollment(enrollment);
+        }
 
         // Remove from user (if you maintain a bidirectional mapping)
-        enrollment.getUser().removeCourseEnrollment(enrollment);
+        if (enrollment.getUser() != null) { // Added null check
+            enrollment.getUser().removeCourseEnrollment(enrollment);
+        }
 
         // Delete enrollment
         courseEnrollmentRepository.delete(enrollment);
@@ -258,10 +334,14 @@ public class CourseServiceImpl implements CourseService {
         return toDto(lesson);
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public List<CourseLesson> getLessonsByCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId).orElseThrow(()-> new EntityNotFoundException("Course Not Found with id" + courseId));
-        return course.getLessons();
+    public List<CourseLessonResponse> getLessonsByCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new EntityNotFoundException("Course Not Found with id" + courseId));
+        return course.getLessons().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -299,11 +379,14 @@ public class CourseServiceImpl implements CourseService {
 
         // Detach lesson progress if exists
         if (lesson.getCourseLessonProgressList() != null) {
-            for (CourseLessonProgress progress : lesson.getCourseLessonProgressList()) { // unlink both sides if needed
+            new HashSet<>(lesson.getCourseLessonProgressList()).forEach(progress -> { // Iterate over copy
                 lesson.removeCourseLessonProgress(progress);
-                progress.getEnrollment().removeProgress(progress);
-            }
-//            courseLessonProgressRepository.deleteAll(lesson.getCourseLessonProgressList()); //Not sure if this command is necessary
+                if (progress.getEnrollment() != null) {
+                    progress.getEnrollment().removeProgress(progress);
+                }
+                courseLessonProgressRepository.delete(progress); // Delete individual progress entries
+            });
+            lesson.getCourseLessonProgressList().clear(); // Clear the collection
         }
         courseLessonRepository.delete(lesson);
     }
@@ -352,9 +435,12 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public List<CourseEnrollment> getEnrollmentsByCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId).orElseThrow(()-> new EntityNotFoundException("Course Not Found with id " + courseId));
-        return course.getEnrollments();
+    public List<CourseEnrollmentResponse> getEnrollmentsByCourse(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(()-> new EntityNotFoundException("Course Not Found with id " + courseId));
+        return course.getEnrollments().stream()
+                .map(this::toDto) // Line 420: Map entities to DTOs
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -373,9 +459,7 @@ public class CourseServiceImpl implements CourseService {
         progress.setCompleted(request.isCompleted());
         progress.setCompletedAt(request.isCompleted() ? LocalDateTime.now() : null);
 
-        lessonProgressRepository.save(progress);
-
-        return toDto(progress);
+        return toDto(lessonProgressRepository.save(progress));
     }
 
     @Transactional
@@ -392,10 +476,13 @@ public class CourseServiceImpl implements CourseService {
         return toDto(progress);
     }
 
+    @Transactional (readOnly = true)
     @Override
-    public List<CourseLessonProgress> getProgressByEnrollment(CourseEnrollmentId enrollmentId) {
+    public List<LessonProgressResponse> getProgressByEnrollment(CourseEnrollmentId enrollmentId) {
         CourseEnrollment enrollment = courseEnrollmentRepository.findById(enrollmentId).orElseThrow(()-> new EntityNotFoundException("Enrollment Not Found with id " + enrollmentId));
-        return enrollment.getProgress();
+        return enrollment.getProgress().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -408,8 +495,8 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new RuntimeException("Survey not found with ID: " + request.getSurveyId()));
 
         CourseSurvey courseSurvey = new CourseSurvey();
-        courseSurvey.setCourse(course);
-        courseSurvey.setSurvey(survey);
+        survey.addCourseSurvey(courseSurvey);
+        course.addCourseSurvey(courseSurvey);
         courseSurvey.setRole(request.getRole());
         survey.setType(request.getSurveyType());
 
@@ -419,16 +506,45 @@ public class CourseServiceImpl implements CourseService {
         courseRepository.save(course);
     }
 
-
     public CourseResponse toDto(Course course) {
         CourseResponse dto = new CourseResponse();
         dto.setId(course.getId());
         dto.setTitle(course.getTitle());
         dto.setDescription(course.getDescription());
-        dto.setStatus(course.getStatus());
-        dto.setTargetGroups(course.getTargetGroups());
         dto.setStartDate(course.getStartDate());
         dto.setEndDate(course.getEndDate());
+        dto.setStatus(course.getStatus());
+        dto.setPublished(course.isPublished());
+        dto.setCreatedAt(course.getCreatedAt());
+
+        // Map TargetGroups (from entity to enum names)
+        if (course.getTargetGroups() != null) {
+            dto.setTargetGroups(course.getTargetGroups().stream()
+                    .map(TargetGroup::getTargetGroupName)
+                    .collect(Collectors.toSet()));
+        }
+
+        // Map Lessons (from entity to DTO)
+        if (course.getLessons() != null) {
+            dto.setLessons(course.getLessons().stream()
+                    .map(this::toDto)
+                    .collect(Collectors.toList()));
+        }
+
+        // Map Enrollments (from entity to DTO)
+        if (course.getEnrollments() != null) {
+            dto.setEnrollments(course.getEnrollments().stream()
+                    .map(this::toDto)
+                    .collect(Collectors.toList()));
+        }
+
+        // Map CourseSurveys (from entity to DTO)
+        if (course.getCourseSurveyList() != null) {
+            dto.setCourseSurveys(course.getCourseSurveyList().stream()
+                    .map(this::toDto)
+                    .collect(Collectors.toList()));
+        }
+
         return dto;
     }
 
@@ -437,9 +553,13 @@ public class CourseServiceImpl implements CourseService {
         dto.setId(lesson.getId());
         dto.setTitle(lesson.getTitle());
         dto.setType(lesson.getType());
-        dto.setContent(lesson.getContent());
+        dto.setContent(lesson.getContent()); // Include content
         dto.setOrderIndex(lesson.getOrderIndex());
         dto.setCourseId(lesson.getCourse() != null ? lesson.getCourse().getId() : null);
+        // Assuming CourseLesson entity doesn't directly have surveyId, if it does, map it.
+        // If surveyId comes from CourseLessonRequest, you'd need to store it in the entity.
+        // For now, leaving it null as per CourseLesson entity structure.
+        dto.setSurveyId(null); // Set to null or map if available in entity
         return dto;
     }
 
@@ -451,15 +571,29 @@ public class CourseServiceImpl implements CourseService {
         return dto;
     }
 
+    public CourseSurveyResponse toDto(CourseSurvey courseSurvey) {
+        CourseSurveyResponse dto = new CourseSurveyResponse();
+        dto.setSurveyId(courseSurvey.getSurvey().getId());
+        dto.setRole(courseSurvey.getRole());
+        dto.setSurveyType(courseSurvey.getSurvey().getType()); // Assuming Survey entity has a getType()
+        return dto;
+    }
+
     public LessonProgressResponse toDto(CourseLessonProgress progress) {
         LessonProgressResponse dto = new LessonProgressResponse();
         dto.setId(progress.getId());
-        dto.setUserId(progress.getEnrollment().getUser().getId());
-        dto.setSurveyId(progress.getEnrollment().getCourse().getId());
-        dto.setLessonId(progress.getLesson().getId());
+        // Map user, course, and lesson IDs for comprehensive tracking
+        if (progress.getEnrollment() != null && progress.getEnrollment().getUser() != null) {
+            dto.setUserId(progress.getEnrollment().getUser().getId());
+        }
+        if (progress.getEnrollment() != null && progress.getEnrollment().getCourse() != null) {
+            dto.setCourseId(progress.getEnrollment().getCourse().getId());
+        }
+        if (progress.getLesson() != null) {
+            dto.setLessonId(progress.getLesson().getId());
+        }
         dto.setCompleted(progress.isCompleted());
         dto.setCompletedAt(progress.getCompletedAt());
         return dto;
     }
-
 }

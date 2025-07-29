@@ -40,6 +40,9 @@ public class Course {
     @Enumerated(EnumType.STRING)
     @Column(name = "Status")
     private CourseStatus status = CourseStatus.DRAFT; // DRAFT, PUBLISHED, ARCHIVED
+
+    @Column (name = "CreatedAt")
+    private LocalDateTime createdAt = LocalDateTime.now();
     
     @ManyToMany
     @JoinTable(
@@ -56,16 +59,16 @@ public class Course {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
-    private List<CourseLesson> lessons = new ArrayList<>();
+    private Set<CourseLesson> lessons = new HashSet<>();
 
     @OneToMany(mappedBy = "course",
             fetch = FetchType.LAZY)
-    private List<CourseEnrollment> enrollments = new ArrayList<>();
+    private Set<CourseEnrollment> enrollments = new HashSet<>();
 
     @OneToMany(
             mappedBy = "course",
             fetch = FetchType.LAZY)
-    private List<CourseSurvey> courseSurveyList = new ArrayList<>();
+    private Set<CourseSurvey> courseSurveyList = new HashSet<>();
 
     public void addEnrollment(CourseEnrollment enrollment) {
         enrollments.add(enrollment);

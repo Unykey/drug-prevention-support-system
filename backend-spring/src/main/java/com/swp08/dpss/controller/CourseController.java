@@ -6,6 +6,7 @@ import com.swp08.dpss.dto.requests.course.LessonProgressRequest;
 import com.swp08.dpss.dto.responses.ApiResponse;
 import com.swp08.dpss.dto.responses.course.CourseEnrollmentResponse;
 import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
+import com.swp08.dpss.dto.responses.course.CourseResponse;
 import com.swp08.dpss.dto.responses.course.LessonProgressResponse;
 import com.swp08.dpss.entity.course.*;
 import com.swp08.dpss.service.interfaces.course.CourseService;
@@ -28,27 +29,27 @@ public class CourseController {
 
     // --- Course ---
     @PostMapping
-    public ResponseEntity<ApiResponse<Course>> createCourse(@RequestBody CourseRequest request) {
-        Course course = courseService.createCourse(request);
+    public ResponseEntity<ApiResponse<CourseResponse>> createCourse(@RequestBody CourseRequest request) {
+        CourseResponse course = courseService.createCourse(request);
         return ResponseEntity.ok(new ApiResponse<>(true, course, "Course created successfully"));
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Course>>> getAllCourses(
+    public ResponseEntity<ApiResponse<List<CourseResponse>>> getAllCourses(
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "targetGroups", required = false) List<String> targetGroups // Add this
     ) {
-        List<Course> result = courseService.searchCourses(keyword, targetGroups); // New service method
+        List<CourseResponse> result = courseService.searchCourses(keyword, targetGroups); // New service method
         return ResponseEntity.ok(new ApiResponse<>(true, result, "Courses retrieved"));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Course>> getCourseById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<CourseResponse>> getCourseById(@PathVariable Long id) {
         return ResponseEntity.ok(new ApiResponse<>(true, courseService.getCourseById(id), "Course retrieved"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Course>> updateCourse(@PathVariable Long id, @RequestBody CourseRequest updated) {
+    public ResponseEntity<ApiResponse<CourseResponse>> updateCourse(@PathVariable Long id, @RequestBody CourseRequest updated) {
         return ResponseEntity.ok(new ApiResponse<>(true, courseService.updateCourse(id, updated), "Course updated"));
     }
 
@@ -77,7 +78,7 @@ public class CourseController {
     }
 
     @GetMapping("/{courseId}/lessons")
-    public ResponseEntity<ApiResponse<List<CourseLesson>>> getLessonsByCourse(@PathVariable Long courseId) {
+    public ResponseEntity<ApiResponse<List<CourseLessonResponse>>> getLessonsByCourse(@PathVariable Long courseId) {
         return ResponseEntity.ok(new ApiResponse<>(true, courseService.getLessonsByCourse(courseId), "Lessons retrieved"));
     }
 
@@ -104,7 +105,7 @@ public class CourseController {
     }
 
     @GetMapping("/{courseId}/enrollments")
-    public ResponseEntity<ApiResponse<List<CourseEnrollment>>> getEnrollments(@PathVariable Long courseId) {
+    public ResponseEntity<ApiResponse<List<CourseEnrollmentResponse>>> getEnrollments(@PathVariable Long courseId) {
         return ResponseEntity.ok(new ApiResponse<>(true, courseService.getEnrollmentsByCourse(courseId), "Enrollments retrieved"));
     }
 
@@ -121,7 +122,7 @@ public class CourseController {
 
     // Option A: Use both user_id and course_id as path variables
     @GetMapping("/progress/user/{userId}/course/{courseId}")
-    public ResponseEntity<ApiResponse<List<CourseLessonProgress>>> getProgressByEnrollment(
+    public ResponseEntity<ApiResponse<List<LessonProgressResponse>>> getProgressByEnrollment(
             @PathVariable Long userId,
             @PathVariable Long courseId) {
 

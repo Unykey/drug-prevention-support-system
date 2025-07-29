@@ -10,10 +10,15 @@ import com.swp08.dpss.dto.requests.survey.CreateSurveyRequest;
 import com.swp08.dpss.dto.requests.survey.QuestionOptionRequest; // New import
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
+import com.swp08.dpss.dto.responses.course.CourseLessonResponse;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
+import com.swp08.dpss.entity.course.Course;
 import com.swp08.dpss.entity.course.CourseEnrollmentId;
+import com.swp08.dpss.entity.course.CourseLesson;
+import com.swp08.dpss.entity.course.TargetGroup;
 import com.swp08.dpss.enums.*;
+import com.swp08.dpss.repository.course.TargetGroupRepository;
 import com.swp08.dpss.service.interfaces.UserService;
 
 import com.swp08.dpss.service.interfaces.course.CourseService;
@@ -25,10 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ArrayList; // Added for creating lists
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j //Log stuffs :D
 @Component
@@ -40,6 +49,7 @@ public class DataInitializer implements CommandLineRunner {
     private final SurveyQuestionService surveyQuestionService;
     private final SurveyAnswerService surveyAnswerService;
     private final CourseService courseService;
+    private final TargetGroupRepository  targetGroupRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -51,20 +61,20 @@ public class DataInitializer implements CommandLineRunner {
             log.error("User initialization failed:", e);
         }
         // Add Survey
-        try {
-            surveyInit();
-            log.info("Survey initialization complete.");
-        } catch (Exception e) {
-            log.error("Survey initialization failed:", e);
-        }
-
-        // Add Survey Answer
-        try {
-            answerInit();
-            log.info("Survey Answer initialization complete.");
-        } catch (Exception e) {
-            log.error("Survey Answer initialization failed: ", e);
-        }
+//        try {
+//            surveyInit();
+//            log.info("Survey initialization complete.");
+//        } catch (Exception e) {
+//            log.error("Survey initialization failed:", e);
+//        }
+//
+//        // Add Survey Answer
+//        try {
+//            answerInit();
+//            log.info("Survey Answer initialization complete.");
+//        } catch (Exception e) {
+//            log.error("Survey Answer initialization failed: ", e);
+//        }
 
         // Add Course
         try {
@@ -140,6 +150,8 @@ public class DataInitializer implements CommandLineRunner {
         // Admin role
         AdminUserCreationRequest ad1 = new AdminUserCreationRequest("ad1", "qweasdzxc", Roles.ADMIN, Genders.MALE, LocalDate.of(1980, 1, 4), "ad1@example.com", "0343124643", null);
 
+        AdminUserCreationRequest ad2 = new AdminUserCreationRequest("admintest", "12345678", Roles.ADMIN, Genders.MALE, LocalDate.of(1980, 1, 4), "admintest@example.com", "3141592653589", null);
+
         userService.createNewUser(cons1);
         userService.createNewUser(cons2);
         userService.createNewUser(cons3);
@@ -147,6 +159,7 @@ public class DataInitializer implements CommandLineRunner {
         userService.createNewUser(staff2);
         userService.createNewUser(man1);
         userService.createNewUser(ad1);
+        userService.createNewUser(ad2);
         log.info("Admin Created User with Roles");
     }
 
@@ -248,76 +261,230 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void courseInit() {
+        // Helper to get TargetGroup Set for courses
+        Set<TargetGroup> studentAndTeacherGroups = new HashSet<>();
+        targetGroupRepository.findByTargetGroupName(TargetGroupName.STUDENT).ifPresent(studentAndTeacherGroups::add);
+        targetGroupRepository.findByTargetGroupName(TargetGroupName.TEACHER).ifPresent(studentAndTeacherGroups::add);
+
+        Set<TargetGroup> teacherAndGuardianGroups = new HashSet<>();
+        targetGroupRepository.findByTargetGroupName(TargetGroupName.TEACHER).ifPresent(teacherAndGuardianGroups::add);
+        targetGroupRepository.findByTargetGroupName(TargetGroupName.GUARDIAN).ifPresent(teacherAndGuardianGroups::add);
+
+        Set<TargetGroup> allTargetGroups = new HashSet<>();
+        targetGroupRepository.findByTargetGroupName(TargetGroupName.STUDENT).ifPresent(allTargetGroups::add);
+        targetGroupRepository.findByTargetGroupName(TargetGroupName.TEACHER).ifPresent(allTargetGroups::add);
+        targetGroupRepository.findByTargetGroupName(TargetGroupName.GUARDIAN).ifPresent(allTargetGroups::add);
+
+
+        // Course 1 (will likely have ID 1L)
         CourseRequest course1 = new CourseRequest();
         course1.setTitle("Introduction to Mental Health");
         course1.setDescription("A course about understanding mental well-being");
         course1.setStatus(CourseStatus.PUBLISHED);
         course1.setStartDate(LocalDate.now());
         course1.setEndDate(LocalDate.now().plusWeeks(4));
+        course1.setTargetGroups(studentAndTeacherGroups);
+        courseService.createCourse(course1); // We no longer store the returned ID
 
+        // Course 2 (will likely have ID 2L)
         CourseRequest course2 = new CourseRequest();
         course2.setTitle("Coping with Stress");
         course2.setDescription("Recognizing and managing everyday stress");
         course2.setStatus(CourseStatus.PUBLISHED);
         course2.setStartDate(LocalDate.now());
         course2.setEndDate(LocalDate.now().plusWeeks(6));
-
-        courseService.createCourse(course1);
+        course2.setTargetGroups(teacherAndGuardianGroups);
         courseService.createCourse(course2);
 
-        log.info("Initialized Courses");
+        // Course 3 (will likely have ID 3L)
+        CourseRequest course3 = new CourseRequest();
+        course3.setTitle("Building Emotional Resilience");
+        course3.setDescription("Advanced techniques for emotional strength.");
+        course3.setStatus(CourseStatus.PUBLISHED);
+        course3.setStartDate(LocalDate.now().plusWeeks(1));
+        course3.setEndDate(LocalDate.now().plusWeeks(10));
+        course3.setTargetGroups(allTargetGroups);
+        courseService.createCourse(course3);
+
+        // Course 4 (will likely have ID 4L)
+        CourseRequest course4 = new CourseRequest();
+        course4.setTitle("Parenting with Purpose");
+        course4.setDescription("Guidance for guardians on supporting child development.");
+        course4.setStatus(CourseStatus.DRAFT);
+        course4.setStartDate(LocalDate.now().plusWeeks(2));
+        course4.setEndDate(LocalDate.now().plusWeeks(8));
+        course4.setTargetGroups(teacherAndGuardianGroups);
+        courseService.createCourse(course4);
+
+        log.info("Created 4 courses with assumed IDs 1L, 2L, 3L, 4L.");
     }
 
+    /**
+     * Adds lessons to the courses using hardcoded IDs.
+     * WARNING: This assumes specific auto-generated IDs (1L, 2L, 3L, 4L) for courses.
+     */
     private void courseLessonInit() {
-        CourseLessonRequest lesson1 = new CourseLessonRequest();
-        lesson1.setTitle("What is Mental Health?");
-        lesson1.setType("Reading"); // Assuming CourseLessonType enum, or a String field
-        lesson1.setContent("Mental health includes our emotional, psychological, and social well-being.");
-        lesson1.setOrderIndex(1);
+        Long course1Id = 1L;
+        Long course2Id = 2L;
+        Long course3Id = 3L;
+        Long course4Id = 4L;
 
-        CourseLessonRequest lesson2 = new CourseLessonRequest();
-        lesson2.setTitle("Stress and Its Impact");
-        lesson2.setType("Video"); // Assuming CourseLessonType enum, or a String field
-        lesson2.setContent("https://video-url.com/stress-impact");
-        lesson2.setOrderIndex(2);
+        // Lessons for Course 1
+        courseService.addLessonToCourse(course1Id, new CourseLessonRequest("What is Mental Health?", "Reading", "Mental health includes our emotional, psychological, and social well-being.", 1, null));
+        courseService.addLessonToCourse(course1Id, new CourseLessonRequest("Stress and Its Impact", "Video", "https://video-url.com/stress-impact", 2, null));
+        courseService.addLessonToCourse(course1Id, new CourseLessonRequest("Mindfulness Basics", "Text", "Learn simple mindfulness techniques.", 3, null));
 
-        // Assuming course ID = 1 exists
-        courseService.addLessonToCourse(1L, lesson1);
-        courseService.addLessonToCourse(1L, lesson2);
+        // Lessons for Course 2
+        courseService.addLessonToCourse(course2Id, new CourseLessonRequest("Basic Coping Mechanisms", "Text", "Learn simple techniques to manage daily stress.", 1, null));
+        courseService.addLessonToCourse(course2Id, new CourseLessonRequest("Advanced Coping Strategies", "Video", "https://video-url.com/advanced-coping", 2, null));
 
-        log.info("Initialized Course Lessons");
+        // Lessons for Course 3
+        courseService.addLessonToCourse(course3Id, new CourseLessonRequest("Foundations of Resilience", "Reading", "Understanding what makes us resilient.", 1, null));
+        courseService.addLessonToCourse(course3Id, new CourseLessonRequest("Building Emotional Strength", "Audio", "Audio guide for emotional strength.", 2, null));
+        courseService.addLessonToCourse(course3Id, new CourseLessonRequest("Practicing Gratitude", "Text", "Simple exercises for cultivating gratitude.", 3, null));
+
+        // Lessons for Course 4
+        courseService.addLessonToCourse(course4Id, new CourseLessonRequest("Understanding Child Psychology", "Reading", "An introduction to child psychological development.", 1, null));
+        courseService.addLessonToCourse(course4Id, new CourseLessonRequest("Effective Communication with Teens", "Video", "Tips for fostering open communication.", 2, null));
+
+        log.info("Initialized Course Lessons using hardcoded IDs.");
     }
 
+
+    /**
+     * Enrolls users into various courses using hardcoded IDs.
+     * WARNING: This assumes specific auto-generated IDs (1L, 2L, 3L, 4L) for courses.
+     */
     private void courseEnrollmentInit() {
-        CourseEnrollmentRequest enroll1 = new CourseEnrollmentRequest();
-        enroll1.setCourseId(1L);
-        enroll1.setUserId(1L);
+        // User IDs based on creation order in userInit
+        Long userId1_ulises = 1L;
+        Long userId2_sammy = 2L;
+        Long userId3_yorker = 3L;
+        Long userId4_napppie = 4L;
 
-        CourseEnrollmentRequest enroll2 = new CourseEnrollmentRequest();
-        enroll2.setCourseId(2L);
-        enroll2.setUserId(2L);
+        // Using assumed hardcoded IDs
+        Long course1Id = 1L;
+        Long course2Id = 2L;
+        Long course3Id = 3L;
+        Long course4Id = 4L;
 
-        courseService.enroll(enroll1);
-        courseService.enroll(enroll2);
+        // Enrollments
+        courseService.enroll(new CourseEnrollmentRequest(course1Id, userId1_ulises));
+        courseService.enroll(new CourseEnrollmentRequest(course1Id, userId2_sammy));
+        courseService.enroll(new CourseEnrollmentRequest(course1Id, userId3_yorker));
 
-        log.info("Initialized Course Enrollments");
+        courseService.enroll(new CourseEnrollmentRequest(course2Id, userId1_ulises));
+        courseService.enroll(new CourseEnrollmentRequest(course2Id, userId2_sammy));
+        courseService.enroll(new CourseEnrollmentRequest(course2Id, userId4_napppie));
+
+        courseService.enroll(new CourseEnrollmentRequest(course3Id, userId1_ulises));
+        courseService.enroll(new CourseEnrollmentRequest(course3Id, userId3_yorker));
+        courseService.enroll(new CourseEnrollmentRequest(course3Id, userId4_napppie));
+
+        courseService.enroll(new CourseEnrollmentRequest(course4Id, userId2_sammy));
+        courseService.enroll(new CourseEnrollmentRequest(course4Id, userId4_napppie));
+
+        log.info("Initialized Course Enrollments using hardcoded IDs.");
     }
+
+    /**
+     * Adds lesson progress for various enrollments.
+     * Uses hardcoded course IDs but dynamically retrieves lesson IDs for robustness.
+     * WARNING: This assumes specific auto-generated IDs (1L, 2L, 3L, 4L) for courses.
+     */
 
     private void lessonProgressInit() {
-        LessonProgressRequest progress1 = new LessonProgressRequest();
+        Long userId1 = 1L;
+        Long userId2 = 2L;
+        Long userId3 = 3L;
+        Long userId4 = 4L;
 
-        progress1.setEnrollmentId(new CourseEnrollmentId(1L, 1L));
-        progress1.setLessonId(1L);
-        progress1.setCompleted(true);
+        // Using assumed hardcoded IDs for courses
+        List<Long> allCourseIds = List.of(1L, 2L, 3L, 4L);
 
-        LessonProgressRequest progress2 = new LessonProgressRequest();
-        progress2.setEnrollmentId(new CourseEnrollmentId(1L, 1L));
-        progress2.setLessonId(2L);
-        progress2.setCompleted(false);
+        // Iterate through courses to get their lessons and then add progress
+        for (Long courseId : allCourseIds) {
+            // IMPORTANT CHANGE: getLessonsByCourse now returns List<CourseLessonResponse>
+            List<CourseLessonResponse> lessons = courseService.getLessonsByCourse(courseId); //
+            if (lessons.isEmpty()) {
+                log.warn("No lessons found for course ID: {}. Skipping progress initialization for this course.", courseId);
+                continue;
+            }
 
-        courseService.addLessonProgress(progress1);
-        courseService.addLessonProgress(progress2);
+            // Map lessons by orderIndex for easy lookup of IDs
+            // IMPORTANT CHANGE: Use CourseLessonResponse's methods
+            java.util.Map<Integer, Long> lessonIdsByOrder = lessons.stream()
+                    .collect(Collectors.toMap(CourseLessonResponse::getOrderIndex, CourseLessonResponse::getId)); //
 
-        log.info("Initialized Lesson Progress");
+            // --- Define progress based on course ID and user ID ---
+            if (courseId.equals(1L)) { // Course 1: "Introduction to Mental Health"
+                // User 1 (Ulises) - partially complete
+                if (lessonIdsByOrder.containsKey(1)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId1, courseId), lessonIdsByOrder.get(1), true)); //
+                }
+                if (lessonIdsByOrder.containsKey(2)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId1, courseId), lessonIdsByOrder.get(2), false)); //
+                }
+
+                // User 2 (Sammy) - fully complete
+                if (lessonIdsByOrder.containsKey(1)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId2, courseId), lessonIdsByOrder.get(1), true)); //
+                }
+                if (lessonIdsByOrder.containsKey(2)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId2, courseId), lessonIdsByOrder.get(2), true)); //
+                }
+                if (lessonIdsByOrder.containsKey(3)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId2, courseId), lessonIdsByOrder.get(3), true)); //
+                }
+
+            } else if (courseId.equals(2L)) { // Course 2: "Coping with Stress"
+                // User 1 (Ulises) - completed first lesson
+                if (lessonIdsByOrder.containsKey(1)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId1, courseId), lessonIdsByOrder.get(1), true)); //
+                }
+
+                // User 2 (Sammy) - started but not completed
+                if (lessonIdsByOrder.containsKey(1)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId2, courseId), lessonIdsByOrder.get(1), false)); //
+                }
+
+            } else if (courseId.equals(3L)) { // Course 3: "Building Emotional Resilience"
+                // User 1 (Ulises) - fully complete
+                if (lessonIdsByOrder.containsKey(1)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId1, courseId), lessonIdsByOrder.get(1), true)); //
+                }
+                if (lessonIdsByOrder.containsKey(2)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId1, courseId), lessonIdsByOrder.get(2), true)); //
+                }
+                if (lessonIdsByOrder.containsKey(3)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId1, courseId), lessonIdsByOrder.get(3), true)); //
+                }
+
+                // User 3 (Yorker) - partially complete
+                if (lessonIdsByOrder.containsKey(1)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId3, courseId), lessonIdsByOrder.get(1), true)); //
+                }
+                if (lessonIdsByOrder.containsKey(2)) {
+                    courseService.addLessonProgress(new LessonProgressRequest(
+                            new CourseEnrollmentId(userId3, courseId), lessonIdsByOrder.get(2), false)); //
+                }
+
+            } else if (courseId.equals(4L)) { // Course 4: "Parenting with Purpose" (Draft Course)
+                // User 2 (Sammy) - no progress yet
+                // User 4 (Napppie) - no progress yet
+            }
+        }
+        log.info("Initialized Lesson Progress using hardcoded IDs.");
     }
 }

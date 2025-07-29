@@ -1,16 +1,16 @@
 package com.swp08.dpss.dto.responses.course;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class CourseLessonResponse {
     private Long id;
     private String title;
-    private String type;         // READING, VIDEO, QUIZ
-    private String content;      // link or text
+    private String type;
+    private String content; // Content link or text
     private int orderIndex;
-    private Long courseId;
-    private Long surveyId;       // optional
+    private Long courseId; // To indicate which course this lesson belongs to
+    private Long surveyId; // Optional survey ID if a lesson is tied to a specific survey
 }

@@ -1,6 +1,7 @@
 package com.swp08.dpss.entity.client;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.swp08.dpss.entity.Post;
 import com.swp08.dpss.entity.course.CourseEnrollment;
 import com.swp08.dpss.entity.program.ProgramParticipation;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
@@ -74,6 +75,10 @@ public class User {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private List<ProgramParticipation> participations = new ArrayList<>();
 
+    // Post
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "author")
+    private List<Post> postList = new ArrayList<>();
+
     // Methods for managing the relationship
     public void addGuardian(Guardian guardian){
         this.guardians.add(guardian);
@@ -103,5 +108,15 @@ public class User {
     public void removeCourseEnrollment(CourseEnrollment courseEnrollment) {
         courseEnrollments.remove(courseEnrollment);
         courseEnrollment.setUser(null);
+    }
+
+    public void addPost(Post post){
+        post.setAuthor(this);
+        postList.add(post);
+    }
+
+    public void removePost(Post post){
+        post.setAuthor(null);
+        postList.remove(post);
     }
 }
