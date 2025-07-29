@@ -33,10 +33,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ArrayList; // Added for creating lists
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j //Log stuffs :D
@@ -76,6 +73,13 @@ public class DataInitializer implements CommandLineRunner {
 //            log.error("Survey Answer initialization failed: ", e);
 //        }
 
+        // Initialize target groups before courses
+        try {
+            targetGroupInit();
+            log.info("TargetGroup initialization complete.");
+        } catch (Exception e) {
+            log.error("TargetGroup initialization failed: ", e);
+        }
         // Add Course
         try {
             courseInit();
@@ -260,21 +264,40 @@ public class DataInitializer implements CommandLineRunner {
         log.info("Bulk answers submission complete for user: {}", user2Email);
     }
 
+    private void targetGroupInit() {
+        // Create STUDENT target group if it doesn't exist
+        if (targetGroupRepository.findByTargetGroupName(TargetGroupName.STUDENT).isEmpty()) {
+            TargetGroup studentTg = new TargetGroup();
+            studentTg.setTargetGroupName(TargetGroupName.STUDENT);
+            studentTg.setDescription("Courses for students");
+            targetGroupRepository.save(studentTg);
+            log.info("Created STUDENT TargetGroup.");
+        }
+
+        // Create TEACHER target group if it doesn't exist
+        if (targetGroupRepository.findByTargetGroupName(TargetGroupName.TEACHER).isEmpty()) {
+            TargetGroup teacherTg = new TargetGroup();
+            teacherTg.setTargetGroupName(TargetGroupName.TEACHER);
+            teacherTg.setDescription("Courses for teachers");
+            targetGroupRepository.save(teacherTg);
+            log.info("Created TEACHER TargetGroup.");
+        }
+
+        // Create GUARDIAN target group if it doesn't exist
+        if (targetGroupRepository.findByTargetGroupName(TargetGroupName.GUARDIAN).isEmpty()) {
+            TargetGroup guardianTg = new TargetGroup();
+            guardianTg.setTargetGroupName(TargetGroupName.GUARDIAN);
+            guardianTg.setDescription("Courses for guardians/parents");
+            targetGroupRepository.save(guardianTg);
+            log.info("Created GUARDIAN TargetGroup.");
+        }
+    }
+
     private void courseInit() {
-        // Helper to get TargetGroup Set for courses
-        Set<TargetGroup> studentAndTeacherGroups = new HashSet<>();
-        targetGroupRepository.findByTargetGroupName(TargetGroupName.STUDENT).ifPresent(studentAndTeacherGroups::add);
-        targetGroupRepository.findByTargetGroupName(TargetGroupName.TEACHER).ifPresent(studentAndTeacherGroups::add);
-
-        Set<TargetGroup> teacherAndGuardianGroups = new HashSet<>();
-        targetGroupRepository.findByTargetGroupName(TargetGroupName.TEACHER).ifPresent(teacherAndGuardianGroups::add);
-        targetGroupRepository.findByTargetGroupName(TargetGroupName.GUARDIAN).ifPresent(teacherAndGuardianGroups::add);
-
-        Set<TargetGroup> allTargetGroups = new HashSet<>();
-        targetGroupRepository.findByTargetGroupName(TargetGroupName.STUDENT).ifPresent(allTargetGroups::add);
-        targetGroupRepository.findByTargetGroupName(TargetGroupName.TEACHER).ifPresent(allTargetGroups::add);
-        targetGroupRepository.findByTargetGroupName(TargetGroupName.GUARDIAN).ifPresent(allTargetGroups::add);
-
+        TargetGroup studentTargetGroupOpt = targetGroupRepository.findByTargetGroupName(TargetGroupName.STUDENT).orElseThrow(() -> new RuntimeException("Target group Student not found"));
+        TargetGroup teacherTargetGroupOpt = targetGroupRepository.findByTargetGroupName(TargetGroupName.TEACHER).orElseThrow(() -> new RuntimeException("Target group Teacher not found"));
+        TargetGroup guardianTargetGroupOpt = targetGroupRepository.findByTargetGroupName(TargetGroupName.GUARDIAN).orElseThrow(() -> new RuntimeException("Target group Guardian not found"));
+        //
 
         // Course 1 (will likely have ID 1L)
         CourseRequest course1 = new CourseRequest();
@@ -283,7 +306,7 @@ public class DataInitializer implements CommandLineRunner {
         course1.setStatus(CourseStatus.PUBLISHED);
         course1.setStartDate(LocalDate.now());
         course1.setEndDate(LocalDate.now().plusWeeks(4));
-        course1.setTargetGroups(studentAndTeacherGroups);
+        course1.setTargetGroups(Set.of(studentTargetGroupOpt, guardianTargetGroupOpt));
         courseService.createCourse(course1); // We no longer store the returned ID
 
         // Course 2 (will likely have ID 2L)
@@ -293,7 +316,7 @@ public class DataInitializer implements CommandLineRunner {
         course2.setStatus(CourseStatus.PUBLISHED);
         course2.setStartDate(LocalDate.now());
         course2.setEndDate(LocalDate.now().plusWeeks(6));
-        course2.setTargetGroups(teacherAndGuardianGroups);
+        course2.setTargetGroups(Set.of(studentTargetGroupOpt, teacherTargetGroupOpt));
         courseService.createCourse(course2);
 
         // Course 3 (will likely have ID 3L)
@@ -303,7 +326,7 @@ public class DataInitializer implements CommandLineRunner {
         course3.setStatus(CourseStatus.PUBLISHED);
         course3.setStartDate(LocalDate.now().plusWeeks(1));
         course3.setEndDate(LocalDate.now().plusWeeks(10));
-        course3.setTargetGroups(allTargetGroups);
+        course3.setTargetGroups(Set.of(studentTargetGroupOpt, teacherTargetGroupOpt,  guardianTargetGroupOpt));
         courseService.createCourse(course3);
 
         // Course 4 (will likely have ID 4L)
@@ -313,7 +336,7 @@ public class DataInitializer implements CommandLineRunner {
         course4.setStatus(CourseStatus.DRAFT);
         course4.setStartDate(LocalDate.now().plusWeeks(2));
         course4.setEndDate(LocalDate.now().plusWeeks(8));
-        course4.setTargetGroups(teacherAndGuardianGroups);
+        course4.setTargetGroups(Set.of(teacherTargetGroupOpt, guardianTargetGroupOpt));
         courseService.createCourse(course4);
 
         log.info("Created 4 courses with assumed IDs 1L, 2L, 3L, 4L.");
