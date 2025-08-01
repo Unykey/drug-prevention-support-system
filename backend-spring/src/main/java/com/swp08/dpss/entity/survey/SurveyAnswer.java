@@ -33,9 +33,9 @@ public class SurveyAnswer {
 
     @ManyToOne
     @JoinColumn(name = "option_id")
-    private QuestionOption option; // Contain selected answer
+    private AnswerOption option; // Contain selected answer
 
-    @Column (name = "Content", nullable = false)
+    @Column (name = "Content")
     private String content; // Contain free-text answer
 
     @Column (name = "ResultScore")

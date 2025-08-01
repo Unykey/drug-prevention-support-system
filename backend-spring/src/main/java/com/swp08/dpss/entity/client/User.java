@@ -2,6 +2,7 @@ package com.swp08.dpss.entity.client;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.swp08.dpss.entity.Post;
+import com.swp08.dpss.entity.consultant.Consultant;
 import com.swp08.dpss.entity.course.CourseEnrollment;
 import com.swp08.dpss.entity.program.ProgramParticipation;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
@@ -63,6 +64,10 @@ public class User {
     )
     private List<Guardian> guardians = new ArrayList<>();
 
+    // Consultant
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Consultant consultant;
+
     // Survey Answers
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     private List<SurveyAnswer> answers = new ArrayList<>();
@@ -118,5 +123,14 @@ public class User {
     public void removePost(Post post){
         post.setAuthor(null);
         postList.remove(post);
+    }
+
+    public void addParticipation(ProgramParticipation participation){
+        participations.add(participation);
+        participation.setUser(this);
+    }
+    public void removeParticipation(ProgramParticipation participation){
+        participations.remove(participation);
+        participation.setUser(null);
     }
 }

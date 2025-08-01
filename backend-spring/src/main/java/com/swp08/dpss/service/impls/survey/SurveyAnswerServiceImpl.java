@@ -4,7 +4,7 @@ import com.swp08.dpss.dto.requests.survey.BulkSubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.requests.survey.SubmitSurveyAnswerRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyAnswerDto;
 import com.swp08.dpss.entity.client.User;
-import com.swp08.dpss.entity.survey.QuestionOption;
+import com.swp08.dpss.entity.survey.AnswerOption;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.entity.survey.SurveyAnswer;
 import com.swp08.dpss.entity.survey.SurveyQuestion;
@@ -12,7 +12,7 @@ import com.swp08.dpss.enums.QuestionTypes;
 import jakarta.persistence.EntityNotFoundException;
 import com.swp08.dpss.mapper.interfaces.survey.SurveyAnswerMapper;
 import com.swp08.dpss.repository.UserRepository;
-import com.swp08.dpss.repository.survey.QuestionOptionRepository;
+import com.swp08.dpss.repository.survey.AnswerOptionRepository;
 import com.swp08.dpss.repository.survey.SurveyAnswerRepository;
 import com.swp08.dpss.repository.survey.SurveyQuestionRepository;
 import com.swp08.dpss.repository.survey.SurveyRepository;
@@ -37,7 +37,7 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
     private final SurveyRepository surveyRepository;
     private final SurveyQuestionRepository surveyQuestionRepository;
     private final UserRepository userRepository;
-    private final QuestionOptionRepository questionOptionRepository; // New repo
+    private final AnswerOptionRepository answerOptionRepository;
     private final SurveyAnswerMapper surveyAnswerMapper;
 
     @Override
@@ -73,20 +73,40 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
                 question.getType() == QuestionTypes.MCQ ||
                 question.getType() == QuestionTypes.MCMC) {
 
-            if (answerRequest.getOptionId() == null) {
-                throw new IllegalArgumentException("Option ID must be provided for questions of type " + question.getType());
+            AnswerOption selectedOption = question.getOptions().stream()
+                    .filter(opt -> opt.getContent() != null && opt.getContent().trim().equalsIgnoreCase(answerRequest.getContent().trim()))
+                    .findFirst()
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "AnswerOption with content '" + answerRequest.getContent() + "' not found for this question."));
+
+            System.out.println("Question ID: " + question.getQuestion_id());
+            System.out.println("AnswerRequest content: " + answerRequest.getContent());
+
+            for (AnswerOption opt : question.getOptions()) {
+                System.out.println("Comparing: option = [" + opt.getContent() + "] vs input = [" + answerRequest.getContent() + "]");
+                System.out.println("Equals: " + opt.getContent().equals(answerRequest.getContent()));
             }
-            QuestionOption selectedOption = questionOptionRepository.findById(answerRequest.getOptionId())
-                    .orElseThrow(() -> new EntityNotFoundException("Question Option not found with ID: " + answerRequest.getOptionId()));
+
+            System.out.println("/////");
+
+            System.out.println(answerRequest.getOptionId());
+            System.out.println(answerRequest.getContent());
+            System.out.println(selectedOption.getContent());
+            System.out.println(selectedOption.isCorrect());
+            System.out.println(selectedOption.getQuestion().getQuestion());
+            System.out.println(selectedOption.getQuestion().getQuestion_id() + " " + question.getQuestion_id());
+            System.out.println(selectedOption.getQuestion() + " " + question);
+            System.out.println(question.getQuestion());
 
             // Validate that the selected option belongs to the question
             if (!selectedOption.getQuestion().getQuestion_id().equals(question.getQuestion_id())) {
                 throw new IllegalArgumentException("Selected option does not belong to the provided question.");
             }
 
+            System.out.println(answerRequest.getContent() + "TEST1");
             surveyAnswer.setOption(selectedOption); // Set the selected option
             surveyAnswer.setContent(null); // Clear content if it's an option-based answer
-
+            System.out.println(answerRequest.getContent() + "TEST2");
             // Calculate score for quiz types
             if (selectedOption.isCorrect()) {
                 score = 1;
@@ -97,6 +117,7 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
             if (answerRequest.getContent() == null || answerRequest.getContent().isBlank()) {
                 throw new IllegalArgumentException("Content must be provided for questions of type " + question.getType());
             }
+            System.out.println(answerRequest.getContent() + "TEST");
             surveyAnswer.setContent(answerRequest.getContent()); // Set free-text content
             surveyAnswer.setOption(null); // Clear option if it's a free-text answer
 
@@ -111,7 +132,6 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
         SurveyAnswer savedAnswer = surveyAnswerRepository.save(surveyAnswer);
 
         // question.addAnswer(savedAnswer); // Re-commented, rely on cascade or explicit bidirectional management if needed.
-
         return surveyAnswerMapper.toDto(savedAnswer);
     }
 
@@ -191,7 +211,7 @@ public class SurveyAnswerServiceImpl implements SurveyAnswerService {
                         question.getType() == QuestionTypes.YN) {
                     // Find the option by content. This assumes option content is unique per question.
                     // If not, you might need a more robust way (e.g., frontend sends optionId).
-                    QuestionOption selectedOption = questionOptionRepository.findByQuestionAndContent(question, content)
+                    AnswerOption selectedOption = answerOptionRepository.findByQuestionAndContent(question, content)
                             .orElseThrow(() -> new EntityNotFoundException("Option with content '" + content + "' not found for question ID: " + questionId));
                     singleAnswerRequest.setOptionId(selectedOption.getId());
                     singleAnswerRequest.setContent(null); // Ensure content is null for option-based

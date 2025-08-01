@@ -1,12 +1,21 @@
-package com.swp08.dpss.service.impls;
+package com.swp08.dpss.service.impls.consultant;
 
+import com.swp08.dpss.entity.client.User;
+import com.swp08.dpss.entity.consultant.Availability;
 import com.swp08.dpss.entity.consultant.Consultant;
-import com.swp08.dpss.repository.ConsultantRepository;
-import com.swp08.dpss.service.interfaces.ConsultantService;
-import io.swagger.v3.oas.annotations.servers.Server;
+import com.swp08.dpss.entity.consultant.Qualification;
+import com.swp08.dpss.entity.consultant.Specialization;
+import com.swp08.dpss.enums.Roles;
+import com.swp08.dpss.repository.UserRepository;
+import com.swp08.dpss.repository.consultant.AvailabilityRepository;
+import com.swp08.dpss.repository.consultant.ConsultantRepository;
+import com.swp08.dpss.repository.consultant.QualificationRepository;
+import com.swp08.dpss.repository.consultant.SpecializationRepository;
+import com.swp08.dpss.service.interfaces.consultant.ConsultantService;
 import lombok.RequiredArgsConstructor;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
@@ -15,12 +24,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ConsultantServiceImpl implements ConsultantService {
 
+    private final UserRepository userRepository;
     private final ConsultantRepository consultantRepository;
+    private final AvailabilityRepository availabilityRepository;
+    private final QualificationRepository qualificationRepository;
+    private final SpecializationRepository specializationRepository;
 
     //TODO: Change List<ConsultantResponse> instead of List<Consultant>
     @Override
@@ -30,7 +45,55 @@ public class ConsultantServiceImpl implements ConsultantService {
 
     //TODO: use ConsultantCreationRequest instead of Consultant
     @Override
-    public Consultant createNewConsultant(Consultant consultant) {
+    public void createNewConsultant(Long userId, Consultant consultantRequest) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Consultant consultant = new Consultant();
+        consultant.setUser(user);
+        consultant.setBio(consultantRequest.getBio());
+        consultant.setSpecializationSet(consultantRequest.getSpecializationSet());
+        consultant.setTimeSlots(consultantRequest.getTimeSlots());
+        consultant.setQualificationSet(consultantRequest.getQualificationSet());
+        consultant.setProfilePicture(consultantRequest.getProfilePicture());
+
+        consultantRepository.save(consultant);
+    }
+
+    @Transactional
+    @Override
+    public Consultant createNewConsultant2(Long userId, Consultant consultant, Set<Availability> availabilities, Set<Specialization> specializations, Qualification qualification) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+
+        if (!user.getRole().equals(Roles.CONSULTANT)) {
+            throw new IllegalArgumentException("User with ID: " + userId + " is not a consultant");
+        }
+
+        // Avoid duplicate Consultant (due to @MapsId)
+        if (consultantRepository.existsById(userId)) {
+            throw new IllegalStateException("Consultant already exists for user ID: " + userId);
+        }
+
+        // Set consultant ID to match user ID (due to @MapsId)
+        consultant.setUser(user);
+
+        // Set relationships
+        Set<Availability> managedAvail = availabilities.stream()
+                .map(availabilityRepository::save)
+                .collect(Collectors.toSet());
+
+        Set<Specialization> managedSpecs = specializations.stream()
+                .map(specializationRepository::save)
+                .collect(Collectors.toSet());
+
+        consultant.getTimeSlots().addAll(managedAvail);
+        consultant.getSpecializationSet().addAll(managedSpecs);
+
+        qualification.setConsultant(consultant);
+        consultant.getQualificationSet().add(qualification);
+
+        // Save consultant (cascades to qualification due to CascadeType.ALL)
         return consultantRepository.save(consultant);
     }
 

@@ -1,20 +1,16 @@
 package com.swp08.dpss.entity.program;
 
-import com.swp08.dpss.entity.client.Guardian;
-import com.swp08.dpss.entity.client.User;
-import com.swp08.dpss.entity.course.CourseSurvey;
-import com.swp08.dpss.entity.survey.Survey;
-import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyTypes;
+import com.swp08.dpss.entity.consultant.Consultant;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table
@@ -27,7 +23,7 @@ public class Program {
     @Column(name = "Id")
     private Long id;
 
-    @Column(name = "Title", nullable = false, columnDefinition = "varchar(50)")
+    @Column(name = "Title", nullable = false, columnDefinition = "varchar(100)")
     private String title;
 
     @Column(name = "Description")
@@ -42,13 +38,13 @@ public class Program {
     @Column(name = "Location")
     private String location;
 
-    @Column(nullable = false)
-    private LocalDate created_at;
-
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "created_by")
-    private User user;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "program_consultants",
+            joinColumns = @JoinColumn(name = "program_id"),
+            inverseJoinColumns = @JoinColumn(name = "consultant_id")
+    )
+    private Set<Consultant> hostedBy = new HashSet<>();
 
     @OneToMany(mappedBy = "program",
             fetch = FetchType.LAZY,

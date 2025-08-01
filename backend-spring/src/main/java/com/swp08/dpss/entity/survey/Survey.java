@@ -1,10 +1,8 @@
 package com.swp08.dpss.entity.survey;
 
-import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.entity.course.CourseSurvey;
 import com.swp08.dpss.entity.program.ProgramSurvey;
 import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyTypes;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,8 +16,6 @@ import java.util.List;
 @Table
 @Getter
 @Setter
-//@RequiredArgsConstructor
-//@AllArgsConstructor //@NoArgsConstructor break and I have no idea why
 @NoArgsConstructor
 public class Survey {
     @Id
@@ -33,18 +29,13 @@ public class Survey {
     @Column (name = "Description")
     private String description;
 
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
     @Column (name = "Type", nullable = false)
-    private SurveyTypes type;
+    private String type;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status",  nullable = false)
     private SurveyStatus status = SurveyStatus.DRAFT; // default
-
-    @OneToOne(fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinColumn(name = "created_by")
-    private User user;
 
     @Column()
     private LocalDate created_at = LocalDate.now();

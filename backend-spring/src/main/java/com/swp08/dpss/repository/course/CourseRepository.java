@@ -1,6 +1,7 @@
 package com.swp08.dpss.repository.course;
 
 import com.swp08.dpss.entity.course.Course;
+import com.swp08.dpss.entity.program.Program;
 import com.swp08.dpss.enums.TargetGroupName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,8 @@ import java.util.Optional;
 import java.util.Set;
 
 public interface CourseRepository extends JpaRepository<Course,Long> {
+    Optional<Course> findByTitle(String title);
+
     List<Course> findAllByTitleContainingIgnoreCase(String title);
 
     List<Course> findAllByTitleContainingIgnoreCaseAndTargetGroupsIn(String keyword, List<String> targetGroups);

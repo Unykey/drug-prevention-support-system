@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Embeddable
 @NoArgsConstructor
@@ -17,10 +18,10 @@ public class CourseSurveyId implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof CourseSurveyId that)) return false;
-        return courseId.equals(that.courseId) && surveyId.equals(that.surveyId);
+        return Objects.equals(courseId, that.courseId) && Objects.equals(surveyId, that.surveyId);
     }
     @Override
     public int hashCode() {
-        return 31 * courseId.hashCode() + surveyId.hashCode();
+        return Objects.hash(courseId, surveyId);
     }
 }

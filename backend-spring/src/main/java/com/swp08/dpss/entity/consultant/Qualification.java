@@ -2,12 +2,14 @@ package com.swp08.dpss.entity.consultant;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "qualification")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Qualification {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +33,12 @@ public class Qualification {
 
     private String description; //e.g. General Medicine, Addiction Psychology, etc.
 
+    public Qualification(String name, String institution, Integer yearObtained, String certificationNumber, String issuingAuthority, String description) {
+        this.name = name;
+        this.institution = institution;
+        this.yearObtained = yearObtained;
+        this.certificationNumber = certificationNumber;
+        this.issuingAuthority = issuingAuthority;
+        this.description = description;
+    }
 }

@@ -14,8 +14,7 @@ public class SubmitSurveyAnswerRequest {
     private String content; // For free-text input questions
 
     // Constructor for convenience (adjust based on new fields)
-    public SubmitSurveyAnswerRequest(Long optionId, String content) {
-        this.optionId = optionId;
+    public SubmitSurveyAnswerRequest(String content) {
         this.content = content;
     }
 }

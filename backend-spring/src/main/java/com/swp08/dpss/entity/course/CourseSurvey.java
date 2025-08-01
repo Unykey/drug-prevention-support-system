@@ -1,11 +1,9 @@
 package com.swp08.dpss.entity.course;
 
-import com.swp08.dpss.entity.program.Program;
-import com.swp08.dpss.entity.program.ProgramSurveyId;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.CourseSurveyRoles;
-import com.swp08.dpss.enums.ProgramSurveyRoles;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class CourseSurvey {
     @EmbeddedId
     private CourseSurveyId courseSurveyId;

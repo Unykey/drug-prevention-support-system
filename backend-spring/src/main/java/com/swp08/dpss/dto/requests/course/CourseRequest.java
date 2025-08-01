@@ -2,9 +2,6 @@ package com.swp08.dpss.dto.requests.course;
 
 import com.swp08.dpss.entity.course.TargetGroup;
 import com.swp08.dpss.enums.CourseStatus;
-import com.swp08.dpss.enums.CourseSurveyRoles;
-import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyTypes;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Data
-public class QuestionOptionRequest {
+public class AnswerOptionRequest {
     // If updating, you might include an 'id'
     // private Long id;
 
@@ -16,7 +16,7 @@ public class QuestionOptionRequest {
     private boolean correct; // Indicates if this option is the correct answer
 
     // Constructor for easier initialization in DataInitializer
-    public QuestionOptionRequest(String content, boolean correct) {
+    public AnswerOptionRequest(String content, boolean correct) {
         this.content = content;
         this.correct = correct;
     }

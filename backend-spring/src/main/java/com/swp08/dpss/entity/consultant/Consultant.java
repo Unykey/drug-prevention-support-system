@@ -16,17 +16,17 @@ import java.util.Set;
 @NoArgsConstructor
 public class Consultant {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long consultantId;
+    private Long consultantId; // Same as user.id
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "id")
     private User user;
 
     @OneToMany(mappedBy = "consultant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Qualification> qualificationSet = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "consultant_specialization",
             joinColumns = @JoinColumn(name = "consultant_id"),
@@ -34,7 +34,7 @@ public class Consultant {
     )
     private Set<Specialization> specializationSet = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "consultant_availability",
             joinColumns = @JoinColumn(name = "consultant_id"),
@@ -42,7 +42,7 @@ public class Consultant {
     )
     private Set<Availability> timeSlots = new HashSet<>();
 
-    @Column(length = 255)
+    @Column(length = 500)
     private String bio;
 
     private String profilePicture;

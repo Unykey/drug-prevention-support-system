@@ -1,6 +1,5 @@
 package com.swp08.dpss.entity.course;
 
-import com.swp08.dpss.entity.client.User;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 

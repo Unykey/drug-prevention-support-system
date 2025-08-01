@@ -575,7 +575,7 @@ public class CourseServiceImpl implements CourseService {
         CourseSurveyResponse dto = new CourseSurveyResponse();
         dto.setSurveyId(courseSurvey.getSurvey().getId());
         dto.setRole(courseSurvey.getRole());
-        dto.setSurveyType(courseSurvey.getSurvey().getType()); // Assuming Survey entity has a getType()
+//        dto.setSurveyType(courseSurvey.getSurvey().getType()); // Assuming Survey entity has a getType()
         return dto;
     }
 

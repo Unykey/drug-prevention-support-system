@@ -3,7 +3,7 @@ package com.swp08.dpss.dto.responses.survey;
 import lombok.Data;
 
 @Data
-public class QuestionOptionDto {
+public class AnswerOptionDto {
     private Long id;
     private String content;
     private boolean correct;

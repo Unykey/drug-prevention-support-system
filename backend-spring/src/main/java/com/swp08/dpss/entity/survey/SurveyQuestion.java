@@ -30,8 +30,8 @@ public class SurveyQuestion {
     @Column (name = "Type", nullable = false)
     private QuestionTypes type;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuestionOption> options = new ArrayList<>();
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<AnswerOption> options = new ArrayList<>();
 
     @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "question")
     private List<SurveyAnswer> answers = new ArrayList<>();

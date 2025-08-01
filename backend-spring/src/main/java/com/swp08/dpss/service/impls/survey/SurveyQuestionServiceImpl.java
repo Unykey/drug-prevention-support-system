@@ -1,16 +1,16 @@
 package com.swp08.dpss.service.impls.survey; // Corrected package name
 
-import com.swp08.dpss.dto.requests.survey.QuestionOptionRequest;
+import com.swp08.dpss.dto.requests.survey.AnswerOptionRequest;
 import com.swp08.dpss.dto.requests.survey.SurveyQuestionRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyQuestionDto;
-import com.swp08.dpss.entity.survey.QuestionOption;
+import com.swp08.dpss.entity.survey.AnswerOption;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.entity.survey.SurveyQuestion;
 import com.swp08.dpss.enums.QuestionTypes;
 import jakarta.persistence.EntityNotFoundException; // Corrected import to jakarta.persistence.EntityNotFoundException
 import com.swp08.dpss.mapper.interfaces.survey.QuestionOptionMapper;
 import com.swp08.dpss.mapper.interfaces.survey.SurveyQuestionMapper;
-import com.swp08.dpss.repository.survey.QuestionOptionRepository;
+import com.swp08.dpss.repository.survey.AnswerOptionRepository;
 import com.swp08.dpss.repository.survey.SurveyQuestionRepository;
 import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
@@ -31,7 +31,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
     private final SurveyRepository surveyRepository;
     private final SurveyQuestionRepository surveyQuestionRepository;
-    private final QuestionOptionRepository questionOptionRepository; // Inject new repo
+    private final AnswerOptionRepository answerOptionRepository; // Inject new repo
     private final SurveyQuestionMapper surveyQuestionMapper;
     private final QuestionOptionMapper questionOptionMapper; // Inject new mapper
 
@@ -53,12 +53,12 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
                 }
                 // Additional validation: ensure only one isCorrect for MCQ, or at least one for MCMC
                 if (question.getType() == QuestionTypes.MCQ) {
-                    long correctOptions = questionRequest.getOptions().stream().filter(QuestionOptionRequest::isCorrect).count();
+                    long correctOptions = questionRequest.getOptions().stream().filter(AnswerOptionRequest::isCorrect).count();
                     if (correctOptions != 1) {
                         throw new IllegalArgumentException("MCQ type questions must have exactly one correct option.");
                     }
                 } else if (question.getType() == QuestionTypes.MCMC) {
-                    long correctOptions = questionRequest.getOptions().stream().filter(QuestionOptionRequest::isCorrect).count();
+                    long correctOptions = questionRequest.getOptions().stream().filter(AnswerOptionRequest::isCorrect).count();
                     if (correctOptions < 1) { // At least one correct option
                         throw new IllegalArgumentException("MCMC type questions must have at least one correct option.");
                     }
@@ -73,9 +73,9 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
                 }
             }
 
-            List<QuestionOption> options = new ArrayList<>();
-            for (QuestionOptionRequest optionRequest : questionRequest.getOptions()) {
-                QuestionOption option = questionOptionMapper.toEntity(optionRequest);
+            List<AnswerOption> options = new ArrayList<>();
+            for (AnswerOptionRequest optionRequest : questionRequest.getOptions()) {
+                AnswerOption option = questionOptionMapper.toEntity(optionRequest);
                 option.setQuestion(question); // Set the bidirectional relationship
                 options.add(option);
             }
@@ -123,12 +123,12 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
                     throw new IllegalArgumentException("MCQ/MCMC questions must have at least 2 options.");
                 }
                 if (questionRequest.getType() == QuestionTypes.MCQ) {
-                    long correctOptions = questionRequest.getOptions().stream().filter(QuestionOptionRequest::isCorrect).count();
+                    long correctOptions = questionRequest.getOptions().stream().filter(AnswerOptionRequest::isCorrect).count();
                     if (correctOptions != 1) {
                         throw new IllegalArgumentException("MCQ type questions must have exactly one correct option.");
                     }
                 } else if (questionRequest.getType() == QuestionTypes.MCMC) {
-                    long correctOptions = questionRequest.getOptions().stream().filter(QuestionOptionRequest::isCorrect).count();
+                    long correctOptions = questionRequest.getOptions().stream().filter(AnswerOptionRequest::isCorrect).count();
                     if (correctOptions < 1) {
                         throw new IllegalArgumentException("MCMC type questions must have at least one correct option.");
                     }
@@ -147,7 +147,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
 
         // Handle options: This is the complex part.
-        List<QuestionOption> optionsToRemove = new ArrayList<>();
+        List<AnswerOption> optionsToRemove = new ArrayList<>();
         // Identify options to remove (those currently on the question but not in the request)
         existingQuestion.getOptions().forEach(existingOption -> {
             boolean foundInRequest = questionRequest.getOptions() != null &&
@@ -160,13 +160,13 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
 
         // Remove identified options
         existingQuestion.getOptions().removeAll(optionsToRemove);
-        questionOptionRepository.deleteAll(optionsToRemove);
+        answerOptionRepository.deleteAll(optionsToRemove);
 
 
         // Add or update options
         if (questionRequest.getOptions() != null) {
-            for (QuestionOptionRequest reqOption : questionRequest.getOptions()) {
-                Optional<QuestionOption> existingOpt = existingQuestion.getOptions().stream()
+            for (AnswerOptionRequest reqOption : questionRequest.getOptions()) {
+                Optional<AnswerOption> existingOpt = existingQuestion.getOptions().stream()
                         .filter(opt -> opt.getContent().equals(reqOption.getContent())) // Match by content, consider ID for updates if available
                         .findFirst();
 
@@ -176,7 +176,7 @@ public class SurveyQuestionServiceImpl implements SurveyQuestionService {
                     existingOpt.get().setCorrect(reqOption.isCorrect());
                 } else {
                     // Add new option
-                    QuestionOption newOption = questionOptionMapper.toEntity(reqOption);
+                    AnswerOption newOption = questionOptionMapper.toEntity(reqOption);
                     newOption.setQuestion(existingQuestion); // Set relationship
                     existingQuestion.getOptions().add(newOption);
                 }

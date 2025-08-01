@@ -5,7 +5,6 @@ import com.swp08.dpss.dto.requests.survey.UpdateSurveyRequest;
 import com.swp08.dpss.dto.responses.survey.SurveyDetailsDto;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyTypes;
 import com.swp08.dpss.mapper.interfaces.survey.SurveyMapper;
 import com.swp08.dpss.repository.survey.SurveyRepository;
 import com.swp08.dpss.service.interfaces.survey.SurveyService;
@@ -84,7 +83,7 @@ public class SurveyServiceImpl implements SurveyService {
     // ... unchanged delete methods ...
 
     @Override
-    public List<SurveyDetailsDto> getSurveysByTypeAndStatus(SurveyTypes type, SurveyStatus status) {
+    public List<SurveyDetailsDto> getSurveysByTypeAndStatus(String type, SurveyStatus status) {
         return surveyRepository.findAllByStatusAndType(status, type)
                 .stream()
                 .map(surveyMapper::toDto)
@@ -92,7 +91,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public List<SurveyDetailsDto> getSurveysByType(SurveyTypes type) {
+    public List<SurveyDetailsDto> getSurveysByType(String type) {
         return surveyRepository.findByType(type)
                 .stream()
                 .map(surveyMapper::toDto)

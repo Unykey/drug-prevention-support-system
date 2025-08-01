@@ -16,7 +16,12 @@ public class TargetGroup {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-        private TargetGroupName targetGroupName;
+    private TargetGroupName targetGroupName;
 
     private String description;
+
+    public TargetGroup(TargetGroupName targetGroupName, String description) {
+        this.targetGroupName = targetGroupName;
+        this.description = description;
+    }
 }

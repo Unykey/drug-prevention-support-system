@@ -1,7 +1,6 @@
 package com.swp08.dpss.dto.requests.survey;
 
 import com.swp08.dpss.enums.SurveyStatus;
-import com.swp08.dpss.enums.SurveyTypes;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -17,7 +16,7 @@ public class UpdateSurveyRequest {
     private String description;
 
     @NotNull
-    private SurveyTypes type;
+    private String type;
 
     @NotNull
     private SurveyStatus status;

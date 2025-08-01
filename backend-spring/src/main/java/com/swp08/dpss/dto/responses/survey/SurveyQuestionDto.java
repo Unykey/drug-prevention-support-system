@@ -11,6 +11,6 @@ public class SurveyQuestionDto {
     private String question;
     private QuestionTypes type;
     // `solution` and `value` fields are removed
-    private List<QuestionOptionDto> options; // New field for options
+    private List<AnswerOptionDto> options; // New field for options
     private Long surveyId;
 }

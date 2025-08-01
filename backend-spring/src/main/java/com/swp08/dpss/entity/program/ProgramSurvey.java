@@ -1,19 +1,19 @@
 package com.swp08.dpss.entity.program;
 
-import com.swp08.dpss.entity.client.User;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.enums.ProgramSurveyRoles;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ProgramSurvey {
     @EmbeddedId
     private ProgramSurveyId programSurveyId;

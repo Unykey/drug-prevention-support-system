@@ -19,5 +19,5 @@ public class SurveyQuestionRequest {
     @NotNull(message = "Question type must be specified")
     private QuestionTypes type;
 
-    private List<QuestionOptionRequest> options;
+    private List<AnswerOptionRequest> options;
 }
