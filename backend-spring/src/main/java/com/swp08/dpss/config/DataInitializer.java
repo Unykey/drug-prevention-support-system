@@ -1,5 +1,6 @@
 package com.swp08.dpss.config;
 
+import com.swp08.dpss.dto.requests.PostRequest;
 import com.swp08.dpss.dto.requests.program.ProgramParticipationRequest;
 import com.swp08.dpss.dto.requests.program.ProgramRequest;
 import com.swp08.dpss.dto.requests.survey.*;
@@ -27,6 +28,7 @@ import com.swp08.dpss.entity.program.ProgramSurveyId;
 import com.swp08.dpss.entity.survey.Survey;
 import com.swp08.dpss.entity.survey.SurveyQuestion;
 import com.swp08.dpss.enums.*;
+import com.swp08.dpss.repository.PostRepository;
 import com.swp08.dpss.repository.UserRepository;
 import com.swp08.dpss.repository.course.CourseRepository;
 import com.swp08.dpss.repository.course.CourseSurveyRepository;
@@ -36,6 +38,7 @@ import com.swp08.dpss.repository.program.ProgramSurveyRepository;
 import com.swp08.dpss.repository.survey.AnswerOptionRepository;
 import com.swp08.dpss.repository.survey.SurveyQuestionRepository;
 import com.swp08.dpss.repository.survey.SurveyRepository;
+import com.swp08.dpss.service.interfaces.PostService;
 import com.swp08.dpss.service.interfaces.UserService;
 
 import com.swp08.dpss.service.interfaces.consultant.ConsultantService;
@@ -82,6 +85,7 @@ public class DataInitializer implements CommandLineRunner {
     private final CourseSurveyRepository courseSurveyRepository;
     private final AnswerOptionRepository answerOptionRepository;
     private final SurveyQuestionRepository surveyQuestionRepository;
+    private final PostService postService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -180,6 +184,14 @@ public class DataInitializer implements CommandLineRunner {
             log.info("=== 4.2 Survey Answer initialization complete ===");
         } catch (Exception e) {
             log.error("Survey Answer initialization failed: ", e);
+        }
+
+        // === Post Part ===
+        try {
+            postInit();
+            log.info("=== 5.1 Post initialization complete ===");
+        } catch (Exception e) {
+            log.error("Post initialization failed:", e);
         }
 
         log.info("===== DataInitializer finished =====");
@@ -817,5 +829,54 @@ public class DataInitializer implements CommandLineRunner {
 
     private void surveyQuestionCourseInit() {
 
+    }
+
+    private void postInit() {
+        // Find users to assign as post authors
+        User staffUser = userRepository.findByEmail("staff1@example.com").orElseThrow(() -> new RuntimeException("Staff user not found for post initialization."));
+        User managerUser = userRepository.findByEmail("man1@example.com").orElseThrow(() -> new RuntimeException("Manager user not found for post initialization."));
+        User memberUser = userRepository.findByEmail("sieghard@eventbrite.com").orElseThrow(() -> new RuntimeException("Member user not found for post initialization."));
+
+        // Create a DRAFT post
+        PostRequest draftPostRequest = new PostRequest();
+        draftPostRequest.setTitle("Draft Post: A draft on a new topic");
+        draftPostRequest.setContent("This is a draft of a post that is not yet ready for publication. It is a work in progress.");
+        draftPostRequest.setAuthorId(staffUser.getId());
+        draftPostRequest.setStatus(PostStatus.DRAFT);
+        postService.createPost(draftPostRequest);
+
+        // Create a PUBLISHED post by a Staff member
+        PostRequest publishedPostRequest1 = new PostRequest();
+        publishedPostRequest1.setTitle("First Official Post: Welcome to Our Platform");
+        publishedPostRequest1.setContent("We are excited to launch our new community platform! This post outlines our goals and vision.");
+        publishedPostRequest1.setAuthorId(staffUser.getId());
+        publishedPostRequest1.setStatus(PostStatus.PUBLISHED);
+        postService.createPost(publishedPostRequest1);
+
+        // Create another PUBLISHED post by a Manager
+        PostRequest publishedPostRequest2 = new PostRequest();
+        publishedPostRequest2.setTitle("Upcoming Events and Webinars");
+        publishedPostRequest2.setContent("Check out our calendar for a list of upcoming events and webinars. We have many exciting things planned!");
+        publishedPostRequest2.setAuthorId(managerUser.getId());
+        publishedPostRequest2.setStatus(PostStatus.PUBLISHED);
+        postService.createPost(publishedPostRequest2);
+
+        // Create a post by a regular Member
+        PostRequest memberPostRequest = new PostRequest();
+        memberPostRequest.setTitle("My Experience with the Course");
+        memberPostRequest.setContent("I recently completed the 'Nhận thức Cơ bản về Ma túy' course and wanted to share my positive experience.");
+        memberPostRequest.setAuthorId(memberUser.getId());
+        memberPostRequest.setStatus(PostStatus.PUBLISHED);
+        postService.createPost(memberPostRequest);
+
+        // Create a DRAFT post by a Staff member
+        PostRequest publishedPostRequest4 = new PostRequest();
+        publishedPostRequest4.setTitle("Common misconception");
+        publishedPostRequest4.setContent("In our modern, it's understandable that some people haven't contacted these drugs once. Therefore, they will be vulnerable if they aren't prepared");
+        publishedPostRequest4.setAuthorId(staffUser.getId());
+        publishedPostRequest4.setStatus(PostStatus.DRAFT);
+        postService.createPost(publishedPostRequest4);
+
+        log.info("Initialized Posts.");
     }
 }

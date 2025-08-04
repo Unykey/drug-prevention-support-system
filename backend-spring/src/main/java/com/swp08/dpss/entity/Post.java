@@ -27,10 +27,10 @@ public class Post {
     private String content;
 
     @Column (name = "CreatedAt", nullable = false)
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
-    @Column (name = "Status", nullable = false, length = 1)
+    @Column (name = "Status", nullable = false)
     private PostStatus status;
 
     @ManyToOne

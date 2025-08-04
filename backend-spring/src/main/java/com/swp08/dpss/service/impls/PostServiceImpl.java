@@ -48,11 +48,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostResponse getPostById(Long id, UserDetails userDetails) {
+    public PostResponse getPostById(Long id, String username) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Post not found with ID: " + id));
 
-        User currentUser = userService.findByEmail(userDetails.getUsername())
+        User currentUser = userService.findByEmail(username)
                 .orElseThrow(() -> new EntityNotFoundException("Authenticated user not found"));
 
         // Access control logic for getting a single post
@@ -71,8 +71,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getAllPosts(UserDetails userDetails) {
-        User currentUser = userService.findByEmail(userDetails.getUsername())
+    public List<PostResponse> getAllPosts(String username) {
+        User currentUser = userService.findByEmail(username)
                 .orElseThrow(() -> new EntityNotFoundException("Authenticated user not found"));
 
         if (currentUser.getRole() == Roles.ADMIN || currentUser.getRole() == Roles.MANAGER || currentUser.getRole() == Roles.STAFF) {
@@ -91,8 +91,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> getPostsByStatus(PostStatus status, UserDetails userDetails) {
-        User currentUser = userService.findByEmail(userDetails.getUsername())
+    public List<PostResponse> getPostsByStatus(PostStatus status, String username) {
+        User currentUser = userService.findByEmail(username)
                 .orElseThrow(() -> new EntityNotFoundException("Authenticated user not found"));
 
         if (currentUser.getRole() == Roles.ADMIN || currentUser.getRole() == Roles.MANAGER || currentUser.getRole() == Roles.STAFF) {
@@ -115,13 +115,13 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostResponse> searchPosts(String keyword, UserDetails userDetails) {
-        User currentUser = userService.findByEmail(userDetails.getUsername())
+    public List<PostResponse> searchPosts(String keyword, String username) {
+        User currentUser = userService.findByEmail(username)
                 .orElseThrow(() -> new EntityNotFoundException("Authenticated user not found"));
 
         if (keyword == null || keyword.isBlank()) {
             // If keyword is empty, return all accessible posts
-            return getAllPosts(userDetails);
+            return getAllPosts(username);
         }
 
         // Search in title or content for non-deleted posts

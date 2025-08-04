@@ -11,12 +11,12 @@ public interface PostService {
     PostResponse createPost(PostRequest request);
 
     void deletePost(Long id);
-    PostResponse getPostById(Long id, UserDetails userDetails); // Modified to include UserDetails for access control
+    PostResponse getPostById(Long id, String username); // Modified to include UserDetails for access control
 
-    List<PostResponse> getAllPosts(UserDetails userDetails); // Modified to include UserDetails for access control
+    List<PostResponse> getAllPosts(String username); // Modified to include UserDetails for access control
 
-    List<PostResponse> getPostsByStatus(PostStatus status, UserDetails userDetails); // Renamed from getPostByStatus and added UserDetails
+    List<PostResponse> getPostsByStatus(PostStatus status, String username); // Renamed from getPostByStatus and added UserDetails
 
-    List<PostResponse> searchPosts(String keyword, UserDetails userDetails); // New method for searching
+    List<PostResponse> searchPosts(String keyword, String username); // New method for searching
 
 }

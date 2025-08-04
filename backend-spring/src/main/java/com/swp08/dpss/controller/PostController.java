@@ -1,17 +1,17 @@
 package com.swp08.dpss.controller;
 
 import com.swp08.dpss.dto.requests.PostRequest;
-import com.swp08.dpss.dto.responses.ApiResponse; // Import ApiResponse
+import com.swp08.dpss.dto.responses.ApiResponse;
 import com.swp08.dpss.dto.responses.PostResponse;
-import com.swp08.dpss.enums.PostStatus; // Import PostStatus enum
+import com.swp08.dpss.enums.PostStatus;
 import com.swp08.dpss.service.interfaces.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize; // Import PreAuthorize
-import org.springframework.security.core.annotation.AuthenticationPrincipal; // Import AuthenticationPrincipal
-import org.springframework.security.core.userdetails.UserDetails; // Import UserDetails
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid; // Assuming PostRequest needs validation
+import jakarta.validation.Valid;
 
 import java.util.List;
 
@@ -26,48 +26,41 @@ public class PostController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN', 'MEMBER')") // Define who can create posts
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<PostResponse>> createPost(@Valid @RequestBody PostRequest request) {
         PostResponse createdPost = postService.createPost(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, createdPost, "Post created successfully"));
     }
 
+    @GetMapping
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<List<PostResponse>>> getPosts(
+            @RequestParam(required = false) PostStatus status,
+            @RequestParam(required = false) String keyword,
+            @AuthenticationPrincipal String username) {
+        List<PostResponse> posts;
+        if (keyword != null && !keyword.isBlank()) {
+            posts = postService.searchPosts(keyword, username);
+            return ResponseEntity.ok(new ApiResponse<>(true, posts, "Posts search results retrieved successfully"));
+        } else if (status != null) {
+            posts = postService.getPostsByStatus(status, username);
+            return ResponseEntity.ok(new ApiResponse<>(true, posts, "Posts filtered by status retrieved successfully"));
+        } else {
+            posts = postService.getAllPosts(username);
+            return ResponseEntity.ok(new ApiResponse<>(true, posts, "All posts retrieved successfully"));
+        }
+    }
+
     @GetMapping("/{id}")
-    @PreAuthorize("isAuthenticated()") // Anyone authenticated can try to view a post, service handles specifics
-    public ResponseEntity<ApiResponse<PostResponse>> getPost(@PathVariable Long id,
-                                                             @AuthenticationPrincipal UserDetails userDetails) {
-        PostResponse post = postService.getPostById(id, userDetails);
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ApiResponse<PostResponse>> getPostById(@PathVariable Long id,
+                                                                 @AuthenticationPrincipal String username) {
+        PostResponse post = postService.getPostById(id, username);
         return ResponseEntity.ok(new ApiResponse<>(true, post, "Post retrieved successfully"));
     }
 
-    @GetMapping
-    @PreAuthorize("isAuthenticated()") // Anyone authenticated can get posts, service handles specifics
-    public ResponseEntity<ApiResponse<List<PostResponse>>> getAllPosts(@AuthenticationPrincipal UserDetails userDetails) {
-        List<PostResponse> posts = postService.getAllPosts(userDetails);
-        return ResponseEntity.ok(new ApiResponse<>(true, posts, "All posts retrieved successfully"));
-    }
-
-    @GetMapping("/filter")
-    @PreAuthorize("isAuthenticated()") // Anyone authenticated can filter, service handles specifics
-    public ResponseEntity<ApiResponse<List<PostResponse>>> filterPostsByStatus(
-            @RequestParam PostStatus status,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        List<PostResponse> posts = postService.getPostsByStatus(status, userDetails);
-        return ResponseEntity.ok(new ApiResponse<>(true, posts, "Posts filtered by status retrieved successfully"));
-    }
-
-    @GetMapping("/search")
-    @PreAuthorize("isAuthenticated()") // Anyone authenticated can search, service handles specifics
-    public ResponseEntity<ApiResponse<List<PostResponse>>> searchPosts(
-            @RequestParam(required = false) String keyword,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        List<PostResponse> posts = postService.searchPosts(keyword, userDetails);
-        return ResponseEntity.ok(new ApiResponse<>(true, posts, "Posts search results retrieved successfully"));
-    }
-
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')") // Only authorized roles can soft delete
-    // Consider adding check if the current user is the author and can delete their own DRAFT posts
+    @PreAuthorize("hasAnyRole('STAFF', 'MANAGER', 'ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deletePost(@PathVariable Long id) {
         postService.deletePost(id);
         return ResponseEntity.ok(new ApiResponse<>(true, null, "Post soft-deleted successfully"));
