@@ -11,10 +11,8 @@ import java.util.Set;
 
 public interface ConsultantService {
     List<Consultant> findAll();
-
-    void createNewConsultant(Long userId, Consultant consultant);
-
-    Consultant createNewConsultant2(Long userId,
+    
+    Consultant createNewConsultant(Long userId,
                               Consultant consultant,
                               Set<Availability> availabilities,
                               Set<Specialization> specializations,

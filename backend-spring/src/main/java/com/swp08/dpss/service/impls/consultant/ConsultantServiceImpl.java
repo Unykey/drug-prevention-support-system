@@ -44,25 +44,9 @@ public class ConsultantServiceImpl implements ConsultantService {
     }
 
     //TODO: use ConsultantCreationRequest instead of Consultant
-    @Override
-    public void createNewConsultant(Long userId, Consultant consultantRequest) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Consultant consultant = new Consultant();
-        consultant.setUser(user);
-        consultant.setBio(consultantRequest.getBio());
-        consultant.setSpecializationSet(consultantRequest.getSpecializationSet());
-        consultant.setTimeSlots(consultantRequest.getTimeSlots());
-        consultant.setQualificationSet(consultantRequest.getQualificationSet());
-        consultant.setProfilePicture(consultantRequest.getProfilePicture());
-
-        consultantRepository.save(consultant);
-    }
-
     @Transactional
     @Override
-    public Consultant createNewConsultant2(Long userId, Consultant consultant, Set<Availability> availabilities, Set<Specialization> specializations, Qualification qualification) {
+    public Consultant createNewConsultant(Long userId, Consultant consultant, Set<Availability> availabilities, Set<Specialization> specializations, Qualification qualification) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
 
