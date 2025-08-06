@@ -87,21 +87,6 @@ const LoginPage = () => {
 
         try {
             const result = await login(email, password);
-            // Mô phỏng delay API call (1 giây) để test UX loading
-            // await new Promise(resolve => setTimeout(resolve, 1000));
-
-            // Tạo mock user dựa trên email nhập vào
-            // Nếu email chứa 'admin' thì role = 'Admin', ngược lại là 'Member'
-            // const mockUser = {
-            //   email,
-            //   name: 'Người dùng Test',
-            //   role: email.includes('admin') ? 'Admin' : 'Member'
-            // };
-
-            // Gọi function login từ AuthContext để lưu thông tin user
-            // login(mockUser);
-
-            // Hiển thị toast thông báo đăng nhập thành công
             if (result.success) {
                 toast({
                     title: result.message || 'Đăng nhập thành công!',
@@ -139,37 +124,26 @@ const LoginPage = () => {
     };
 
     return (
-        // Container chính - căn giữa form đăng nhập trên màn hình
         <div className="flex items-center justify-center min-h-[calc(100vh-200px)] py-12">
-            {/* Card chứa form đăng nhập - có shadow và theme tùy chỉnh */}
             <Card className="w-full max-w-md light-theme-card shadow-2xl">
-
-                {/* Header của card - tiêu đề và mô tả */}
                 <CardHeader className="text-center">
-                    {/* Icon đăng nhập với background tròn */}
                     <div className="inline-block p-3 bg-primary/10 rounded-full mx-auto mb-4">
                         <LogIn className="h-10 w-10 text-primary"/>
                     </div>
-                    {/* Tiêu đề trang với gradient text effect */}
                     <CardTitle className="text-3xl font-bold gradient-text">Đăng Nhập</CardTitle>
-                    {/* Mô tả ngắn gọn về trang */}
                     <CardDescription className="light-theme-card-description">
                         Chào mừng trở lại! Vui lòng nhập thông tin của bạn.
                     </CardDescription>
                 </CardHeader>
 
-                {/* Nội dung chính của card - chứa form */}
                 <CardContent>
-                    {/* Form đăng nhập với onSubmit handler */}
                     <form onSubmit={handleSubmit} className="space-y-6">
 
                         {/* Trường Email */}
                         <div className="space-y-2">
-                            {/* Label với icon email */}
                             <Label htmlFor="email" className="light-theme-text-default flex items-center">
                                 <Mail className="h-4 w-4 mr-2 text-primary"/> Email
                             </Label>
-                            {/* Input email với validation và controlled component */}
                             <Input
                                 id="email"
                                 type="email" // HTML5 email validation
@@ -183,11 +157,9 @@ const LoginPage = () => {
 
                         {/* Trường Password */}
                         <div className="space-y-2">
-                            {/* Label với icon khóa */}
                             <Label htmlFor="password" className="light-theme-text-default flex items-center">
                                 <KeyRound className="h-4 w-4 mr-2 text-primary"/> Mật Khẩu
                             </Label>
-                            {/* Input password với controlled component */}
                             <Input
                                 id="password"
                                 type="password" // Ẩn text khi nhập
