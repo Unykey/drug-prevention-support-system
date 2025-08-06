@@ -153,6 +153,32 @@ export const AuthProvider = ({children}) => {
     };
 
     /**
+     * Hàm đăng ký - Gửi thông tin người dùng để tạo tài khoản
+     * @param {Object} userData - Thông tin người dùng bao gồm name, email, phone, gender, dateOfBirth, password, và guardian (nếu dưới 18 tuổi)
+     * @returns {Promise<{success: boolean, user?: Object, message?: string, error?: string}>}
+     */
+    const register = async (userData) => {
+        try {
+            const response = await axios.post('http://localhost:8080/api/auth/register', userData);
+            console.log('Register response:', response.data);
+            const {success, data, message} = response.data;
+            if (!success) {
+                console.error('Registration failed with message:', message);
+                throw new Error(message || 'Registration failed');
+            }
+            if (data) {
+                localStorage.setItem('user', JSON.stringify(data));
+                setUser(data);
+            }
+            return { success: true, user: data, message: message || 'Registration successful' };
+        } catch (error) {
+            const errorMessage = error.response?.data?.error || error.message || 'Registration failed';
+            console.error('Registration error:', errorMessage);
+            return {success: false, error: errorMessage};
+        }
+    };
+
+    /**
      * Hàm đăng xuất - Xóa thông tin token và user khỏi state và localStorage
      */
     const logout = () => {
@@ -168,7 +194,7 @@ export const AuthProvider = ({children}) => {
 
 // Cung cấp context value cho toàn bộ ứng dụng
     return (
-        <AuthContext.Provider value={{user, login, logout, loading}}>
+        <AuthContext.Provider value={{user, login, logout, register, loading}}>
             {children}
         </AuthContext.Provider>
     );

@@ -5,13 +5,14 @@ import {Button} from '@/components/ui/button'; // Component button tùy chỉnh
 import {Input} from '@/components/ui/input'; // Component input tùy chỉnh
 import {Label} from '@/components/ui/label'; // Component label tùy chỉnh
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card'; // Các component card để tạo layout
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {UserPlus, Mail, KeyRound, User, Phone, Calendar, Shield} from 'lucide-react'; // Icons từ thư viện Lucide React
 import {useToast} from '@/components/ui/use-toast'; // Hook để hiển thị thông báo toast
 import * as Yup from 'yup';
-import { Formik, Form, Field } from 'formik';
+import {Formik, Form, Field} from 'formik';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import {useAuth} from '@/contexts/AuthContext';
 
 const calculateAge = (dateOfBirth) => {
     if (!dateOfBirth) return null;
@@ -23,7 +24,6 @@ const calculateAge = (dateOfBirth) => {
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
         age--;
     }
-
     return age;
 };
 
@@ -93,6 +93,7 @@ const RegisterPage = () => {
         // Hooks để điều hướng và hiển thị thông báo
         const navigate = useNavigate(); // Hook để chuyển hướng trang
         const {toast} = useToast(); // Hook để hiển thị thông báo toast
+        const {register} = useAuth();
 
         const initialValues = {
             name: '',
@@ -108,7 +109,8 @@ const RegisterPage = () => {
         };
 
         // Hàm xử lý submit form đăng ký
-        const handleSubmit = async (e, values, {setSubmitting}) => {
+        const handleSubmit = async (values, {setSubmitting}) => {
+            setSubmitting(true); // Bật trạng thái loading để disable button và hiển thị spinner
             try {
                 const age = calculateAge(values.dateOfBirth);
 
@@ -131,23 +133,32 @@ const RegisterPage = () => {
                     };
                 }
 
-                toast({
-                    title: "Đăng ký thành công!",
-                    description: "Tài khoản của bạn đã được tạo. Vui lòng đăng nhập.",
-                    variant: "default",
-                    className: "bg-green-500 text-white",
-                });
+                console.log('yes:');
+                console.log('userData:', userData);
 
-                navigate('/login');
+                const result = await register(userData);
+                if (result.success) {
+                    toast({
+                        title: "Đăng ký thành công!",
+                        description: result.message || "Tài khoản của bạn đã được tạo. Vui lòng đăng nhập.",
+                        variant: "default",
+                        className: "bg-green-500 text-white",
+                    });
+                    navigate('/login');
+                } else {
+                    toast({
+                        title: "Đăng ký thất bại",
+                        description: result.error || "Đã có lỗi xảy ra. Vui lòng thử lại.",
+                        variant: "destructive",
+                    });
+                }
             } catch (error) {
                 const errorMessage = error?.message || 'Đã có lỗi xảy ra. Vui lòng thử lại.';
-
                 toast({
                     title: "Đăng ký thất bại",
                     description: errorMessage,
                     variant: "destructive",
                 });
-
                 console.error('Register error:', error);
             } finally {
                 setSubmitting(false); // Tắt trạng thái submit khi xử lý xong

@@ -67,7 +67,7 @@ public class AuthController {
         }
 
         userService.register(user);
-        return ResponseEntity.ok(new ApiResponse<>(true, user, "Đăng ký thành công!"));
+        return ResponseEntity.ok(new ApiResponse<>(true, user, "Đăng ký thành công! Tài khoản của bạn đã được tạo. Vui lòng đăng nhập."));
     }
 
     @PostMapping("/forgot-password")
