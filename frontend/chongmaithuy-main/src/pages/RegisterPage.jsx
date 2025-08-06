@@ -10,6 +10,8 @@ import {UserPlus, Mail, KeyRound, User, Phone, Calendar, Shield} from 'lucide-re
 import {useToast} from '@/components/ui/use-toast'; // Hook để hiển thị thông báo toast
 import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const calculateAge = (dateOfBirth) => {
     if (!dateOfBirth) return null;
@@ -44,6 +46,8 @@ const validationSchema = Yup.object({
         .required('Giới tính là bắt buộc'),
 
     dateOfBirth: Yup.date()
+        .typeError('Ngày sinh không hợp lệ. Vui lòng chọn từ lịch.')
+        .min(new Date(1900, 0, 1), 'Ngày sinh không thể trước năm 1900')
         .max(new Date(), 'Ngày sinh không thể là tương lai')
         .required('Ngày sinh là bắt buộc'),
 
@@ -270,11 +274,15 @@ const RegisterPage = () => {
                                                 <Calendar className="h-4 w-4 mr-2 text-accent"/> Ngày Sinh
                                             </Label>
                                             <Field name="dateOfBirth">
-                                                {({field}) => (
-                                                    <Input
+                                                {({field, form}) => (
+                                                    <DatePicker
                                                         {...field}
-                                                        id="dateOfBirth"
-                                                        type="date"
+                                                        selected={field.value}
+                                                        onChange={(val) => form.setFieldValue('dateOfBirth', val)}
+                                                        dateFormat="dd/MM/yyyy"
+                                                        maxDate={new Date()}
+                                                        minDate={new Date('1900-01-01')}
+                                                        placeholderText="Chọn ngày sinh"
                                                         className="light-theme-input"
                                                     />
                                                 )}
