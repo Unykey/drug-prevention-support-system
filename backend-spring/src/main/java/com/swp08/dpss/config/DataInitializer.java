@@ -44,7 +44,6 @@ import com.swp08.dpss.service.interfaces.UserService;
 import com.swp08.dpss.service.interfaces.consultant.ConsultantService;
 import com.swp08.dpss.service.interfaces.course.CourseService;
 import com.swp08.dpss.service.interfaces.program.ProgramService;
-import com.swp08.dpss.service.interfaces.survey.AnswerOptionService;
 import com.swp08.dpss.service.interfaces.survey.SurveyAnswerService;
 import com.swp08.dpss.service.interfaces.survey.SurveyQuestionService;
 import com.swp08.dpss.service.interfaces.survey.SurveyService;
@@ -277,22 +276,28 @@ public class DataInitializer implements CommandLineRunner {
         Qualification qual3 = new Qualification("Chuyên gia Tư vấn", "ĐH Y Dược 123", 2020, "CNT-003", "Bộ Sức Khỏe", "Phục hồi chức năng");
 
         // 5 Create Consultant and set all before save
+
+//        @Value("${supabase.storage.public-url}")
+//        private String supabaseBaseUrl;
+
+
+
         Consultant cons1 = new Consultant();
         cons1.setUser(user1);
         cons1.setBio("Tiến sĩ Madel Mutton là trưởng khoa Bệnh viện từ năm 2000 - 2019. Trong suốt thời gian tại Bệnh viện Ung thư Quốc gia, ông luôn dành thời gian tâm huyết nghiên cứu, áp dụng điều trị cho nhóm bệnh. Tham gia vào hệ thống bệnh viện, ông ấy làm trưởng đơn vị điều trị hoá chất và hỗ trợ, Trung tâm chấn thương chỉnh hình.");
-        cons1.setProfilePicture("https://example.com/avatar1.jpg");
+        cons1.setProfilePicture("uploads/profile-pictures/cons1.jpg");
         consultantService.createNewConsultant(user1.getId(), cons1, Set.of(avai1), Set.of(spec1), qual1);
 
         Consultant cons2 = new Consultant();
         cons2.setUser(user2);
         cons2.setBio("Ông đã làm việc và nghiên cứu hơn 25 năm trong việc thúc đẩy thực hành tâm lý theo định hướng phục hồi và dựa trên bằng chứng cho những người có vấn đề về sức khỏe tâm thần. Ông đã làm việc tại Úc, Vương quốc Anh, Châu Âu, Châu Mỹở mọi cấp độ bao gồm chăm sóc lâm sàng trực tiếp, nghiên cứu và giảng dạy sau đại học, chính sách quốc gia và phát triển thực hành cũng như vai trò cải thiện dịch vụ lâm sàng.");
-        cons2.setProfilePicture("https://example.com/avatar1.jpg");
+        cons2.setProfilePicture("uploads/profile-pictures/cons1.jpeg");
         consultantService.createNewConsultant(user2.getId(), cons2, Set.of(avai2), Set.of(spec2), qual2);
 
         Consultant cons3 = new Consultant();
         cons3.setUser(user3);
         cons3.setBio("Với sự cần mẫn trong học tập, tận tụy trong công việc nhiều năm qua, đến nay ông đã tích lũy được nhiều kinh nghiệm trong khám, điều trị các bệnh lý về chuyên khoa Chấn thương chỉnh hình, đặc biệt là các bệnh liên quan đến thoái hóa xương khớp, cột sống. Thường xuyên tham gia các khóa dào tạo liên tục, các hội nghị cập nhật về chấn thương chỉnh hình, phẫu thuật tạo hình-bàn tay, các khóa cập nhật điều trị gãy xương.");
-        cons3.setProfilePicture("https://example.com/avatar1.jpg");
+        cons3.setProfilePicture("uploads/profile-pictures/cons3.jpg");
         consultantService.createNewConsultant(user3.getId(), cons3, Set.of(avai2, avai4), Set.of(spec2), qual3);
 
         log.info("Created Consultants");

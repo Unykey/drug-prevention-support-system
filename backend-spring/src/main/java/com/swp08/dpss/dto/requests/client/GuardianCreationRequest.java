@@ -3,6 +3,7 @@ package com.swp08.dpss.dto.requests.client;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +22,7 @@ public class GuardianCreationRequest {
     private String guardianEmail;
 
     @NotBlank(message = "Phone cannot be blank")
-//    @Pattern(regexp = "^\\+?\\d{10,15}$", message = "Invalid phone number")
+    @Pattern(regexp = "^\\+?\\d{10,15}$", message = "Invalid phone number, phone number must be between 10 and 15 digits")
     private String guardianPhone;
 
 //    @NotEmpty(message = "At least one User ID is required")

@@ -13,6 +13,7 @@ import com.swp08.dpss.repository.consultant.QualificationRepository;
 import com.swp08.dpss.repository.consultant.SpecializationRepository;
 import com.swp08.dpss.service.interfaces.consultant.ConsultantService;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +37,9 @@ public class ConsultantServiceImpl implements ConsultantService {
     private final AvailabilityRepository availabilityRepository;
     private final QualificationRepository qualificationRepository;
     private final SpecializationRepository specializationRepository;
+
+//    @Value("${supabase.storage.public-url}")
+//    private String supabaseBaseUrl;
 
     //TODO: Change List<ConsultantResponse> instead of List<Consultant>
     @Override
@@ -115,11 +119,17 @@ public class ConsultantServiceImpl implements ConsultantService {
         }
     }
 
+    @Override
+    public Consultant getConsultantById(Long consultantId) {
+        return consultantRepository.findById(consultantId)
+                .orElseThrow(() -> new IllegalArgumentException("Consultant not found with id: " + consultantId));
+    }
+
     // Check if file is an image and its size is less than 5MB
     // NOTE: You can change the maximum size limit as needed.
     public boolean isValidPicture(MultipartFile file) {
         String contentType = file.getContentType();
-        return contentType != null && contentType.startsWith("image/jpeg") || contentType.startsWith("image/png")
+        return contentType != null && (contentType.startsWith("image/jpeg") || contentType.startsWith("image/png"))
                 && (file.getSize() <= 5 * 1024 * 1024); // Max 5MB
     }
 

@@ -19,4 +19,6 @@ public interface ConsultantService {
                               Qualification qualification);
 
     String saveProfilePicture(Long consultantId, MultipartFile profilePicture);
+
+    Consultant getConsultantById(Long consultantId);
 }

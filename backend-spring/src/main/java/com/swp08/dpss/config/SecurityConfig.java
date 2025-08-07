@@ -42,7 +42,9 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/api/user/profile",
-            "/actuator/**"
+            "/actuator/**",
+            "/api/consultant/**",
+            "/uploads/**"
     };
 
     private static final String[] PUBLIC_USER_URLS = {

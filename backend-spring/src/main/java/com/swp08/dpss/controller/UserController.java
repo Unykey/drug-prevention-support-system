@@ -75,19 +75,6 @@ public class UserController {
         return ResponseEntity.ok().body(new ApiResponse<>(true, userResponse, "Create new user successfully"));
     }
 
-    @GetMapping("/profile")
-    public ResponseEntity<ApiResponse<UserResponse>> getUserProfile(Authentication authentication) {
-        // Get current user's email from Spring Security context
-        String email = authentication.getName();
-
-        // Load user details
-        Optional<User> user = userService.findByEmail(email);
-        if (user.isPresent()) {
-            return ResponseEntity.ok().body(new ApiResponse<>(true, userMapper.toResponse(user.get()), "Get user profile successfully"));
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, null, "Not found user"));
-    }
-
     @DeleteMapping("/delete/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'MANAGER')")
     public ResponseEntity<ApiResponse<Void>> deleteUser(@PathVariable Long id) {
@@ -104,6 +91,19 @@ public class UserController {
         Optional<User> update = userService.updateUserByAdmin(id, request);
         if (update.isPresent()) {
             return ResponseEntity.ok().body(new ApiResponse<>(true, userMapper.toResponse(update.get()), "Update user successfully"));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, null, "Not found user"));
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ApiResponse<UserResponse>> getUserProfile(Authentication authentication) {
+        // Get current user's email from Spring Security context
+        String email = authentication.getName();
+
+        // Load user details
+        Optional<User> user = userService.findByEmail(email);
+        if (user.isPresent()) {
+            return ResponseEntity.ok().body(new ApiResponse<>(true, userMapper.toResponse(user.get()), "Get user profile successfully"));
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse<>(false, null, "Not found user"));
     }
