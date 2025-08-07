@@ -128,7 +128,7 @@ export const AuthProvider = ({children}) => {
      */
     const login = async (email, password) => {
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/login', {email, password});
+            const response = await axios.post('https://drug-prevention-support-system.onrender.com/api/auth/login', {email, password});
             console.log('Login response:', response.data);
             const {success, data, message} = response.data;
             if (!success) {
@@ -159,7 +159,7 @@ export const AuthProvider = ({children}) => {
      */
     const register = async (userData) => {
         try {
-            const response = await axios.post('http://localhost:8080/api/auth/register', userData);
+            const response = await axios.post('https://drug-prevention-support-system.onrender.com/api/auth/register', userData);
             console.log('Register response:', response.data);
             const {success, data, message} = response.data;
             if (!success) {

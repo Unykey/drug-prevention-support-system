@@ -11,6 +11,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:5173") // Only allow requests from localhost frontend
+                .allowedOrigins("https://drug-prevention-support-system.vercel.app")
                 .allowedMethods("*") // Allow all HTTP methods (GET, POST, PUT, DELETE, etc.)
                 .allowedHeaders("*") // Allow all headers (e.g., Content-Type, Authorization)
                 .allowCredentials(true); // Allow sending cookies / Authorization headers
